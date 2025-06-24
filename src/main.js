@@ -71,10 +71,3 @@ while (true) {
       break;
   }
 }
-
-console.log(currentList);
-
-newTodo = new ToDo(prompt("Enter the name of a new todo item"));
-currentList.addToDo(newTodo);
-
-console.log(currentList);
