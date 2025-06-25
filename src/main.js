@@ -2,7 +2,7 @@ import Manager from "./modules/manager.js";
 const manager = new Manager();
 
 function switchList() {
-  const listNames = manager.allLists
+  const listNames = manager.lists
     .map((list, i) => `${i + 1}. ${list.title}`)
     .join("\n");
 
@@ -28,11 +28,20 @@ function viewListTasks() {
   alert(manager.formattedTasks);
 }
 
+function deleteTask() {
+  const taskToDelete = parseInt(
+    prompt(
+      `Enter the index of the task to be deleted (starting from 1)\n${manager.formattedTasks} `
+    )
+  );
+  manager.deleteTask(taskToDelete);
+}
+
 let choice = null;
 while (true) {
   choice = parseInt(
     prompt(
-      `what would you like to do?\n1. Select another list\n2. Add task to current list (${manager.currentListTitle})\n3. Create a new List\n4. Edit a task of the current list (${manager.currentListTitle})\n5. View all tasks of current List`
+      `what would you like to do?\n1. Select another list\n2. Add task to current list (${manager.currentListTitle})\n3. Create a new List\n4. Edit a task of the current list (${manager.currentListTitle})\n5. View all tasks of current List\n6. Delete a task`
     )
   );
 
@@ -51,6 +60,9 @@ while (true) {
       break;
     case 5:
       viewListTasks();
+      break;
+    case 6:
+      deleteTask();
       break;
   }
 }

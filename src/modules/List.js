@@ -8,12 +8,9 @@ export default class List {
     this.#creationDate = creationDate || "";
   }
 
+  ////////////// GETTER METHODS ///////////////
   get title() {
     return this.#title;
-  }
-
-  set title(newTitle) {
-    this.#title = newTitle;
   }
 
   get creationDate() {
@@ -22,6 +19,24 @@ export default class List {
 
   get todos() {
     return this.#todos;
+  }
+
+  ////////////// SETTER METHODS ///////////////
+  set todos(trimmedTasks) {
+    this.#todos = trimmedTasks;
+  }
+
+  set title(newTitle) {
+    this.#title = newTitle;
+  }
+
+  ////////////// ACTION METHODS ///////////////
+
+  deleteTask(taskId) {
+    this.todos.splice(
+      this.todos.findIndex((item) => parseInt(item.id) === taskId),
+      1
+    );
   }
 
   addToDo(newToDo) {
