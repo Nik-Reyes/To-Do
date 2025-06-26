@@ -8,9 +8,8 @@ export default class ToDo {
   #completed;
   #id = Date.now() + Math.floor(Math.random() * 1000);
 
-  constructor(title, description, dueDate, priority, notes, completed) {
+  constructor(title, notes, dueDate, priority, completed) {
     this.#title = title;
-    this.#description = description || "";
     this.#dueDate = dueDate || "";
     this.#priority = priority || "";
     this.#notes = notes || "";
