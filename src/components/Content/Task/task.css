@@ -1,0 +1,36 @@
+.task-wrapper {
+  display: grid;
+  column-gap: 0.5rem;
+  grid-template-columns: auto 1fr;
+  align-content: start;
+  background-color: red;
+}
+
+.task-input {
+  font-size: inherit;
+  border: none;
+  min-width: 5ch;
+}
+
+.task-input:focus,
+.task-input:active {
+  outline: none;
+}
+
+.task-notes {
+  grid-column: 2;
+  height: 1lh;
+  min-height: 1lh;
+  resize: none;
+  overflow: hidden;
+  outline: none;
+  font-family: inherit;
+  font-size: 0.875rem;
+  color: #797979;
+  border: none;
+}
+
+.task-date {
+  grid-column: 2;
+  width: fit-content;
+}
