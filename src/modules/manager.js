@@ -1,24 +1,20 @@
 import List from "./List.js";
 import ToDo from "./ToDo.js";
-import CreateDefaultLists from "./DefaultLists.js";
 
 export default class Manager {
+  #listCollection;
+  #currentListId;
   constructor() {
-    this.listCollection = CreateDefaultLists();
-    this.currentListId = 0; // tracks the current list
+    this.#listCollection = [];
+    this.#currentListId = undefined; // tracks the current list
   }
 
   ////////////// GETTER METHODS ///////////////
-  get aggregateLists() {
-    return [...this.listCollection.systemLists, ...this.listCollection.myLists];
-  }
-
   get lists() {
-    return this.aggregateLists.map((list, i) => ({
-      id: i,
-      title: list.title,
-      creationDate: list.creationDate,
-    }));
+    return [
+      ...this.#listCollection.systemLists,
+      ...this.#listCollection.myLists,
+    ];
   }
 
   get listTasks() {
@@ -35,32 +31,34 @@ export default class Manager {
     return this.currentList.todos;
   }
 
-  get formattedTasks() {
-    return (
-      this.listTasks.map((task) => task.title).join("\n") || "list is empty"
-    );
-  }
-
   get numberOfLists() {
-    return this.aggregateLists.length;
+    return this.lists.length;
   }
 
   get currentList() {
-    return this.aggregateLists[this.currentListId];
+    return this.lists[this.#currentListId];
   }
 
-  get currentListTitle() {
-    return this.aggregateLists[this.currentListId]?.title || "Unknown List";
+  get firstMyList() {
+    return this.#listCollection.systemLists.length;
+  }
+
+  get listCollection() {
+    return this.#listCollection;
   }
 
   ////////////// SETTER METHODS ///////////////
   set currentList(listId) {
-    this.currentListId = listId;
+    this.#currentListId = listId;
+  }
+
+  set listCollection(newList) {
+    this.#listCollection = newList;
   }
 
   ////////////// ACTION METHODS ///////////////
   addList(title) {
-    this.listCollection.myLists.push(new List(title));
+    this.#listCollection.myLists.push(new List(title));
     return this.numberOfLists;
   }
 
