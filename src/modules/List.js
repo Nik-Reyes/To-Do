@@ -1,11 +1,11 @@
 export default class List {
   #title;
-  #creationDate;
+  #color;
   #todos = [];
 
-  constructor(title, creationDate) {
+  constructor(title, color) {
     this.#title = title;
-    this.#creationDate = creationDate || "";
+    this.#color = color || "rgb(228, 27, 51)";
   }
 
   ////////////// GETTER METHODS ///////////////
@@ -13,12 +13,12 @@ export default class List {
     return this.#title;
   }
 
-  get creationDate() {
-    return this.#creationDate;
-  }
-
   get todos() {
     return this.#todos;
+  }
+
+  get hasTasks() {
+    return this.#todos.length >= 1 ? true : false;
   }
 
   ////////////// SETTER METHODS ///////////////
@@ -31,7 +31,6 @@ export default class List {
   }
 
   ////////////// ACTION METHODS ///////////////
-
   deleteTask(taskId) {
     this.todos.splice(
       this.todos.findIndex((item) => parseInt(item.id) === taskId),
