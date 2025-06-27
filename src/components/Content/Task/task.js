@@ -7,22 +7,25 @@ export default function task(manager) {
   manager.lists.forEach((list) => {
     if (list.hasTasks) {
       list.todos.forEach((task) => {
+        //////// ELEMENT CREATION ////////
         const taskWrapper = utils.generateElement("div", ["task-wrapper"]);
         const taskContentBorder = utils.generateElement("div", [
           "task-content-border",
         ]);
         const taskContent = utils.generateElement("div", ["task-content"]);
         const taskInput = utils.generateElement("input", ["task-input"]);
-        const customCheckbox = utils.generateElement("span", "customCheckbox");
         const taskCheckBox = utils.generateElement("input", ["task-checkbox"]);
         const expandableContentWrapper = utils.generateElement("div", [
-          "expandable-content-wrapper",
+          ["expandable-content-wrapper"],
         ]);
         const expandableContent = utils.generateElement("div", [
           "expandable-content",
         ]);
         const taskNotes = utils.generateElement("textarea", ["task-notes"]);
         const taskDate = utils.generateElement("input", ["task-date"]);
+        const taskPriorityWrapper = utils.generateElement("div", [
+          "task-priority-wrapper",
+        ]);
         const taskPriority = utils.generateElement(
           "button",
           ["task-priority"],
@@ -37,11 +40,12 @@ export default function task(manager) {
         ]);
         const moreOptions = utils.generateElement("div", ["more-options"]);
 
+        //////// ELEMENT ATTRIBUTES APPLICATION ////////
         taskInput.type = "text";
         taskInput.name = "task";
         taskInput.placeholder = " ";
         taskInput.value = task.title;
-        taskInput.style.width = taskInput.value.length + "ch";
+        taskInput.style.width = `${taskInput.value.length + 2.5}ch`;
 
         taskCheckBox.type = "checkbox";
         taskCheckBox.name = task.title;
@@ -56,6 +60,7 @@ export default function task(manager) {
         taskDate.min = "2025-01-01";
         taskDate.max = "2025-12-31";
 
+        //////// ELEMENT EVENT LISTENER APPLICATION ////////
         taskCheckBox.addEventListener("input", () => {
           task.completed ? console.log("checked") : console.log("unchecked");
         });
@@ -73,11 +78,10 @@ export default function task(manager) {
         });
         taskInput.addEventListener("blur", (e) => {
           e.stopPropagation();
-          taskInput.style.width = taskInput.value.length + "ch";
+          taskInput.style.width = `${taskInput.value.length + 2}ch`;
         });
         taskInput.addEventListener("keydown", (e) => {
           e.stopPropagation();
-
           if (e.key === "Enter" || e.key === "Escape") {
             taskInput.style.width = taskInput.value.length + "ch";
             taskInput.blur();
@@ -104,8 +108,10 @@ export default function task(manager) {
           }
         });
 
+        //////// TASK ELEMENT ASSEMBLY ////////
+        taskPriorityWrapper.appendChild(taskPriority);
         taskPriorityColorPanel.appendChild(taskPriorityInnerDiv);
-        moreOptions.append(taskDate, taskPriority);
+        moreOptions.append(taskDate, taskPriorityWrapper);
         expandableContent.append(taskNotes, moreOptions);
         expandableContentWrapper.append(expandableContent);
         taskContent.append(taskCheckBox, taskInput, expandableContentWrapper);
