@@ -4,38 +4,30 @@
   margin-bottom: 1rem;
 }
 
+.task-wrapper :where(button) {
+  cursor: pointer;
+}
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+}
+
 .priority-panel {
-  background-color: var(--no-priority-bg);
+  background-color: var(--priority-bg);
   display: grid;
   place-items: center left;
-  border: 1.25px solid var(--no-priority-border);
+  border: 1.25px solid var(--priority-border);
 }
 
 .inner-div {
+  border: inherit;
   border-left: none;
-  border-right: inherit;
-  border-bottom: inherit;
-  border-top: inherit;
   width: 75%;
   height: 4px;
 }
 
 .no-priority {
-  --no-priority-border: hsl(4, 51%, 50%);
-  --no-priority-bg: hsl(3, 54%, 33%);
-}
-
-.task-content-border {
-  padding: 1.5px;
-  background-color: rgb(228, 27, 51);
-  clip-path: polygon(
-    0% 0%,
-    100% 0%,
-    100% calc(100% - 11px),
-    calc(100% - 11px) 100%,
-    0% 100%
-  );
-  overflow: hidden;
+  --priority-border: hsl(4, 51%, 50%);
+  --priority-bg: hsl(3, 54%, 33%);
 }
 
 .task-content {
@@ -67,7 +59,7 @@
   display: grid;
   place-content: center;
   position: relative;
-  cursor: pointer;
+  border-radius: 0px;
 }
 
 .task-checkbox::after {
@@ -139,8 +131,20 @@
   margin-top: 0.25em;
 }
 
+.task-notes::placeholder {
+  color: inherit;
+}
+
 .task-date {
   width: fit-content;
+  appearance: none;
+  -webkit-appearance: none;
+  color: hsl(0, 100%, 61%);
+  border: none;
+  background-color: #1d1218;
+  padding: 0.5em 1.5em;
+  clip-path: inherit;
+  transition: inherit;
 }
 
 .expandable-content-wrapper {
@@ -161,8 +165,7 @@
   gap: 0.5rem;
 }
 
-.task-priority-wrapper {
-  cursor: pointer;
+.cyberpunk-clipped-wrapper-br {
   clip-path: polygon(
     0% 0%,
     100% 0%,
@@ -171,7 +174,10 @@
     0% 100%
   );
   background-color: rgb(228, 27, 51);
-  padding: 1px;
+  padding: 1.5px;
+  overflow: hidden;
+  transition: background-color 200ms;
+  pointer-events: all;
 }
 
 .task-priority {
@@ -179,12 +185,13 @@
   background-color: #1d1218;
   color: hsl(0, 100%, 61%);
   padding: 0.5em 1.5em;
-  cursor: inherit;
   clip-path: inherit;
-  transition: background-color 200ms;
+  transition: inherit;
 }
 
-.task-priority-wrapper:hover .task-priority,
-.task-priority-wrapper:focus-within .task-priority {
+.date-wrapper:hover .task-date,
+.date-wrapper.focused .task-date,
+.priority-btn-wrapper:hover .task-priority,
+.priority-btn-wrapper:focus-within .task-priority {
   background-color: hsl(0, 65%, 20%);
 }
