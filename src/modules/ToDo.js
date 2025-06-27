@@ -1,7 +1,6 @@
 export default class ToDo {
   // the only required item property is the title
   #title;
-  #description;
   #dueDate;
   #priority;
   #notes;
@@ -22,14 +21,6 @@ export default class ToDo {
 
   set title(newTitle) {
     this.#title = newTitle;
-  }
-
-  get description() {
-    return this.#description;
-  }
-
-  set description(newDescription) {
-    this.#description = newDescription;
   }
 
   get dueDate() {
