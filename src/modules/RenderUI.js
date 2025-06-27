@@ -1,5 +1,6 @@
 import Manager from "./manager.js";
 import task from "../components/Content/Task/task.js";
+import "../components/Content/Task/task.css";
 
 // Purpose of this function is only to load all lists and tasks and then attach to them to
 // DOM when the website is first visted.
@@ -18,8 +19,15 @@ export default function renderUi() {
       manager.listCollection = CreateDefaultLists();
       manager.currentList = manager.firstMyList;
 
-      const tasktElements = task(manager);
-      body.append(...tasktElements);
+      const tasks = [];
+      // loop through all lists, check if they have tasks, and if they do, create them
+      manager.lists.forEach((list) => {
+        if (list.hasTasks) {
+          list.todos.forEach((taskObj) => tasks.push(task(taskObj)));
+        }
+      });
+      console.log(tasks);
+      body.append(...tasks);
     });
   } else {
     console.log("load stored lists");
