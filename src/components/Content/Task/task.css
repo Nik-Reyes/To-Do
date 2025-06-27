@@ -1,15 +1,126 @@
 .task-wrapper {
   display: grid;
+  grid-template-columns: 15px 1fr;
+  margin-bottom: 1rem;
+}
+
+.priority-panel {
+  background-color: var(--no-priority-bg);
+  display: grid;
+  place-items: center left;
+  border: 1.25px solid var(--no-priority-border);
+}
+
+.inner-div {
+  border-left: none;
+  border-right: inherit;
+  border-bottom: inherit;
+  border-top: inherit;
+  width: 75%;
+  height: 4px;
+}
+
+.no-priority {
+  --no-priority-border: hsl(4, 51%, 50%);
+  --no-priority-bg: hsl(3, 54%, 33%);
+}
+
+.task-content-border {
+  padding: 1px;
+  background-color: rgb(228, 27, 51);
+  clip-path: polygon(
+    0% 0%,
+    100% 0%,
+    100% calc(100% - 11px),
+    calc(100% - 11px) 100%,
+    0% 100%
+  );
+  overflow: hidden;
+}
+
+.task-content {
+  display: grid;
   column-gap: 0.5rem;
   grid-template-columns: auto 1fr;
   align-content: start;
-  background-color: red;
+  background-color: darkgray;
+  padding: 0.75em 0.5em;
+  color: rgb(228, 27, 51);
+  background-color: #310203;
+  clip-path: polygon(
+    0% 0%,
+    100% 0%,
+    100% calc(100% - 11px),
+    calc(100% - 11px) 100%,
+    0% 100%
+  );
+  position: relative;
+}
+
+.task-content.active .expandable-content-wrapper {
+  grid-template-rows: 1fr;
+}
+
+.task-checkbox {
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: #1d1218;
+  margin: 0;
+  font: inherit;
+  color: currentColor;
+  width: 1.15em;
+  height: 1.15em;
+  border: 0.1em solid currentColor;
+  display: grid;
+  place-content: center;
+  position: relative;
+}
+
+.task-checkbox::after {
+  content: "";
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  width: 60%;
+  height: 60%;
+  position: absolute;
+  background-color: rgb(120, 214, 204);
+  opacity: 0;
+  transition: opacity 100ms;
+}
+
+.task-checkbox:not(:checked):hover::after,
+.task-checkbox:not(:checked):focus-visible::after {
+  opacity: 1;
+}
+
+.task-checkbox::before {
+  content: "";
+  width: 1em;
+  height: 1em;
+  transform: scale(0);
+  transition: transform 120ms ease-in-out;
+  box-shadow: inset 1em 1em rgb(120, 214, 204);
+  background-color: CanvasText;
+  clip-path: polygon(28% 38%, 41% 53%, 75% 24%, 86% 38%, 40% 78%, 15% 50%);
+}
+
+.task-checkbox:checked::before {
+  transform: scale(1);
+}
+
+.task-checkbox:focus-visible {
+  outline: max(2px, 0.1em) solid currentColor;
+  outline-offset: max(2px, 0.15em);
 }
 
 .task-input {
   font-size: inherit;
   border: none;
   min-width: 5ch;
+  background-color: transparent;
+  color: inherit;
 }
 
 .task-input:focus,
@@ -18,19 +129,37 @@
 }
 
 .task-notes {
-  grid-column: 2;
-  height: 1lh;
-  min-height: 1lh;
+  height: 1.3lh;
+  min-height: 1.3lh;
+  min-width: 5ch;
   resize: none;
   overflow: hidden;
   outline: none;
   font-family: inherit;
   font-size: 0.875rem;
   color: #797979;
+  background-color: transparent;
   border: none;
 }
 
 .task-date {
-  grid-column: 2;
   width: fit-content;
+}
+
+.expandable-content-wrapper {
+  grid-column: 2;
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 200ms;
+}
+
+.expandable-content {
+  display: grid;
+  overflow: hidden;
+  row-gap: 0.25rem;
+}
+
+.more-options {
+  display: flex;
+  gap: 0.5rem;
 }
