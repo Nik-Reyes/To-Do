@@ -137,6 +137,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .task-date {
   min-width: 0;
+  width: max-content;
   appearance: none;
   -webkit-appearance: none;
   color: hsl(0, 100%, 61%);
@@ -144,6 +145,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   background-color: #1d1218;
   padding: 0.5em 1.5em;
   transition: inherit;
+  border-radius: none;
 }
 
 ::-webkit-calendar-picker-indicator {
@@ -190,8 +192,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .date-wrapper:hover .task-date,
 .date-wrapper.focused .task-date,
 .priority-btn-wrapper:hover .task-priority,
-.priority-btn-wrapper:focus-within .task-priority {
+.priority-btn-wrapper:focus .task-priority,
+.priority-menu-option:hover,
+.priority-menu-option:focus-within {
   background-color: hsl(0, 65%, 20%);
+  outline: none;
+  border: none;
 }
 
 /******** Priority button and Priority menu styles ********/
@@ -201,7 +207,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   color: hsl(0, 100%, 61%);
   padding: 0.5em 1.5em;
   transition: inherit;
-  anchor-name: --priority-menu-btn;
   height: 100%;
 }
 
@@ -211,7 +216,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .priority-menu-wrapper {
   width: max-content;
-  position-anchor: --priority-menu-btn;
   margin: 0;
   inset: auto;
   position: absolute;
@@ -234,6 +238,11 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   background-color: #1d1218;
   color: hsl(0, 100%, 61%);
   padding: 0.5em 1.5em;
+  transition: background-color 100ms ease-in-out;
+}
+
+.priority-menu-option:hover {
+  background-color: hsl(0, 65%, 20%);
 }
 
 .priority-menu-option:last-child {
