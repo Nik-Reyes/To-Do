@@ -44,6 +44,7 @@ export default function task(task) {
   });
   const taskPriorityWrapper = utils.generateElement("div", {
     class: "cyberpunk-clip-wrapper-br priority-btn-wrapper",
+    tabIndex: "0",
   });
   const taskDateWrapper = utils.generateElement("div", {
     class: "cyberpunk-clip-wrapper-br date-wrapper",
@@ -52,14 +53,16 @@ export default function task(task) {
     "button",
     {
       class: "inner-cyberpunk-clip-wrapper-br task-priority",
-      popovertarget: "priority-menu-wrapper",
+      popovertarget: task.id,
+      style: `anchor-name: --${task.id}`,
     },
     "Priority"
   );
   const priorityMenuWrapper = utils.generateElement("div", {
-    id: "priority-menu-wrapper",
+    id: task.id,
     class: "cyberpunk-clip-wrapper-br priority-menu-wrapper",
     popover: "auto",
+    style: `position-anchor: --${task.id}`,
   });
   const priorityMenu = utils.generateElement("menu", {
     class: "priority-menu",
@@ -124,8 +127,10 @@ export default function task(task) {
   });
 
   //////// ELEMENT EVENT LISTENER APPLICATION ////////
-  taskCheckBox.addEventListener("input", () => {
-    task.completed ? console.log("checked") : console.log("unchecked");
+  taskCheckBox.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      taskCheckBox.click();
+    }
   });
 
   taskInput.addEventListener("click", (e) => {
@@ -171,8 +176,22 @@ export default function task(task) {
     taskDate.closest(".date-wrapper").classList.remove("focused");
   });
 
+  priorityMenu.addEventListener("click", (e) => {
+    if (e.target.closest(".priority-menu-option")) {
+      priorityMenuWrapper.hidePopover();
+      taskPriority.blur();
+    }
+  });
+
+  taskPriorityWrapper.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      priorityMenuWrapper.togglePopover();
+    }
+  });
+
   // check if task wrapper is active and if the element clicked is outside the taskContent
   document.addEventListener("click", (e) => {
+    if (e.target.closest(".priority-menu-option")) return;
     if (
       taskContent.classList.contains("active") &&
       !taskContent.contains(e.target)
