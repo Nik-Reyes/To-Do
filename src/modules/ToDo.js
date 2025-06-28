@@ -5,8 +5,9 @@ export default class ToDo {
   #priority;
   #notes;
   #completed;
-  #id = Date.now() + Math.floor(Math.random() * 1000);
-
+  #id = `${performance.now().toString(36)}-${Math.random()
+    .toString(36)
+    .substring(2)}`;
   constructor(title, notes, dueDate, priority, completed) {
     this.#title = title;
     this.#dueDate = dueDate || "";
