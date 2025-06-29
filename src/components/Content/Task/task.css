@@ -37,9 +37,21 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   grid-template-columns: auto 1fr;
   background-color: darkgray;
   padding: 0.75em 0.5em;
-  color: rgb(228, 27, 51);
-  background-color: #310203;
-  position: relative;
+  background-color: rgb(49, 2, 3);
+}
+
+.task-content :is(input, textarea, button) {
+  text-transform: uppercase;
+}
+
+input[type="text"],
+textarea {
+  background-color: transparent;
+}
+
+.task-content input:not(input[type="checkbox"]),
+.task-content button {
+  color: rgb(252, 100, 92);
 }
 
 .task-content.active .expandable-content-wrapper {
@@ -52,10 +64,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   background-color: #1d1218;
   margin: 0;
   font: inherit;
-  color: currentColor;
+  color: rgb(228, 27, 51);
   width: 1.15em;
   height: 1.15em;
-  border: 0.1em solid currentColor;
+  border: 1px solid currentColor;
   display: grid;
   place-content: center;
   position: relative;
@@ -105,10 +117,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   font-size: inherit;
   border: none;
   min-width: 6ch;
-  background-color: transparent;
-  color: hsl(0, 100%, 61%);
   text-shadow: 0.01em 0.01em 0.15em hsla(0, 100%, 61%, 0.4);
-  text-transform: uppercase;
 }
 
 .task-input:focus,
@@ -124,9 +133,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   overflow: hidden;
   outline: none;
   font-family: inherit;
-  font-size: 0.875rem;
-  color: #797979;
-  background-color: transparent;
+  font-size: 0.7125rem;
+  color: hsl(0, 0%, 80%, 90%);
+  text-shadow: 0px 0px 1px hsl(0, 0%, 85%);
   border: none;
   margin-top: 0.25em;
 }
@@ -135,17 +144,17 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   color: inherit;
 }
 
-.task-date {
-  min-width: 0;
+.date-wrapper {
   width: max-content;
-  appearance: none;
-  -webkit-appearance: none;
-  color: hsl(0, 100%, 61%);
+}
+
+input[type="date"] {
+  min-width: 0;
   border: none;
   background-color: #1d1218;
   padding: 0.5em 1.5em;
   transition: inherit;
-  border-radius: none;
+  border-radius: 0px;
 }
 
 ::-webkit-calendar-picker-indicator {
@@ -177,10 +186,14 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   gap: 0.5rem;
 }
 
+.more-options > div > * {
+  font-size: 0.8125rem;
+}
+
 .cyberpunk-clip-wrapper-br {
   clip-path: var(--cyberpunk-clip-br);
-  background-color: rgb(228, 27, 51);
-  padding: 1.5px;
+  background-color: rgb(252, 100, 92);
+  padding: 0.5px;
   overflow: hidden;
   transition: background-color 200ms;
 }
@@ -204,7 +217,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .task-priority {
   border: none;
   background-color: #1d1218;
-  color: hsl(0, 100%, 61%);
   padding: 0.5em 1.5em;
   transition: inherit;
   height: 100%;
@@ -236,7 +248,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .priority-menu-option {
   border: none;
   background-color: #1d1218;
-  color: hsl(0, 100%, 61%);
+  color: rgb(252, 100, 92);
   padding: 0.5em 1.5em;
   transition: background-color 100ms ease-in-out;
 }
@@ -250,7 +262,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .menu-spacer {
-  background-color: #1d1218;
   display: block;
   display: flex;
   align-items: center;
@@ -261,8 +272,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   inset: 0;
   display: block;
   height: 1px;
-  width: 100%;
-  background-color: hsl(0, 100%, 61%);
+  background-color: rgb(252, 100, 92);
 }
 
 @media only screen and (min-width: 355px) {
