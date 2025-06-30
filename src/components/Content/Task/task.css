@@ -5,10 +5,8 @@
   position: relative;
 }
 
-.task-wrapper :where(button) {
-  cursor: pointer;
-}
-input[type="date"]::-webkit-calendar-picker-indicator {
+.task-wrapper
+  :where(button, input[type="date"]::-webkit-calendar-picker-indicator) {
   cursor: pointer;
 }
 
@@ -31,11 +29,25 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   --priority-bg: hsl(3, 54%, 33%);
 }
 
+.low-priority {
+  --priority-border: #c2c2c2;
+  --priority-bg: hsl(35, 5%, 48%);
+}
+
+.medium-priority {
+  --priority-border: hsl(171, 37%, 70%);
+  --priority-bg: rgb(46, 116, 125);
+}
+
+.high-priority {
+  --priority-border: #eebb5b;
+  --priority-bg: rgb(182, 117, 57);
+}
+
 .task-content {
   display: grid;
   column-gap: 0.5rem;
   grid-template-columns: auto 1fr;
-  background-color: darkgray;
   padding: 0.75em 0.5em;
   background-color: rgb(49, 2, 3);
 }
@@ -64,7 +76,7 @@ textarea {
   background-color: #1d1218;
   margin: 0;
   font: inherit;
-  color: rgb(228, 27, 51);
+  color: rgb(166, 51, 46);
   width: 1.15em;
   height: 1.15em;
   border: 1px solid currentColor;
@@ -186,8 +198,14 @@ input[type="date"] {
   gap: 0.5rem;
 }
 
-.more-options > div > * {
+.more-options > div {
+  display: grid;
+}
+
+.more-options > div > *,
+.priority-menu-option {
   font-size: 0.8125rem;
+  background-color: rgb(25, 0, 0);
 }
 
 .cyberpunk-clip-wrapper-br {
@@ -216,10 +234,8 @@ input[type="date"] {
 /******** Priority button and Priority menu styles ********/
 .task-priority {
   border: none;
-  background-color: #1d1218;
   padding: 0.5em 1.5em;
   transition: inherit;
-  height: 100%;
 }
 
 .priority-btn-wrapper {
@@ -247,7 +263,6 @@ input[type="date"] {
 
 .priority-menu-option {
   border: none;
-  background-color: #1d1218;
   color: rgb(252, 100, 92);
   padding: 0.5em 1.5em;
   transition: background-color 100ms ease-in-out;
@@ -255,6 +270,21 @@ input[type="date"] {
 
 .priority-menu-option:hover {
   background-color: hsl(0, 65%, 20%);
+}
+
+.priority-menu-option.medium-priority:hover {
+  background-color: rgb(46, 116, 125);
+  color: hsl(171, 37%, 70%);
+}
+
+.priority-menu-option.low-priority:hover {
+  background-color: hsl(35, 5%, 48%);
+  color: #c2c2c2;
+}
+
+.priority-menu-option.high-priority:hover {
+  background-color: rgb(182, 117, 57);
+  color: #eebb5b;
 }
 
 .priority-menu-option:last-child {

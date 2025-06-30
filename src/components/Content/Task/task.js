@@ -127,6 +127,18 @@ export default function task(task) {
   });
 
   //////// ELEMENT EVENT LISTENER APPLICATION ////////
+  taskWrapper.addEventListener("dblclick", (e) => {
+    e.stopPropagation();
+    console.log(e.target.tagName);
+    if (
+      e.target.tagName === "INPUT" ||
+      e.target.tagName === "TEXTAREA" ||
+      e.target.tagName === "BUTTON"
+    )
+      return;
+    taskContent.classList.toggle("active");
+  });
+
   taskCheckBox.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
       taskCheckBox.click();
@@ -176,10 +188,29 @@ export default function task(task) {
     taskDate.closest(".date-wrapper").classList.remove("focused");
   });
 
+  taskDate.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      taskDate.closest(".date-wrapper").classList.remove("focused");
+    }
+  });
+
   priorityMenu.addEventListener("click", (e) => {
     if (e.target.closest(".priority-menu-option")) {
       priorityMenuWrapper.hidePopover();
       taskPriority.blur();
+
+      // Change the color of the priority panel
+      const newPriority = Array.from(e.target.classList).find((className) => {
+        return className.includes("-priority");
+      });
+      // if the user re-selects the current priortiy, no point in replacing, just return
+      if (task.priority === newPriority) return;
+
+      taskPriorityColorPanel.classList.forEach((className) => {
+        if (className.includes("-priority")) {
+          taskPriorityColorPanel.classList.replace(className, newPriority);
+        }
+      });
     }
   });
 
