@@ -1,15 +1,21 @@
-import { utils } from "../../../utils/createElement.js";
+// task.js creates a singluar task element
+// each task element is fully de-coupled from one another
+// no task is responsible for updating its respective todo object it was created from
+// each task is responsible ONLY for its own UI changes
+// no task is reponsible for updating its own states, even though it handles UI changes
+
+import generateElement from "../../../utils/createElement.js";
 
 export default function task(task) {
   //////// ELEMENT CREATION ////////
-  const taskWrapper = utils.generateElement("div", { class: "task-wrapper" });
-  const taskContentBorder = utils.generateElement("div", {
+  const taskWrapper = generateElement("div", { class: "task-wrapper" });
+  const taskContentBorder = generateElement("div", {
     class: "cyberpunk-clip-wrapper-br",
   });
-  const taskContent = utils.generateElement("div", {
+  const taskContent = generateElement("div", {
     class: "inner-cyberpunk-clip-wrapper-br task-content",
   });
-  const taskInput = utils.generateElement("input", {
+  const taskInput = generateElement("input", {
     class: "task-input",
     type: "text",
     name: "task",
@@ -17,39 +23,39 @@ export default function task(task) {
     value: task.title,
     style: `width: ${task.title.length + 2.5}ch`,
   });
-  const taskCheckBox = utils.generateElement("input", {
+  const taskCheckBox = generateElement("input", {
     class: "task-checkbox",
     type: "checkbox",
     name: task.title,
     value: task.title,
     checked: true,
   });
-  const expandableContentWrapper = utils.generateElement("div", {
+  const expandableContentWrapper = generateElement("div", {
     class: "expandable-content-wrapper",
   });
-  const expandableContent = utils.generateElement("div", {
+  const expandableContent = generateElement("div", {
     class: "expandable-content",
   });
-  const taskNotes = utils.generateElement("textarea", {
+  const taskNotes = generateElement("textarea", {
     class: "task-notes",
     rows: "1",
     placeholder: "Notes",
   });
-  const taskDate = utils.generateElement("input", {
+  const taskDate = generateElement("input", {
     class: "inner-cyberpunk-clip-wrapper-br task-date",
     type: "date",
     name: "due-date",
     min: "2025-01-01",
     max: "2025-12-31",
   });
-  const taskPriorityWrapper = utils.generateElement("div", {
+  const taskPriorityWrapper = generateElement("div", {
     class: "cyberpunk-clip-wrapper-br priority-btn-wrapper",
     tabIndex: "0",
   });
-  const taskDateWrapper = utils.generateElement("div", {
+  const taskDateWrapper = generateElement("div", {
     class: "cyberpunk-clip-wrapper-br date-wrapper",
   });
-  const taskPriority = utils.generateElement(
+  const taskPriority = generateElement(
     "button",
     {
       class: "inner-cyberpunk-clip-wrapper-br task-priority",
@@ -58,51 +64,51 @@ export default function task(task) {
     },
     "Priority"
   );
-  const priorityMenuWrapper = utils.generateElement("div", {
+  const priorityMenuWrapper = generateElement("div", {
     id: task.id,
     class: "cyberpunk-clip-wrapper-br priority-menu-wrapper",
     popover: "auto",
     style: `position-anchor: --${task.id}`,
   });
-  const priorityMenu = utils.generateElement("menu", {
+  const priorityMenu = generateElement("menu", {
     class: "priority-menu",
   });
-  const priorityMenuOptionHigh = utils.generateElement(
+  const priorityMenuOptionHigh = generateElement(
     "button",
     {
       class: "priority-menu-option high-priority",
     },
     "High Priority"
   );
-  const priorityMenuOptionMedium = utils.generateElement(
+  const priorityMenuOptionMedium = generateElement(
     "button",
     {
       class: "priority-menu-option medium-priority",
     },
     "Medium Priority"
   );
-  const priorityMenuOptionLow = utils.generateElement(
+  const priorityMenuOptionLow = generateElement(
     "button",
     {
       class: "priority-menu-option low-priority",
     },
     "Low Priority"
   );
-  const priorityMenuOptionNone = utils.generateElement(
+  const priorityMenuOptionNone = generateElement(
     "button",
     {
       class: "inner-cyberpunk-clip-wrapper-br priority-menu-option no-priority",
     },
     "No Priority"
   );
-  const menuSpacer = utils.generateElement("span", { class: "menu-spacer" });
-  const taskPriorityColorPanel = utils.generateElement("div", {
+  const menuSpacer = generateElement("span", { class: "menu-spacer" });
+  const taskPriorityColorPanel = generateElement("div", {
     class: "no-priority priority-panel",
   });
-  const taskPriorityInnerDiv = utils.generateElement("div", {
+  const taskPriorityInnerDiv = generateElement("div", {
     class: "inner-div",
   });
-  const moreOptions = utils.generateElement("div", { class: "more-options" });
+  const moreOptions = generateElement("div", { class: "more-options" });
 
   //////// ACTIVE STATE MANAGEMENT ////////
   const removeActiveState = () => {
@@ -129,7 +135,6 @@ export default function task(task) {
   //////// ELEMENT EVENT LISTENER APPLICATION ////////
   taskWrapper.addEventListener("dblclick", (e) => {
     e.stopPropagation();
-    console.log(e.target.tagName);
     if (
       e.target.tagName === "INPUT" ||
       e.target.tagName === "TEXTAREA" ||
