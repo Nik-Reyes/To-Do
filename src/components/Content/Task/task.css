@@ -63,7 +63,7 @@ textarea {
 
 .task-content input:not(input[type="checkbox"]),
 .task-content button {
-  color: rgb(252, 100, 92);
+  color: var(--cyber-red-text);
 }
 
 .task-content.active .expandable-content-wrapper {
@@ -210,7 +210,7 @@ input[type="date"] {
 
 .cyberpunk-clip-wrapper-br {
   clip-path: var(--cyberpunk-clip-br);
-  background-color: rgb(252, 100, 92);
+  background-color: var(--cyber-red-neon-bg);
   padding: 0.5px;
   overflow: hidden;
   transition: background-color 200ms;
@@ -263,7 +263,7 @@ input[type="date"] {
 
 .priority-menu-option {
   border: none;
-  color: rgb(252, 100, 92);
+  color: var(--cyber-red-neon-bg);
   padding: 0.5em 1.5em;
   transition: background-color 100ms ease-in-out;
 }
@@ -302,7 +302,7 @@ input[type="date"] {
   inset: 0;
   display: block;
   height: 1px;
-  background-color: rgb(252, 100, 92);
+  background-color: var(--cyber-red-neon-bg);
 }
 
 @media only screen and (min-width: 355px) {
