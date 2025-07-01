@@ -1,4 +1,5 @@
 import generateElement from "../../utils/GenerateElement.js";
+import createHamburger from "../Hamburger/CreateHamburger.js";
 import "./sidebar.css";
 
 export default function createSidebar() {
@@ -7,19 +8,6 @@ export default function createSidebar() {
     id: "sidebar",
     class: "side-panel",
   });
-
-  const hamburger = generateElement("button", {
-    class: "hamburger close-sidepanel",
-    "aria-label": "Close Menu",
-    "aria-expanded": "true",
-    role: "button",
-    tabindex: "0",
-    "aria-controls": "sidebar",
-  });
-
-  const hamLine1 = generateElement("span", { class: "ham-line" });
-  const hamLine2 = generateElement("span", { class: "ham-line" });
-  const hamLine3 = generateElement("span", { class: "ham-line" });
 
   const searchWrapper = generateElement("div", { class: "search" });
   const searchLabel = generateElement("label", {
@@ -49,10 +37,14 @@ export default function createSidebar() {
 
   //////// ELEMENT ASSEMBLY ////////
   myListWrapper.appendChild(myListTitle);
-  hamburger.append(hamLine1, hamLine2, hamLine3);
   searchLabel.appendChild(searchInput);
   searchWrapper.appendChild(searchLabel);
-  sidebar.append(hamburger, searchWrapper, systemListWrapper, myListWrapper);
+  sidebar.append(
+    createHamburger(),
+    searchWrapper,
+    systemListWrapper,
+    myListWrapper
+  );
 
   return sidebar;
 }

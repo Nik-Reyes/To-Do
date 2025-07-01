@@ -1,0 +1,17 @@
+.hamburger {
+  width: 30px;
+  aspect-ratio: 1;
+  display: grid;
+  align-items: center;
+  transition: background-color 200ms ease-in-out;
+  padding: 5px;
+  border: none;
+  background-color: transparent;
+}
+
+.ham-line {
+  height: 3px;
+  background-color: var(--cyber-red);
+  width: 100%;
+  transition: background-color 200ms ease-in-out;
+}
