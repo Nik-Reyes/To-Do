@@ -1,5 +1,5 @@
 import List from "./List.js";
-import ToDo from "./ToDo.js";
+import Task from "./Task.js";
 
 export default class Manager {
   #listCollection;
@@ -19,16 +19,16 @@ export default class Manager {
 
   get listTasks() {
     return this.currentList
-      ? this.currentList.todos.map((todo) => ({
-          id: todo.id,
-          title: todo.title,
-          completed: todo.completed,
+      ? this.currentList.tasks.map((task) => ({
+          id: task.id,
+          title: task.title,
+          completed: task.completed,
         }))
       : [];
   }
 
   get tasks() {
-    return this.currentList.todos;
+    return this.currentList.tasks;
   }
 
   get numberOfLists() {
@@ -64,13 +64,13 @@ export default class Manager {
 
   addTask(title) {
     if (this.currentList) {
-      this.currentList.addToDo(new ToDo(title));
+      this.currentList.addTask(new Task(title));
     }
   }
 
   markCompleted(taskId) {
     if (this.currentList) {
-      this.currentList.completeToDo(taskId);
+      this.currentList.completeTask(taskId);
     }
   }
 

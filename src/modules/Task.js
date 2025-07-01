@@ -1,4 +1,4 @@
-export default class ToDo {
+export default class Task {
   // the only required item property is the title
   #title;
   #dueDate;

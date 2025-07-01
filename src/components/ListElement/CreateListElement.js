@@ -1,5 +1,5 @@
-import generateElement from "../../utils/createElement.js";
-import "./ListElement.css";
+import generateElement from "../../utils/GenerateElement.js";
+import "./list.css";
 
 export default function createListElement(list) {
   //////// ELEMENT CREATION ////////
@@ -24,9 +24,8 @@ export default function createListElement(list) {
     class: "list-btn stacked",
   });
 
-  console.log(list.numberOfTodos);
   const buttonName = generateElement("span", {}, list.title.toUpperCase());
-  const todoCount = generateElement("span", {}, list.numberOfTodos.toString());
+  const taskCount = generateElement("span", {}, list.numberOfTasks.toString());
 
   //////// EVENT LISTENER APPLICATION ////////
   buttonWrapper.addEventListener("mouseover", () => {
@@ -38,7 +37,7 @@ export default function createListElement(list) {
   });
 
   //////// ELEMENT ASSEMBLY ////////
-  listButton.append(buttonName, todoCount);
+  listButton.append(buttonName, taskCount);
   svgWrapper.appendChild(svgStroke);
   buttonWrapper.append(svgWrapper, listButton);
 

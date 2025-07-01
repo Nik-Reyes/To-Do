@@ -1,7 +1,7 @@
 export default class List {
   #title;
   #color;
-  #todos = [];
+  #tasks = [];
 
   constructor(title, color) {
     this.#title = title;
@@ -13,21 +13,21 @@ export default class List {
     return this.#title;
   }
 
-  get todos() {
-    return this.#todos;
+  get tasks() {
+    return this.#tasks;
   }
 
-  get numberOfTodos() {
-    return this.#todos.length;
+  get numberOfTasks() {
+    return this.#tasks.length;
   }
 
   get hasTasks() {
-    return this.#todos.length >= 1 ? true : false;
+    return this.#tasks.length >= 1 ? true : false;
   }
 
   ////////////// SETTER METHODS ///////////////
-  set todos(trimmedTasks) {
-    this.#todos = trimmedTasks;
+  set tasks(trimmedTasks) {
+    this.#tasks = trimmedTasks;
   }
 
   set title(newTitle) {
@@ -36,20 +36,20 @@ export default class List {
 
   ////////////// ACTION METHODS ///////////////
   deleteTask(taskId) {
-    this.todos.splice(
-      this.todos.findIndex((item) => parseInt(item.id) === taskId),
+    this.tasks.splice(
+      this.tasks.findIndex((item) => parseInt(item.id) === taskId),
       1
     );
   }
 
-  addToDo(newToDo) {
-    this.todos.push(newToDo);
+  addTask(newTask) {
+    this.tasks.push(newTask);
   }
 
-  completeToDo(todoId) {
-    const todo = this.#todos.find((todo) => todo.id === todoId);
-    if (todo) {
-      todo.markCompleted();
+  completeTask(taskId) {
+    const task = this.#tasks.find((task) => task.id === taskId);
+    if (task) {
+      task.markCompleted();
     }
   }
 }

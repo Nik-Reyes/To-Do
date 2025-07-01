@@ -1,4 +1,4 @@
-import Manager from "./modules/manager.js";
+import Manager from "./modules/Manager.js";
 import renderUi from "./modules/RenderUI.js";
 import "@oddbird/popover-polyfill";
 import "@oddbird/css-anchor-positioning";

@@ -1,5 +1,5 @@
 import List from "./List.js";
-import { defaultItems } from "./DefaultToDoItems.js";
+import { defaultItems } from "./DefaultTasks.js";
 
 export default function CreateDefaultLists() {
   const lists = {};
@@ -20,7 +20,7 @@ export default function CreateDefaultLists() {
 
   const addMyListItems = () => {
     defaultItems.forEach((item) => {
-      myListStage[0].addToDo(item);
+      myListStage[0].addTask(item);
     });
   };
 

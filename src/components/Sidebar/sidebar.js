@@ -1,4 +1,4 @@
-import generateElement from "../../utils/createElement.js";
+import generateElement from "../../utils/GenerateElement.js";
 import "./sidebar.css";
 
 export default function createSidebar() {

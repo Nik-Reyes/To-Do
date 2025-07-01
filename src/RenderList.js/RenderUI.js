@@ -1,6 +1,5 @@
-import Manager from "./Manager.js";
-import createTaskElement from "../components/Content/Task/CreateTaskElement.js";
-import createListElement from "../components/ListElement/CreateListElement.js";
+import Manager from "./manager.js";
+import task from "../components/Content/Task/task.js";
 import createSidebar from "../components/Sidebar/Sidebar.js";
 import "../components/Content/Task/task.css";
 
@@ -10,21 +9,29 @@ import "../components/Content/Task/task.css";
 
 function upDateSvg() {
   //why do I have to use .list-btn-testfor the width and height instead of .list-btn-wrapper???
-  const button = document.querySelector(".list-btn");
-  const svgStrokes = document.querySelectorAll("polygon");
+  const listButton = document.querySelector(".list-btn");
+  const svgStroke = document.querySelector("polygon");
+  const height = listButton.offsetHeight;
+  const width = listButton.offsetWidth;
 
-  const buttonHeight = button.offsetHeight;
-  const buttonWidth = button.offsetWidth;
+  // Convert your calc() values to percentages
+  const bottomPoint = ((height - 11) / height) * 100;
+  const cornerPoint = ((width - 8.5) / width) * 100;
 
-  const bottomPoint = ((buttonHeight - 11) / buttonHeight) * 100;
-  const cornerPoint = ((buttonWidth - 8.5) / buttonWidth) * 100;
+  console.log("Container dimensions:", width, "x", height);
+  console.log(
+    "Button computed style (height):",
+    getComputedStyle(listButton).height
+  );
+  console.log(
+    "Button computed style (width):",
+    getComputedStyle(listButton).width
+  );
 
-  svgStrokes.forEach((stroke) => {
-    stroke.setAttribute(
-      "points",
-      `0 0 100 0 100 ${bottomPoint} ${cornerPoint} 100 0 100`
-    );
-  });
+  svgStroke.setAttribute(
+    "points",
+    `0 0 100 0 100 ${bottomPoint} ${cornerPoint} 100 0 100`
+  );
 }
 
 export default function renderUi() {
@@ -36,7 +43,7 @@ export default function renderUi() {
   const body = document.querySelector("body");
 
   // 1. check if there are lists. if no lists have ever been created, then create the defualt ones. condition should change to if(!Storage.lists) create defaults, else load the stored lists
-  // 2. load/create the task items only for the current list. Check local storage for lists
+  // 2. load/create the todo items only for the current list. Check local storage for lists
   // 2a. therefore, Manager needs to keep track of the current list, whenever a list is clicked on, that list id should be saed at the currentListId in Manager class
 
   if (!Manager.listCollection) {
@@ -48,18 +55,11 @@ export default function renderUi() {
       // // loop through all lists, check if they have tasks, and if they do, create them
       // manager.lists.forEach((list) => {
       //   if (list.hasTasks) {
-      //     list.tasks.forEach((taskObj) => tasks.push(createTaskElement(taskObj)));
+      //     list.todos.forEach((taskObj) => tasks.push(task(taskObj)));
       //   }
       // });
 
-      const lists = manager.lists.map((list) => createListElement(list));
-      const sidebar = createSidebar();
-      lists.forEach((list, i) => {
-        i >= manager.firstMyList
-          ? sidebar.querySelector(".mylist-wrapper").appendChild(list)
-          : sidebar.querySelector(".system-list-wrapper").appendChild(list);
-      });
-      body.append(sidebar);
+      body.append(createSidebar());
 
       // Update on load and resize
       setTimeout(upDateSvg, 100);

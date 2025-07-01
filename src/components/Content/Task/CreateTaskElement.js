@@ -1,12 +1,12 @@
 // task.js creates a singluar task element
 // each task element is fully de-coupled from one another
-// no task is responsible for updating its respective todo object it was created from
+// no task is responsible for updating its respective task object it was created from
 // each task is responsible ONLY for its own UI changes
 // no task is reponsible for updating its own states, even though it handles UI changes
 
-import generateElement from "../../../utils/createElement.js";
+import generateElement from "../../../utils/GenerateElement.js";
 
-export default function task(task) {
+export default function createTaskElement(task) {
   //////// ELEMENT CREATION ////////
   const taskWrapper = generateElement("div", { class: "task-wrapper" });
   const taskContentBorder = generateElement("div", {
