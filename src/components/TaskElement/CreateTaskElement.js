@@ -4,7 +4,7 @@
 // each task is responsible ONLY for its own UI changes
 // no task is reponsible for updating its own states, even though it handles UI changes
 
-import generateElement from "../../../utils/GenerateElement.js";
+import generateElement from "../../utils/GenerateElement.js";
 
 export default function createTaskElement(task) {
   //////// ELEMENT CREATION ////////

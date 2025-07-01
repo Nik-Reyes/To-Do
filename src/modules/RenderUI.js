@@ -1,8 +1,8 @@
 import Manager from "./Manager.js";
-import createTaskElement from "../components/Content/Task/CreateTaskElement.js";
+import createTaskElement from "../components/TaskElement/CreateTaskElement.js";
 import createListElement from "../components/ListElement/CreateListElement.js";
 import createSidebar from "../components/Sidebar/Sidebar.js";
-import "../components/Content/Task/task.css";
+import "../components/TaskElement/task.css";
 
 // Purpose of this function is only to load all lists and tasks and then attach to them to
 // DOM when the website is first visted.
