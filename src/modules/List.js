@@ -17,6 +17,10 @@ export default class List {
     return this.#todos;
   }
 
+  get numberOfTodos() {
+    return this.#todos.length;
+  }
+
   get hasTasks() {
     return this.#todos.length >= 1 ? true : false;
   }
