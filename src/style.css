@@ -10,9 +10,10 @@
   /* colors */
   --cyber-red: rgb(228, 27, 51);
   --cyber-blue: rgb(120, 214, 204);
-  --cyber-red-text: hsl(3, 96%, 67%);
+  --cyber-red-text: rgb(252, 98, 90);
   --cyber-red-neon-bg: rgb(252, 100, 92);
   --list-button-hover-bg: rgba(0, 217, 255, 0.2);
+  --main-bg: rgb(22, 3, 5);
   --black-transparent-light: rgba(0, 0, 0, 0.3);
   --black-transparent-reg: rgba(0, 0, 0, 0.5);
   --black-transparent-bold: rgba(0, 0, 0, 0.7);
@@ -33,7 +34,25 @@ button {
 }
 
 body {
-  background-color: black;
+  background-color: var(--main-bg);
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+
+.page-wrapper {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr;
+  height: 100dvh;
+}
+
+.stacked {
+  grid-row: 1/-1;
+  grid-column: 1/-1;
+}
+
+@media (min-width: 41.875rem) {
+  .page-wrapper {
+    grid-template-columns: minmax(auto, 17rem) 1fr;
+  }
 }
