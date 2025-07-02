@@ -1,5 +1,6 @@
 import generateElement from "../../utils/GenerateElement.js";
 import createHamburger from "../Hamburger/CreateHamburger.js";
+import createListTitle from "../ListTitle/CreateListTitle.js";
 import "./sidebar.css";
 
 export default function createSidebar() {
@@ -29,16 +30,16 @@ export default function createSidebar() {
     class: "mylist-wrapper",
   });
 
-  const myListTitle = generateElement(
-    "h3",
-    { class: "mylist-title" },
-    "MY LISTS"
-  );
+  const systemListTitle = createListTitle("SYSTEM LISTS");
+  const myListTitle = createListTitle("MY LISTS");
 
   //////// ELEMENT ASSEMBLY ////////
+  systemListWrapper.appendChild(systemListTitle);
   myListWrapper.appendChild(myListTitle);
+
   searchLabel.appendChild(searchInput);
   searchWrapper.appendChild(searchLabel);
+
   sidebar.append(
     createHamburger(),
     searchWrapper,

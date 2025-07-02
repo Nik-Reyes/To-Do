@@ -1,12 +1,17 @@
 .hamburger {
   width: 30px;
-  aspect-ratio: 1;
   display: grid;
   align-items: center;
   transition: background-color 200ms ease-in-out;
-  padding: 5px;
   border: none;
   background-color: transparent;
+}
+
+.ham-line-wrapper {
+  width: inherit;
+  aspect-ratio: 1;
+  display: inherit;
+  padding: 5px;
 }
 
 .ham-line {
