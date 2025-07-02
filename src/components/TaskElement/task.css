@@ -1,3 +1,7 @@
+.task-collection {
+  --task-collection-padding: 16px;
+  padding: var(--task-collection-padding);
+}
 .task-wrapper {
   display: grid;
   grid-template-columns: 13.5px 1fr;
@@ -310,5 +314,13 @@ input[type="date"] {
     bottom: anchor(top);
     left: anchor(left);
     transform: translateY(-10px) translateX(-18%);
+  }
+}
+
+@media (min-width: 41.875rem) {
+  .task-collection {
+    grid-column: 2;
+    grid-row: 2;
+    padding: calc(var(--task-collection-padding) * 2);
   }
 }

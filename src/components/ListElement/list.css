@@ -5,11 +5,6 @@
   transition: transform var(--list-btn-transition-speed) ease-in-out;
 }
 
-.stacked {
-  grid-row: 1/-1;
-  grid-column: 1/-1;
-}
-
 .list-btn {
   background-color: var(--black-transparent-light);
   /* backdrop-filter: blur(1px); */
