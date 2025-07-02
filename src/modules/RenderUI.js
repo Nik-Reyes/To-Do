@@ -1,7 +1,9 @@
 import Manager from "./Manager.js";
 import createTaskElement from "../components/TaskElement/CreateTaskElement.js";
 import createListElement from "../components/ListElement/CreateListElement.js";
+import createHeader from "../components/Header/CreateHeader.js";
 import createSidebar from "../components/Sidebar/Sidebar.js";
+import generateElement from "../utils/GenerateElement.js";
 import "../components/TaskElement/task.css";
 
 // Purpose of this function is only to load all lists and tasks and then attach to them to
@@ -33,7 +35,7 @@ export default function renderUi() {
   // if the default lists exists, pull from localStorage, else create defaults (first-timer)
   // w/o localStorage, just create default lists every time
   const manager = new Manager();
-  const body = document.querySelector("body");
+  const pageWrapper = document.querySelector(".page-wrapper");
 
   // 1. check if there are lists. if no lists have ever been created, then create the defualt ones. condition should change to if(!Storage.lists) create defaults, else load the stored lists
   // 2. load/create the task items only for the current list. Check local storage for lists
@@ -43,26 +45,39 @@ export default function renderUi() {
     import("./DefaultLists.js").then(({ default: CreateDefaultLists }) => {
       manager.listCollection = CreateDefaultLists();
       manager.currentList = manager.firstMyList; //else will load ?
+      console.log(manager.currentList);
 
-      // const tasks = [];
-      // // loop through all lists, check if they have tasks, and if they do, create them
-      // manager.lists.forEach((list) => {
-      //   if (list.hasTasks) {
-      //     list.tasks.forEach((taskObj) => tasks.push(createTaskElement(taskObj)));
-      //   }
-      // });
+      const tasks = [];
+      // loop through all lists, check if they have tasks, and if they do, create them
+      manager.lists.forEach((list) => {
+        if (list.hasTasks) {
+          list.tasks.forEach((taskObj) =>
+            tasks.push(createTaskElement(taskObj))
+          );
+        }
+      });
 
-      const lists = manager.lists.map((list) => createListElement(list));
+      const taskCollection = generateElement("div", {
+        class: "task-collection",
+      });
+
+      taskCollection.append(...tasks);
+
       const sidebar = createSidebar();
+      const lists = manager.lists.map((list) => createListElement(list));
       lists.forEach((list, i) => {
         i >= manager.firstMyList
           ? sidebar.querySelector(".mylist-wrapper").appendChild(list)
           : sidebar.querySelector(".system-list-wrapper").appendChild(list);
       });
-      body.append(sidebar);
+      pageWrapper.append(
+        createHeader(manager.currentListTitle),
+        sidebar,
+        taskCollection
+      );
 
       // Update on load and resize
-      setTimeout(upDateSvg, 100);
+      setTimeout(upDateSvg, 1);
       window.addEventListener("resize", upDateSvg);
     });
   } else {

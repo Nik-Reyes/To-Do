@@ -39,6 +39,10 @@ export default class Manager {
     return this.lists[this.#currentListId];
   }
 
+  get currentListTitle() {
+    return this.lists[this.#currentListId].title;
+  }
+
   get firstMyList() {
     return this.#listCollection.systemLists.length;
   }
