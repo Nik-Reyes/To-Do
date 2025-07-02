@@ -1,12 +1,14 @@
 import List from "./List.js";
 import Task from "./Task.js";
+import RenderUI from "./RenderUI.js";
 
 export default class Manager {
   #listCollection;
   #currentListId;
   constructor() {
     this.#listCollection = [];
-    this.#currentListId = undefined; // tracks the current list
+    this.#currentListId = undefined;
+    this.Renderer = new RenderUI(this);
   }
 
   ////////////// GETTER METHODS ///////////////
@@ -49,6 +51,10 @@ export default class Manager {
 
   get listCollection() {
     return this.#listCollection;
+  }
+
+  get hasListCollection() {
+    return this.#listCollection.length >= 1;
   }
 
   ////////////// SETTER METHODS ///////////////

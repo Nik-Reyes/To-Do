@@ -1,11 +1,11 @@
 import Manager from "./modules/Manager.js";
-import renderUi from "./modules/RenderUI.js";
 import "@oddbird/popover-polyfill";
 import "@oddbird/css-anchor-positioning";
+import "./style.css";
 
 const manager = new Manager();
-import "./style.css";
-renderUi();
+manager.Renderer.render();
+console.log("hi");
 
 // function switchList() {
 //   const listNames = manager.lists
