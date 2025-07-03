@@ -1,11 +1,10 @@
-import Manager from "./modules/Manager.js";
+import ScreenController from "./modules/ScreenController.js";
 import "@oddbird/popover-polyfill";
 import "@oddbird/css-anchor-positioning";
 import "./style.css";
 
-const manager = new Manager();
-manager.Renderer.render();
-console.log("hi");
+const screenController = new ScreenController();
+screenController.initialize();
 
 // function switchList() {
 //   const listNames = manager.lists

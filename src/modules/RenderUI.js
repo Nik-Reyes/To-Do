@@ -5,9 +5,9 @@ import createSidebar from "../components/Sidebar/Sidebar.js";
 import generateElement from "../utils/GenerateElement.js";
 import "../components/TaskElement/task.css";
 
-// Purpose of this function is only to load all lists and tasks and then attach to them to
+// Purpose of this class is only to load all lists and tasks and then attach to them to
 // DOM when the website is first visted.
-// This function does not handle newly created lists/tasks
+// This class does not handle newly created lists/tasks
 
 export default class RenderUI {
   #manager;
@@ -15,21 +15,22 @@ export default class RenderUI {
   #sidebar;
   #header;
   #taskCollection;
-  #tasks;
-  #lists;
+  #taskElements;
+  #listElements;
 
   constructor(injectedManager) {
     this.#manager = injectedManager;
     this.#pageWrapper = document.querySelector(".page-wrapper");
     this.#sidebar = createSidebar();
-    this.#header = undefined;
+    this.#header = null;
     this.#taskCollection = generateElement("div", {
       class: "task-collection",
     });
-    this.#tasks = [];
-    this.#lists = [];
+    this.#taskElements = [];
+    this.#listElements = [];
   }
 
+  ////////////// GETTER METHODS ///////////////
   get manager() {
     return this.#manager;
   }
@@ -51,20 +52,31 @@ export default class RenderUI {
   }
 
   get tasks() {
-    return this.#tasks;
+    return this.#taskElements;
   }
 
   get lists() {
-    return this.#lists;
+    return this.#listElements;
+  }
+  ////////////// SETTER METHODS ///////////////
+  set lists(lists) {
+    this.#listElements = lists;
   }
 
-  set lists(lists) {
-    this.#lists = lists;
-  }
   set header(header) {
     this.#header = header;
   }
 
+  set tasks(taskList) {
+    this.#taskElements.length = 0;
+    this.#taskElements.push(...taskList.map((task) => createTaskElement(task)));
+  }
+
+  set header(headerElement) {
+    this.#header = headerElement;
+  }
+
+  ////////////// ACTION METHODS ///////////////
   #upDateSvg() {
     const button = document.querySelector(".list-btn");
     const svgStrokes = document.querySelectorAll("polygon");
@@ -83,21 +95,19 @@ export default class RenderUI {
     });
   }
 
-  #createTaskElements() {
-    this.manager.lists.forEach((list) => {
-      if (list.hasTasks) {
-        list.tasks.forEach((taskObj) =>
-          this.tasks.push(createTaskElement(taskObj))
-        );
-      }
-    });
+  createTaskElements() {
+    this.tasks = this.manager.currentListTasks;
   }
 
   #createListElements() {
     this.lists = this.manager.lists.map((list) => createListElement(list));
   }
 
-  #appendLists() {
+  #createHeaderElement() {
+    this.header = createHeader(this.manager.currentListTitle);
+  }
+
+  #renderLists() {
     this.lists.forEach((list, i) => {
       i >= this.manager.firstMyList
         ? this.sidebar.querySelector(".mylist-wrapper").appendChild(list)
@@ -105,31 +115,51 @@ export default class RenderUI {
     });
   }
 
-  #appendTasks() {
+  renderTasks() {
+    this.taskCollection.innerText = "";
+    this.createTaskElements();
     this.taskCollection.append(...this.tasks);
+  }
+
+  set headerTitle(listTitle) {
+    this.header.querySelector(".header-title").innerText =
+      listTitle.toUpperCase();
   }
 
   #assembleComponents() {
     this.pageWrapper.append(this.header, this.sidebar, this.taskCollection);
   }
 
-  render() {
-    console.log(this.manager.hasListCollection);
+  // appends list element to sidebar
+  renderEditableList() {
+    const newList = createListElement();
+    this.sidebar.querySelector(".mylist-wrapper").appendChild(newList);
+    newList.querySelector(".newList-input").focus();
 
+    setTimeout(this.#upDateSvg(), 1);
+  }
+
+  renderList(editableList, newListObj) {
+    editableList.replaceWith(createListElement(newListObj));
+    setTimeout(() => this.#upDateSvg(), 1);
+  }
+
+  render(callback) {
     if (this.manager.hasListCollection === false) {
       import("./DefaultLists.js").then(({ default: CreateDefaultLists }) => {
         this.manager.listCollection = CreateDefaultLists();
         this.manager.currentList = this.manager.firstMyList;
-        this.#createTaskElements();
-        this.#appendTasks();
+        // this.createTaskElements();
+        this.renderTasks();
         this.#createListElements();
-        this.header = createHeader(this.manager.currentListTitle);
+        this.#createHeaderElement();
         this.#assembleComponents();
-        this.#appendLists();
+        this.#renderLists();
 
         // Update on load and resize
-        setTimeout(this.#upDateSvg(), 1);
+        setTimeout(() => this.#upDateSvg(), 1);
         window.addEventListener("resize", this.#upDateSvg());
+        if (callback) callback();
       });
     } else {
       console.log("load stored lists");

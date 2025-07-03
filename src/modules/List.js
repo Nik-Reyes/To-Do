@@ -1,16 +1,21 @@
 export default class List {
+  static count = 0;
   #title;
-  #color;
   #tasks = [];
+  #id;
 
-  constructor(title, color) {
+  constructor(title) {
     this.#title = title;
-    this.#color = color || "rgb(228, 27, 51)";
+    this.#id = List.count++;
   }
 
   ////////////// GETTER METHODS ///////////////
   get title() {
     return this.#title;
+  }
+
+  get id() {
+    return this.#id;
   }
 
   get tasks() {

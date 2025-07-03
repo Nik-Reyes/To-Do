@@ -8,7 +8,7 @@ export default function createHeader(listName) {
   const headerTitle = generateElement(
     "h2",
     { class: "header-title" },
-    listName
+    listName.toUpperCase()
   );
 
   header.append(headerTitle, hamburger);

@@ -1,6 +1,7 @@
 import generateElement from "../../utils/GenerateElement.js";
 import "./list.css";
 
+let count = 0;
 export default function createListElement(list) {
   //////// ELEMENT CREATION ////////
   const buttonWrapper = generateElement("div", {
@@ -20,26 +21,41 @@ export default function createListElement(list) {
     "vector-effect": "non-scaling-stroke",
   });
 
-  const listButton = generateElement("button", {
-    class: "list-btn stacked",
-  });
+  let listElement = undefined;
+  let buttonName = undefined;
+  let taskCount = undefined;
 
-  const buttonName = generateElement("span", {}, list.title.toUpperCase());
-  const taskCount = generateElement("span", {}, list.numberOfTasks.toString());
+  if (list) {
+    buttonName = generateElement("span", {}, list.title.toUpperCase());
+    taskCount = generateElement("span", {}, list.numberOfTasks.toString());
+    listElement = generateElement("button", {
+      class: "list-btn stacked",
+    });
 
-  //////// EVENT LISTENER APPLICATION ////////
-  buttonWrapper.addEventListener("mouseover", () => {
-    svgStroke.setAttribute("stroke", "hsl(48, 82%, 52%)");
-  });
+    buttonWrapper.addEventListener("mouseover", () => {
+      svgStroke.setAttribute("stroke", "hsl(48, 82%, 52%)");
+    });
 
-  buttonWrapper.addEventListener("mouseout", () => {
-    svgStroke.setAttribute("stroke", "rgb(120, 214, 204)");
-  });
+    buttonWrapper.addEventListener("mouseout", () => {
+      svgStroke.setAttribute("stroke", "rgb(120, 214, 204)");
+    });
 
+    buttonWrapper.setAttribute("data-id", `${count++}`);
+  } else {
+    buttonName = generateElement("input", {
+      type: "text",
+      class: "newList-input",
+      placeholder: "List Name",
+    });
+    taskCount = generateElement("span", {}, "0");
+    listElement = generateElement("div", {
+      class: "new-list list-btn stacked",
+    });
+  }
   //////// ELEMENT ASSEMBLY ////////
-  listButton.append(buttonName, taskCount);
+  listElement.append(buttonName, taskCount);
   svgWrapper.appendChild(svgStroke);
-  buttonWrapper.append(svgWrapper, listButton);
+  buttonWrapper.append(svgWrapper, listElement);
 
   return buttonWrapper;
 }
