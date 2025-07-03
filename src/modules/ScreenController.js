@@ -3,63 +3,20 @@ import Task from "./Task.js";
 import RenderUI from "./RenderUI.js";
 
 export default class ScreenController {
-  #listCollection;
-  #currentListId;
-  #currentList;
-  #header;
-  #mylistWrapper;
-  #taskCollection;
-  #addListBtn;
-  #sidebar;
-  #currentListTitle;
-  constructor() {
-    this.#listCollection = [];
-    this.Renderer = new RenderUI(this);
-    this.#currentListId = null;
-    this.#currentList = null;
-    this.#header = null;
-    this.#sidebar = null;
-    this.#mylistWrapper = null;
-    this.#taskCollection = null;
-    this.#addListBtn = null;
-    this.#currentListTitle = null;
-  }
+  #header = null;
+  #sidebar = null;
+  #addListBtn = null;
+  #currentList = null;
+  #listCollection = [];
+  #mylistWrapper = null;
+  #currentListId = null;
+  #taskCollection = null;
+  #currentTaskIndex = null;
+  #currentListTitle = null;
+  #activeTaskElement = null;
+  #Renderer = new RenderUI(this);
 
-  ////////////// GETTER METHODS ///////////////
-  get lists() {
-    return [
-      ...this.#listCollection.systemLists,
-      ...this.#listCollection.myLists,
-    ];
-  }
-  get currentListTasks() {
-    return this.currentList.tasks;
-  }
-
-  get numberOfLists() {
-    return this.lists.length;
-  }
-
-  get currentList() {
-    return this.#currentList;
-  }
-
-  get currentListTitle() {
-    return this.#currentList.title;
-  }
-
-  get firstMyList() {
-    return this.#listCollection.systemLists.length;
-  }
-
-  get listCollection() {
-    return this.#listCollection;
-  }
-
-  get hasListCollection() {
-    return this.#listCollection.length >= 1;
-  }
-
+  ////////////// FIELD GETTER METHODS ///////////////
   get header() {
     return this.#header;
   }
@@ -68,20 +25,74 @@ export default class ScreenController {
     return this.#sidebar;
   }
 
+  get addListBtn() {
+    return this.#addListBtn;
+  }
+
+  get currentList() {
+    return this.#currentList;
+  }
+
+  get listCollection() {
+    return this.#listCollection;
+  }
+
   get mylistWrapper() {
     return this.#mylistWrapper;
+  }
+
+  get currentListId() {
+    return this.#currentListId;
   }
 
   get taskCollection() {
     return this.#taskCollection;
   }
 
-  get addListBtn() {
-    return this.#addListBtn;
+  get currentTaskIndex() {
+    return this.#currentTaskIndex;
   }
 
-  get currentListId() {
-    return this.#currentListId;
+  get currentListTitle() {
+    return this.#currentList.title;
+  }
+
+  get activeTaskElement() {
+    return this.#activeTaskElement;
+  }
+
+  get Renderer() {
+    return this.#Renderer;
+  }
+
+  ////////////// HELPER GETTER METHODS ///////////////
+  get lists() {
+    return [
+      ...this.#listCollection.systemLists,
+      ...this.#listCollection.myLists,
+    ];
+  }
+
+  get currentTask() {
+    return this.#currentTaskIndex !== null
+      ? this.currentListTasks[this.#currentTaskIndex]
+      : null;
+  }
+
+  get currentListTasks() {
+    return this.currentList.tasks;
+  }
+
+  get numberOfLists() {
+    return this.lists.length;
+  }
+
+  get firstMyList() {
+    return this.#listCollection.systemLists.length;
+  }
+
+  get hasListCollection() {
+    return this.#listCollection.length >= 1;
   }
 
   ////////////// SETTER METHODS ///////////////
@@ -122,6 +133,14 @@ export default class ScreenController {
     this.#addListBtn = button;
   }
 
+  set activeTaskElement(el) {
+    this.#activeTaskElement = el;
+  }
+
+  set currentTaskIndex(idx) {
+    this.#currentTaskIndex = idx;
+  }
+
   ////////////// ACTION METHODS ///////////////
   // Event listener listening for any textarea, input, checkbox, or priority button change within the taskCollection will call this function
   // this.updateTask is responsible for dynamically updating the object data of the current list
@@ -132,6 +151,53 @@ export default class ScreenController {
   // This function is solely responsible for updating the data, the task elements
   // appearance is handled by the individual task
   updateTask() {}
+
+  clearActiveTasks() {
+    this.taskCollection
+      .querySelectorAll(".task-content.active")
+      .forEach((taskContent) => {
+        taskContent.classList.remove("active");
+        const taskInput = taskContent.querySelector(".task-input");
+        if (taskInput) {
+          taskInput.style.width = `${taskInput.value.length + 2}ch`;
+        }
+      });
+    this.activeTaskElement = null;
+  }
+
+  setActiveTask(e, taskWrapper, taskContent, taskIndex) {
+    this.clearActiveTasks();
+
+    if (taskContent && e.target) {
+      taskContent.classList.add("active");
+      e.target.style.width = "100%";
+      this.activeTaskElement = taskWrapper;
+      this.currentTaskIndex = taskIndex;
+    }
+  }
+
+  getTaskIdxFromElement(taskWrapper) {
+    const tasks = Array.from(
+      this.taskCollection.querySelectorAll(".task-wrapper")
+    );
+    return tasks.indexOf(taskWrapper);
+  }
+
+  handleTaskInputClick(e, taskWrapper, taskContent, taskIndex) {
+    this.setActiveTask(e, taskWrapper, taskContent, taskIndex);
+  }
+
+  handleTaksCollectionClick(e) {
+    const taskWrapper = e.target.closest(".task-wrapper");
+    const taskContent = e.target.closest(".task-content");
+
+    if (!taskWrapper || !taskContent) return;
+
+    const taskIndex = this.getTaskIdxFromElement(taskWrapper);
+    if (e.target.classList.contains("task-input")) {
+      this.handleTaskInputClick(e, taskWrapper, taskContent, taskIndex);
+    }
+  }
 
   markCompleted(taskId) {
     if (this.currentList) {
@@ -223,13 +289,6 @@ export default class ScreenController {
     }
   }
 
-  handleMyListWrapperClicks(e) {
-    if (e.target.closest()) {
-    }
-    if (e.target.closest()) {
-    }
-  }
-
   applyEventListeners() {
     this.addListBtn.addEventListener(
       "click",
@@ -241,6 +300,10 @@ export default class ScreenController {
     );
     this.sidebar.addEventListener("click", this.handleSidebarClick.bind(this));
     document.addEventListener("click", this.handleNonNewListClick.bind(this));
+    this.taskCollection.addEventListener(
+      "click",
+      this.handleTaksCollectionClick.bind(this)
+    );
   }
 
   initialize() {

@@ -110,28 +110,6 @@ export default function createTaskElement(task) {
   });
   const moreOptions = generateElement("div", { class: "more-options" });
 
-  //////// ACTIVE STATE MANAGEMENT ////////
-  const removeActiveState = () => {
-    taskContent.classList.remove("active");
-    taskInput.blur();
-  };
-
-  const addActiveState = () => {
-    document.dispatchEvent(
-      new CustomEvent("task:collapse-task", {
-        detail: { activeTask: taskContent },
-      })
-    );
-    taskContent.classList.add("active");
-    taskInput.style.width = "100%";
-  };
-
-  document.addEventListener("task:collapse-task", (e) => {
-    if (e.detail.activeTask !== taskContent) {
-      removeActiveState();
-    }
-  });
-
   //////// ELEMENT EVENT LISTENER APPLICATION ////////
   taskWrapper.addEventListener("dblclick", (e) => {
     e.stopPropagation();
@@ -148,11 +126,6 @@ export default function createTaskElement(task) {
     if (e.key === "Enter") {
       taskCheckBox.click();
     }
-  });
-
-  taskInput.addEventListener("click", (e) => {
-    e.stopPropagation();
-    addActiveState();
   });
 
   taskInput.addEventListener("blur", (e) => {
