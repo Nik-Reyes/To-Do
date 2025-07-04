@@ -4,10 +4,9 @@ import createHeader from "../components/Header/CreateHeader.js";
 import createSidebar from "../components/Sidebar/Sidebar.js";
 import generateElement from "../utils/GenerateElement.js";
 import "../components/TaskElement/task.css";
+import CreateDefaultLists from "./DefaultLists.js";
 
-// Purpose of this class is only to load all lists and tasks and then attach to them to
-// DOM when the website is first visted.
-// This class does not handle newly created lists/tasks
+// Purpose of this class is only to render any UI changes requested by ScreenController
 
 export default class RenderUI {
   #manager;
@@ -146,21 +145,18 @@ export default class RenderUI {
 
   render(callback) {
     if (this.manager.hasListCollection === false) {
-      import("./DefaultLists.js").then(({ default: CreateDefaultLists }) => {
-        this.manager.listCollection = CreateDefaultLists();
-        this.manager.currentList = this.manager.firstMyList;
-        // this.createTaskElements();
-        this.renderTasks();
-        this.#createListElements();
-        this.#createHeaderElement();
-        this.#assembleComponents();
-        this.#renderLists();
+      this.manager.listCollection = CreateDefaultLists();
+      this.manager.currentList = this.manager.firstMyList;
+      this.renderTasks();
+      this.#createListElements();
+      this.#createHeaderElement();
+      this.#assembleComponents();
+      this.#renderLists();
 
-        // Update on load and resize
-        setTimeout(() => this.#upDateSvg(), 1);
-        window.addEventListener("resize", this.#upDateSvg());
-        if (callback) callback();
-      });
+      // Update on load and resize
+      setTimeout(() => this.#upDateSvg(), 1);
+      window.addEventListener("resize", this.#upDateSvg());
+      if (callback) callback();
     } else {
       console.log("load stored lists");
     }
