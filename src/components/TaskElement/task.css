@@ -1,6 +1,8 @@
 .task-collection {
   --task-collection-padding: 16px;
   padding: var(--task-collection-padding);
+  height: 100%;
+  overflow-y: scroll;
 }
 .task-wrapper {
   display: grid;

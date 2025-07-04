@@ -66,44 +66,44 @@ export default function createTaskElement(task) {
     },
     "Priority"
   );
-  const priorityMenuWrapper = generateElement("div", {
-    id: task.id,
-    class: "cyberpunk-clip-wrapper-br priority-menu-wrapper",
-    popover: "auto",
-    style: `position-anchor: --${task.id}`,
-  });
-  const priorityMenu = generateElement("menu", {
-    class: "priority-menu",
-  });
-  const priorityMenuOptionHigh = generateElement(
-    "button",
-    {
-      class: "priority-menu-option high-priority",
-    },
-    "High Priority"
-  );
-  const priorityMenuOptionMedium = generateElement(
-    "button",
-    {
-      class: "priority-menu-option medium-priority",
-    },
-    "Medium Priority"
-  );
-  const priorityMenuOptionLow = generateElement(
-    "button",
-    {
-      class: "priority-menu-option low-priority",
-    },
-    "Low Priority"
-  );
-  const priorityMenuOptionNone = generateElement(
-    "button",
-    {
-      class: "inner-cyberpunk-clip-wrapper-br priority-menu-option no-priority",
-    },
-    "No Priority"
-  );
-  const menuSpacer = generateElement("span", { class: "menu-spacer" });
+  // const priorityMenuWrapper = generateElement("div", {
+  //   id: task.id,
+  //   class: "cyberpunk-clip-wrapper-br priority-menu-wrapper",
+  //   popover: "auto",
+  //   style: `position-anchor: --${task.id}`,
+  // });
+  // const priorityMenu = generateElement("menu", {
+  //   class: "priority-menu",
+  // });
+  // const priorityMenuOptionHigh = generateElement(
+  //   "button",
+  //   {
+  //     class: "priority-menu-option high-priority",
+  //   },
+  //   "High Priority"
+  // );
+  // const priorityMenuOptionMedium = generateElement(
+  //   "button",
+  //   {
+  //     class: "priority-menu-option medium-priority",
+  //   },
+  //   "Medium Priority"
+  // );
+  // const priorityMenuOptionLow = generateElement(
+  //   "button",
+  //   {
+  //     class: "priority-menu-option low-priority",
+  //   },
+  //   "Low Priority"
+  // );
+  // const priorityMenuOptionNone = generateElement(
+  //   "button",
+  //   {
+  //     class: "inner-cyberpunk-clip-wrapper-br priority-menu-option no-priority",
+  //   },
+  //   "No Priority"
+  // );
+  // const menuSpacer = generateElement("span", { class: "menu-spacer" });
   const taskPriorityColorPanel = generateElement("div", {
     class: `${task.priority} priority-panel`,
   });
@@ -113,70 +113,71 @@ export default function createTaskElement(task) {
   const moreOptions = generateElement("div", { class: "more-options" });
 
   //////// ELEMENT EVENT LISTENER APPLICATION ////////
-  taskCheckBox.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      taskCheckBox.click();
-    }
-  });
 
-  taskInput.addEventListener("blur", (e) => {
-    e.stopPropagation();
-    taskInput.style.width = `${taskInput.value.length + 2}ch`;
-  });
+  // taskInput.addEventListener("blur", (e) => {
+  //   e.stopPropagation();
+  //   taskInput.style.width = `${taskInput.value.length + 2}ch`;
+  // });
 
-  taskInput.addEventListener("keydown", (e) => {
-    e.stopPropagation();
-    if (e.key === "Enter" || e.key === "Escape") {
-      taskInput.style.width = taskInput.value.length + "ch";
-      taskInput.blur();
-    }
-  });
+  // taskDate.addEventListener("blur", () => {
+  //   taskDate.closest(".date-wrapper").classList.remove("focused");
+  // });
 
-  taskNotes.addEventListener("input", (e) => {
-    e.stopPropagation();
-    taskNotes.style.height = "auto"; // shrinks to auto when content shrinks
-    taskNotes.style.height = taskNotes.scrollHeight + "px"; // grows to fit content
-  });
+  // taskNotes.addEventListener("input", (e) => {
+  //   e.stopImmediatePropagation();
+  //   taskNotes.style.height = "auto"; // shrinks to auto when content shrinks
+  //   taskNotes.style.height = taskNotes.scrollHeight + "px"; // grows to fit content
+  // });
 
-  taskNotes.addEventListener("keydown", (e) => {
-    e.stopPropagation();
-    if (e.key === "Escape") {
-      taskNotes.blur();
-    }
-  });
+  // taskDate.addEventListener("click", () => {
+  //   taskDate.closest(".date-wrapper").classList.add("focused");
+  // });
 
-  taskDate.addEventListener("click", () => {
-    taskDate.closest(".date-wrapper").classList.add("focused");
-  });
+  // taskDate.addEventListener("change", () => {
+  //   taskDate.closest(".date-wrapper").classList.remove("focused");
+  // });
 
-  taskDate.addEventListener("blur", () => {
-    taskDate.closest(".date-wrapper").classList.remove("focused");
-  });
+  // taskDate.addEventListener("keydown", (e) => {
+  //   if (e.key === "Escape") {
+  //     taskDate.closest(".date-wrapper").classList.remove("focused");
+  //   }
+  // });
 
-  taskDate.addEventListener("change", () => {
-    taskDate.closest(".date-wrapper").classList.remove("focused");
-  });
+  // taskNotes.addEventListener("keydown", (e) => {
+  //   e.stopImmediatePropagation();
+  //   if (e.key === "Escape") {
+  //     taskNotes.blur();
+  //   }
+  // });
 
-  taskDate.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") {
-      taskDate.closest(".date-wrapper").classList.remove("focused");
-    }
-  });
+  // taskInput.addEventListener("keydown", (e) => {
+  //   e.stopPropagation();
+  //   if (e.key === "Enter" || e.key === "Escape") {
+  //     taskInput.style.width = taskInput.value.length + "ch";
+  //     taskInput.blur();
+  //   }
+  // });
 
-  taskPriorityWrapper.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      priorityMenuWrapper.togglePopover();
-    }
-  });
+  // taskCheckBox.addEventListener("keydown", (e) => {
+  //   if (e.key === "Enter") {
+  //     taskCheckBox.click();
+  //   }
+  // });
+
+  // taskPriorityWrapper.addEventListener("keydown", (e) => {
+  //   if (e.key === "Enter") {
+  //     priorityMenuWrapper.togglePopover();
+  //   }
+  // });
   //////// TASK ELEMENT ASSEMBLY ////////
-  priorityMenu.append(
-    priorityMenuOptionHigh,
-    priorityMenuOptionMedium,
-    priorityMenuOptionLow,
-    menuSpacer,
-    priorityMenuOptionNone
-  );
-  priorityMenuWrapper.appendChild(priorityMenu);
+  // priorityMenu.append(
+  //   priorityMenuOptionHigh,
+  //   priorityMenuOptionMedium,
+  //   priorityMenuOptionLow,
+  //   menuSpacer,
+  //   priorityMenuOptionNone
+  // );
+  // priorityMenuWrapper.appendChild(priorityMenu);
   taskPriorityWrapper.append(taskPriority);
   taskPriorityColorPanel.appendChild(taskPriorityInnerDiv);
   taskDateWrapper.appendChild(taskDate);
@@ -187,8 +188,8 @@ export default function createTaskElement(task) {
   taskContentBorder.appendChild(taskContent);
   taskWrapper.append(
     taskPriorityColorPanel,
-    taskContentBorder,
-    priorityMenuWrapper
+    taskContentBorder
+    // priorityMenuWrapper
   );
 
   return taskWrapper;
