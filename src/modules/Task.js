@@ -11,7 +11,7 @@ export default class Task {
   constructor(title, notes, dueDate, priority, completed) {
     this.#title = title;
     this.#dueDate = dueDate || "";
-    this.#priority = priority || "";
+    this.#priority = priority || "no-priority";
     this.#notes = notes || "";
     this.#completed = completed || false;
   }

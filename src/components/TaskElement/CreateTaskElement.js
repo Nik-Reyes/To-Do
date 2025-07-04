@@ -28,7 +28,7 @@ export default function createTaskElement(task) {
     type: "checkbox",
     name: task.title,
     value: task.title,
-    checked: true,
+    checked: task.completed,
   });
   const expandableContentWrapper = generateElement("div", {
     class: "expandable-content-wrapper",
@@ -40,6 +40,7 @@ export default function createTaskElement(task) {
     class: "task-notes",
     rows: "1",
     placeholder: "Notes",
+    value: task.notes,
   });
   const taskDate = generateElement("input", {
     class: "inner-cyberpunk-clip-wrapper-br task-date",
@@ -47,6 +48,7 @@ export default function createTaskElement(task) {
     name: "due-date",
     min: "2025-01-01",
     max: "2025-12-31",
+    value: task.dueDate,
   });
   const taskPriorityWrapper = generateElement("div", {
     class: "cyberpunk-clip-wrapper-br priority-btn-wrapper",
@@ -103,7 +105,7 @@ export default function createTaskElement(task) {
   );
   const menuSpacer = generateElement("span", { class: "menu-spacer" });
   const taskPriorityColorPanel = generateElement("div", {
-    class: "no-priority priority-panel",
+    class: `${task.priority} priority-panel`,
   });
   const taskPriorityInnerDiv = generateElement("div", {
     class: "inner-div",
@@ -111,17 +113,6 @@ export default function createTaskElement(task) {
   const moreOptions = generateElement("div", { class: "more-options" });
 
   //////// ELEMENT EVENT LISTENER APPLICATION ////////
-  taskWrapper.addEventListener("dblclick", (e) => {
-    e.stopPropagation();
-    if (
-      e.target.tagName === "INPUT" ||
-      e.target.tagName === "TEXTAREA" ||
-      e.target.tagName === "BUTTON"
-    )
-      return;
-    taskContent.classList.toggle("active");
-  });
-
   taskCheckBox.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
       taskCheckBox.click();
@@ -172,43 +163,11 @@ export default function createTaskElement(task) {
     }
   });
 
-  priorityMenu.addEventListener("click", (e) => {
-    if (e.target.closest(".priority-menu-option")) {
-      priorityMenuWrapper.hidePopover();
-      taskPriority.blur();
-
-      // Change the color of the priority panel
-      const newPriority = Array.from(e.target.classList).find((className) => {
-        return className.includes("-priority");
-      });
-      // if the user re-selects the current priortiy, no point in replacing, just return
-      if (task.priority === newPriority) return;
-
-      taskPriorityColorPanel.classList.forEach((className) => {
-        if (className.includes("-priority")) {
-          taskPriorityColorPanel.classList.replace(className, newPriority);
-        }
-      });
-    }
-  });
-
   taskPriorityWrapper.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
       priorityMenuWrapper.togglePopover();
     }
   });
-
-  // check if task wrapper is active and if the element clicked is outside the taskContent
-  document.addEventListener("click", (e) => {
-    if (e.target.closest(".priority-menu-option")) return;
-    if (
-      taskContent.classList.contains("active") &&
-      !taskContent.contains(e.target)
-    ) {
-      taskContent.classList.remove("active");
-    }
-  });
-
   //////// TASK ELEMENT ASSEMBLY ////////
   priorityMenu.append(
     priorityMenuOptionHigh,

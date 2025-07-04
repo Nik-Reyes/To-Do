@@ -152,68 +152,6 @@ export default class ScreenController {
   // appearance is handled by the individual task
   updateTask() {}
 
-  clearActiveTasks() {
-    this.taskCollection
-      .querySelectorAll(".task-content.active")
-      .forEach((taskContent) => {
-        taskContent.classList.remove("active");
-        const taskInput = taskContent.querySelector(".task-input");
-        if (taskInput) {
-          taskInput.style.width = `${taskInput.value.length + 2}ch`;
-        }
-      });
-    this.activeTaskElement = null;
-  }
-
-  setActiveTask(e, taskWrapper, taskContent, taskIndex) {
-    this.clearActiveTasks();
-
-    if (taskContent && e.target) {
-      taskContent.classList.add("active");
-      e.target.style.width = "100%";
-      this.activeTaskElement = taskWrapper;
-      this.currentTaskIndex = taskIndex;
-    }
-  }
-
-  getTaskIdxFromElement(taskWrapper) {
-    const tasks = Array.from(
-      this.taskCollection.querySelectorAll(".task-wrapper")
-    );
-    return tasks.indexOf(taskWrapper);
-  }
-
-  handleTaskInputClick(e, taskWrapper, taskContent, taskIndex) {
-    this.setActiveTask(e, taskWrapper, taskContent, taskIndex);
-  }
-
-  handleTaksCollectionClick(e) {
-    const taskWrapper = e.target.closest(".task-wrapper");
-    const taskContent = e.target.closest(".task-content");
-
-    if (!taskWrapper || !taskContent) return;
-
-    const taskIndex = this.getTaskIdxFromElement(taskWrapper);
-    if (e.target.classList.contains("task-input")) {
-      this.handleTaskInputClick(e, taskWrapper, taskContent, taskIndex);
-    }
-  }
-
-  markCompleted(taskId) {
-    if (this.currentList) {
-      this.currentList.completeTask(taskId);
-    }
-  }
-
-  idxToId(selectedIdx) {
-    return this.currentListTasks.at(selectedIdx - 1).id;
-  }
-
-  deleteTask(taskToDelete) {
-    const taskId = this.idxToId(taskToDelete);
-    this.currentList.deleteTask(taskId);
-  }
-
   listElementToListObject(element) {
     const elId = element.dataset.id;
     return this.lists.at(elId);
@@ -232,6 +170,7 @@ export default class ScreenController {
     this.listCollection.myLists.push(newListObj);
   }
 
+  ////////////// EVENT LISTENER METHODS ///////////////
   toggleButton() {
     this.addListBtn.disabled
       ? this.addListBtn.removeAttribute("disabled")
@@ -277,15 +216,136 @@ export default class ScreenController {
     }
   }
 
-  handleNonNewListClick(e) {
+  removeEditableList(newList) {
+    newList.closest(".list-btn-wrapper").remove();
+    this.toggleButton();
+  }
+
+  handleDocumentClicks(e) {
+    const newList = this.mylistWrapper.querySelector(".newList-input");
+    const currentTaskContent = null;
+
     if (
-      this.mylistWrapper.querySelector(".newList-input") &&
+      newList &&
       !e.target.closest(".new-list") &&
       !e.target.closest(".addList-btn")
     ) {
-      const newListInput = this.mylistWrapper.querySelector(".newList-input");
-      newListInput.closest(".list-btn-wrapper").remove();
-      this.toggleButton();
+      this.removeEditableList(newList);
+    }
+    // if (e.target.closest(".priority-menu-option")) return;
+
+    console.log("hi");
+    // if (
+    //   taskContent.classList.contains("active") &&
+    //   !taskContent.contains(e.target)
+    // ) {
+    //   taskContent.classList.remove("active");
+    // }
+  }
+
+  // the active task element is whichever task content has class active or whichever task checkbox is clicked
+  // class active is gained by double clicking or clicking the input of a task
+  clearActiveTasks() {
+    this.taskCollection
+      .querySelectorAll(".task-content.active")
+      .forEach((taskContent) => {
+        taskContent.classList.remove("active");
+        const taskInput = taskContent.querySelector(".task-input");
+        if (taskInput) {
+          taskInput.style.width = `${taskInput.value.length + 2}ch`;
+        }
+      });
+    this.activeTaskElement = null;
+  }
+
+  setActiveTask(e, taskWrapper, taskContent, taskIndex) {
+    this.clearActiveTasks();
+
+    if (taskContent && e.target) {
+      taskContent.classList.add("active");
+      e.target.style.width = "100%";
+      this.activeTaskElement = taskWrapper;
+      this.currentTaskIndex = taskIndex;
+    }
+  }
+
+  getTaskIdxFromElement(taskWrapper) {
+    const tasks = Array.from(
+      this.taskCollection.querySelectorAll(".task-wrapper")
+    );
+    return tasks.indexOf(taskWrapper);
+  }
+
+  updateTaskObject(taskIndex, property, value) {
+    if (taskIndex !== -1 && this.currentListTasks[taskIndex]) {
+      const currentTaskObj = this.currentTask;
+
+      switch (property) {
+        case "title":
+          currentTaskObj.title = value;
+          break;
+        case "completed":
+          currentTaskObj.completed = value;
+          break;
+        case "notes":
+          currentTaskObj.notes = value;
+          break;
+        case "priority":
+          currentTaskObj.priority = value;
+          break;
+        case "dueDate":
+          currentTaskObj.dueDate = value;
+      }
+    }
+  }
+
+  handleTaskInputClick(e, taskWrapper, taskContent, taskIndex) {
+    this.setActiveTask(e, taskWrapper, taskContent, taskIndex);
+  }
+
+  handleCheckboxClick(e, taskWrapper, taskIndex) {
+    this.currentTaskIndex = taskIndex;
+    this.activeTaskElement = taskWrapper;
+    console.log(e.target.checked);
+    this.updateTaskObject(taskIndex, "completed", e.target.checked);
+  }
+
+  handlePriorityOptionClick(e, taskWrapper, taskIndex) {
+    const priorityMenuWrapper = taskWrapper.querySelector(
+      ".priority-menu-wrapper"
+    );
+    const menuId = priorityMenuWrapper.getAttribute("id");
+    const taskPriorityBtn = taskWrapper.querySelector("button.task-priority");
+    const taskPriorityColorPanel = taskWrapper.querySelector(".priority-panel");
+    priorityMenuWrapper.hidePopover();
+    taskPriorityBtn.blur();
+
+    // Change the color of the priority panel
+    const newPriority = Array.from(e.target.classList).find((className) => {
+      return className.includes("-priority");
+    });
+    taskPriorityColorPanel.classList.forEach((className) => {
+      if (className.includes("-priority")) {
+        taskPriorityColorPanel.classList.replace(className, newPriority);
+      }
+    });
+    this.updateTaskObject(taskIndex, "priority", newPriority);
+  }
+
+  handleTaksCollectionClick(e) {
+    const taskWrapper = e.target.closest(".task-wrapper");
+    const taskContent = e.target.closest(".task-content");
+
+    // if (!taskWrapper || !taskContent) return;
+
+    const taskIndex = this.getTaskIdxFromElement(taskWrapper);
+
+    if (e.target.classList.contains("task-input")) {
+      this.handleTaskInputClick(e, taskWrapper, taskContent, taskIndex);
+    } else if (e.target.classList.contains("task-checkbox")) {
+      this.handleCheckboxClick(e, taskWrapper, taskIndex);
+    } else if (e.target.closest(".priority-menu-option")) {
+      this.handlePriorityOptionClick(e, taskWrapper, taskIndex);
     }
   }
 
@@ -299,11 +359,26 @@ export default class ScreenController {
       this.replaceEditableListElement.bind(this)
     );
     this.sidebar.addEventListener("click", this.handleSidebarClick.bind(this));
-    document.addEventListener("click", this.handleNonNewListClick.bind(this));
+
+    document.addEventListener("click", this.handleDocumentClicks.bind(this));
+
     this.taskCollection.addEventListener(
       "click",
       this.handleTaksCollectionClick.bind(this)
     );
+    document
+      .querySelector(".task-wrapper")
+      .addEventListener("dblclick", (e) => {
+        e.stopPropagation();
+        if (
+          e.target.tagName === "INPUT" ||
+          e.target.tagName === "TEXTAREA" ||
+          e.target.tagName === "BUTTON"
+        ) {
+          return;
+        }
+        taskContent.classList.toggle("active");
+      });
   }
 
   initialize() {
