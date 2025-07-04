@@ -14,6 +14,7 @@ export default class ScreenController {
   #currentTaskIndex = null;
   #currentListTitle = null;
   #activeTaskElement = null;
+  #previousTaskElement = null;
   #Renderer = new RenderUI(this);
 
   ////////////// FIELD GETTER METHODS ///////////////
@@ -59,6 +60,10 @@ export default class ScreenController {
 
   get activeTaskElement() {
     return this.#activeTaskElement;
+  }
+
+  get previousTaskElement() {
+    return this.#previousTaskElement;
   }
 
   get Renderer() {
@@ -137,6 +142,10 @@ export default class ScreenController {
     this.#activeTaskElement = el;
   }
 
+  set previousTaskElement(el) {
+    this.#previousTaskElement = el;
+  }
+
   set currentTaskIndex(idx) {
     this.#currentTaskIndex = idx;
   }
@@ -201,6 +210,8 @@ export default class ScreenController {
 
   // expects a list object
   switchLists(list) {
+    //if the current list is the selected list, return
+
     this.currentList = list.id;
     this.currentListTitle = list.title;
     this.Renderer.renderTasks();
@@ -212,6 +223,8 @@ export default class ScreenController {
       const clickedList = this.listElementToListObject(
         e.target.closest(".list-btn-wrapper")
       );
+
+      if (clickedList === this.currentList) return;
       this.switchLists(clickedList);
     }
   }
@@ -223,7 +236,6 @@ export default class ScreenController {
 
   handleDocumentClicks(e) {
     const newList = this.mylistWrapper.querySelector(".newList-input");
-    const currentTaskContent = null;
 
     if (
       newList &&
@@ -232,34 +244,36 @@ export default class ScreenController {
     ) {
       this.removeEditableList(newList);
     }
-    // if (e.target.closest(".priority-menu-option")) return;
+    if (e.target.closest(".priority-menu-option")) return;
 
-    console.log("hi");
-    // if (
-    //   taskContent.classList.contains("active") &&
-    //   !taskContent.contains(e.target)
-    // ) {
-    //   taskContent.classList.remove("active");
-    // }
+    // Any time i click outside the current task wrapper, remove active state from current task content
+    const withinActiveWrapper = e
+      .composedPath()
+      .includes(this.activeTaskElement);
+    if (withinActiveWrapper === false) {
+      this.removeActiveTask();
+    }
   }
 
   // the active task element is whichever task content has class active or whichever task checkbox is clicked
   // class active is gained by double clicking or clicking the input of a task
-  clearActiveTasks() {
-    this.taskCollection
-      .querySelectorAll(".task-content.active")
-      .forEach((taskContent) => {
-        taskContent.classList.remove("active");
-        const taskInput = taskContent.querySelector(".task-input");
-        if (taskInput) {
-          taskInput.style.width = `${taskInput.value.length + 2}ch`;
-        }
-      });
+  removeActiveTask() {
+    const activeTask = this.taskCollection.querySelector(
+      ".task-content.active"
+    );
+    if (!activeTask) return;
+
+    const taskInput = activeTask.querySelector(".task-input");
+    if (taskInput) {
+      taskInput.style.width = `${taskInput.value.length + 2}ch`;
+    }
+    activeTask.classList.remove("active");
+    this.previousTaskElement = activeTask.offsetParent;
     this.activeTaskElement = null;
   }
 
   setActiveTask(e, taskWrapper, taskContent, taskIndex) {
-    this.clearActiveTasks();
+    this.removeActiveTask();
 
     if (taskContent && e.target) {
       taskContent.classList.add("active");
@@ -305,8 +319,6 @@ export default class ScreenController {
 
   handleCheckboxClick(e, taskWrapper, taskIndex) {
     this.currentTaskIndex = taskIndex;
-    this.activeTaskElement = taskWrapper;
-    console.log(e.target.checked);
     this.updateTaskObject(taskIndex, "completed", e.target.checked);
   }
 
@@ -332,12 +344,9 @@ export default class ScreenController {
     this.updateTaskObject(taskIndex, "priority", newPriority);
   }
 
-  handleTaksCollectionClick(e) {
+  handleTaskClicks(e) {
     const taskWrapper = e.target.closest(".task-wrapper");
     const taskContent = e.target.closest(".task-content");
-
-    // if (!taskWrapper || !taskContent) return;
-
     const taskIndex = this.getTaskIdxFromElement(taskWrapper);
 
     if (e.target.classList.contains("task-input")) {
@@ -349,6 +358,35 @@ export default class ScreenController {
     }
   }
 
+  handleDoubleClicks(e) {
+    if (
+      e.target.tagName === "INPUT" ||
+      e.target.tagName === "TEXTAREA" ||
+      e.target.tagName === "BUTTON"
+    ) {
+      return;
+    }
+    if (e.target.closest(".task-content")) {
+      const taskWrapper = e.target.closest(".task-wrapper");
+      const taskContent = e.target.closest(".task-content");
+      const taskIndex = this.getTaskIdxFromElement(taskWrapper);
+
+      if (taskContent.classList.contains("active")) {
+        taskContent.classList.remove("active");
+        this.previousTaskElement = taskWrapper;
+        this.activeTaskElement = null;
+      } else if (!taskContent.classList.contains("active")) {
+        taskContent.classList.add("active");
+        this.activeTaskElement = taskWrapper;
+        this.currentTaskIndex = taskIndex;
+      }
+    }
+  }
+
+  handleTaskInput(e) {
+    console.log(e);
+  }
+
   applyEventListeners() {
     this.addListBtn.addEventListener(
       "click",
@@ -358,27 +396,17 @@ export default class ScreenController {
       "keydown",
       this.replaceEditableListElement.bind(this)
     );
-    this.sidebar.addEventListener("click", this.handleSidebarClick.bind(this));
-
-    document.addEventListener("click", this.handleDocumentClicks.bind(this));
-
     this.taskCollection.addEventListener(
       "click",
-      this.handleTaksCollectionClick.bind(this)
+      this.handleTaskClicks.bind(this)
     );
-    document
-      .querySelector(".task-wrapper")
-      .addEventListener("dblclick", (e) => {
-        e.stopPropagation();
-        if (
-          e.target.tagName === "INPUT" ||
-          e.target.tagName === "TEXTAREA" ||
-          e.target.tagName === "BUTTON"
-        ) {
-          return;
-        }
-        taskContent.classList.toggle("active");
-      });
+    this.taskCollection.addEventListener(
+      "input",
+      this.handleTaskInput.bind(this)
+    );
+    this.sidebar.addEventListener("click", this.handleSidebarClick.bind(this));
+    document.addEventListener("click", this.handleDocumentClicks.bind(this));
+    document.addEventListener("dblclick", this.handleDoubleClicks.bind(this));
   }
 
   initialize() {
