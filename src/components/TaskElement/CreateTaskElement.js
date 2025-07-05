@@ -40,8 +40,9 @@ export default function createTaskElement(task) {
     class: "task-notes",
     rows: "1",
     placeholder: "Notes",
-    value: task.notes,
   });
+  taskNotes.textContent = task.notes;
+
   const taskDate = generateElement("input", {
     class: "inner-cyberpunk-clip-wrapper-br task-date",
     type: "date",
