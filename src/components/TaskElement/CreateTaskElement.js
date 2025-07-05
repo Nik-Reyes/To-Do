@@ -28,7 +28,7 @@ export default function createTaskElement(task) {
     type: "checkbox",
     name: task.title,
     value: task.title,
-    checked: task.completed,
+    checked: task.checked,
   });
   const expandableContentWrapper = generateElement("div", {
     class: "expandable-content-wrapper",
@@ -124,12 +124,6 @@ export default function createTaskElement(task) {
   const moreOptions = generateElement("div", { class: "more-options" });
 
   //////// ELEMENT EVENT LISTENER APPLICATION ////////
-  // taskNotes.addEventListener("keydown", (e) => {
-  //   e.stopImmediatePropagation();
-  //   if (e.key === "Escape") {
-  //     taskNotes.blur();
-  //   }
-  // });
 
   // taskPriorityWrapper.addEventListener("keydown", (e) => {
   //   if (e.key === "Enter") {

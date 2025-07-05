@@ -333,20 +333,23 @@ export default class ScreenController {
       "task-input": "title",
       "task-notes": "notes",
       "task-date": "dueDate",
-      "task-checkbox": "completed",
+      "task-checkbox": "checked",
     };
 
     const property = Object.keys(propMap).find((className) =>
       e.target.className.includes(className)
     );
 
-    if (property)
-      if (property === "completed") this.currentTaskIndex = taskIndex;
-    if (property === "task-notes") {
-      e.target.style.height = "auto"; // shrinks to auto when content shrinks
-      e.target.style.height = e.target.scrollHeight + "px"; // grows to fit content
+    if (property) {
+      if (property === "checked") this.currentTaskIndex = taskIndex;
+      if (property === "task-notes") {
+        e.target.style.height = "auto"; // shrinks to auto when content shrinks
+        e.target.style.height = e.target.scrollHeight + "px"; // grows to fit content
+      }
+      property === "task-checkbox"
+        ? this.updateTaskObject(taskIndex, propMap[property], e.target.checked)
+        : this.updateTaskObject(taskIndex, propMap[property], e.target.value);
     }
-    this.updateTaskObject(taskIndex, propMap[property], e.target.value);
   }
 
   handleTaskChanges(e) {
@@ -357,7 +360,7 @@ export default class ScreenController {
 
   handleTaskKeydown(e) {
     if (e.target.closest(".task-date")) {
-      if (e.key === "Escape") {
+      if (e.key === "Escape" || e.key === "Enter") {
         e.target.closest(".date-wrapper").classList.remove("focused");
       }
     }
@@ -369,6 +372,11 @@ export default class ScreenController {
     if (e.target.closest(".task-input")) {
       if (e.key === "Enter" || e.key === "Escape") {
         e.target.style.width = e.target.value.length + "ch";
+        e.target.blur();
+      }
+    }
+    if (e.target.closest(".task-notes")) {
+      if (e.key === "Escape") {
         e.target.blur();
       }
     }

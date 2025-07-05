@@ -54,7 +54,7 @@ export default class List {
   completeTask(taskId) {
     const task = this.#tasks.find((task) => task.id === taskId);
     if (task) {
-      task.markCompleted();
+      task.markchecked();
     }
   }
 }

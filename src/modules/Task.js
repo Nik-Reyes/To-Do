@@ -4,16 +4,16 @@ export default class Task {
   #dueDate;
   #priority;
   #notes;
-  #completed;
+  #checked;
   #id = `${performance.now().toString(36)}-${Math.random()
     .toString(36)
     .substring(2)}`;
-  constructor(title, notes, dueDate, priority, completed) {
+  constructor(title, notes, dueDate, priority, checked) {
     this.#title = title;
     this.#dueDate = dueDate || "";
     this.#priority = priority || "no-priority";
     this.#notes = notes || "";
-    this.#completed = completed || false;
+    this.#checked = checked || false;
   }
 
   get title() {
@@ -48,19 +48,19 @@ export default class Task {
     this.#notes = newNote;
   }
 
-  get completed() {
-    return this.#completed;
+  get checked() {
+    return this.#checked;
   }
 
-  set completed(updateComplete) {
-    this.#completed = updateComplete;
+  set checked(updateComplete) {
+    this.#checked = updateComplete;
   }
 
   get id() {
     return this.#id;
   }
 
-  markCompleted() {
-    this.completed = true;
+  markchecked() {
+    this.checked = true;
   }
 }
