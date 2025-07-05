@@ -144,7 +144,6 @@ textarea {
 }
 
 .task-notes {
-  height: 1.3lh;
   min-height: 1.3lh;
   min-width: 5ch;
   resize: none;
@@ -190,7 +189,7 @@ input[type="date"] {
   grid-column: 2;
   display: grid;
   grid-template-rows: 0fr;
-  transition: grid-template-rows 200ms;
+  transition: grid-template-rows 100ms;
 }
 
 .expandable-content {

@@ -239,7 +239,9 @@ export default class ScreenController {
 
   handleDocumentClicks(e) {
     const newList = this.mylistWrapper.querySelector(".newList-input");
-
+    const focusedDateWrapper = this.taskCollection.querySelector(
+      ".date-wrapper.focused"
+    );
     // handle new list removal
     if (
       newList &&
@@ -256,6 +258,11 @@ export default class ScreenController {
       !e.composedPath().includes(this.activeTaskElement)
     ) {
       this.removeActiveTask();
+    }
+
+    //handle focused date wrapper unfocusing
+    if (focusedDateWrapper && !e.target.closest(".date-wrapper")) {
+      focusedDateWrapper.classList.remove("focused");
     }
   }
 
@@ -294,6 +301,8 @@ export default class ScreenController {
       this.handleTaskInputClick(e, taskWrapper, taskContent, taskIndex);
     } else if (e.target.closest(".priority-menu-option")) {
       this.handlePriorityOptionClick(e, taskWrapper, taskIndex);
+    } else if (e.target.closest(".task-date")) {
+      e.target.closest(".date-wrapper").classList.add("focused");
     }
   }
 
@@ -333,7 +342,36 @@ export default class ScreenController {
 
     if (property)
       if (property === "completed") this.currentTaskIndex = taskIndex;
+    if (property === "task-notes") {
+      e.target.style.height = "auto"; // shrinks to auto when content shrinks
+      e.target.style.height = e.target.scrollHeight + "px"; // grows to fit content
+    }
     this.updateTaskObject(taskIndex, propMap[property], e.target.value);
+  }
+
+  handleTaskChanges(e) {
+    if (e.target.closest(".task-date")) {
+      e.target.closest(".date-wrapper").classList.remove("focused");
+    }
+  }
+
+  handleTaskKeydown(e) {
+    if (e.target.closest(".task-date")) {
+      if (e.key === "Escape") {
+        e.target.closest(".date-wrapper").classList.remove("focused");
+      }
+    }
+    if (e.target.closest(".task-checkbox")) {
+      if (e.key === "Enter") {
+        e.target.closest(".task-checkbox").click();
+      }
+    }
+    if (e.target.closest(".task-input")) {
+      if (e.key === "Enter" || e.key === "Escape") {
+        e.target.style.width = e.target.value.length + "ch";
+        e.target.blur();
+      }
+    }
   }
 
   applyEventListeners() {
@@ -353,6 +391,8 @@ export default class ScreenController {
       "input",
       this.handleTaskInput.bind(this)
     );
+    this.taskCollection.addEventListener("keydown", this.handleTaskKeydown);
+    this.taskCollection.addEventListener("change", this.handleTaskChanges);
     this.sidebar.addEventListener("click", this.handleSidebarClick.bind(this));
     document.addEventListener("click", this.handleDocumentClicks.bind(this));
     document.addEventListener("dblclick", this.handleDoubleClicks.bind(this));

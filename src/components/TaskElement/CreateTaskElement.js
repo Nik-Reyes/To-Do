@@ -36,12 +36,22 @@ export default function createTaskElement(task) {
   const expandableContent = generateElement("div", {
     class: "expandable-content",
   });
+  if (task.notes.length >= 1) {
+    console.log();
+  }
   const taskNotes = generateElement("textarea", {
     class: "task-notes",
-    rows: "1",
     placeholder: "Notes",
   });
   taskNotes.textContent = task.notes;
+  // Alternative approach using requestAnimationFrame
+  if (task.notes.length > 0) {
+    console.log(task.notes.length);
+    requestAnimationFrame(() => {
+      taskNotes.style.height = "auto";
+      taskNotes.style.height = taskNotes.scrollHeight + "px";
+    });
+  }
 
   const taskDate = generateElement("input", {
     class: "inner-cyberpunk-clip-wrapper-br task-date",
@@ -114,54 +124,10 @@ export default function createTaskElement(task) {
   const moreOptions = generateElement("div", { class: "more-options" });
 
   //////// ELEMENT EVENT LISTENER APPLICATION ////////
-
-  // taskInput.addEventListener("blur", (e) => {
-  //   e.stopPropagation();
-  //   taskInput.style.width = `${taskInput.value.length + 2}ch`;
-  // });
-
-  // taskDate.addEventListener("blur", () => {
-  //   taskDate.closest(".date-wrapper").classList.remove("focused");
-  // });
-
-  // taskNotes.addEventListener("input", (e) => {
-  //   e.stopImmediatePropagation();
-  //   taskNotes.style.height = "auto"; // shrinks to auto when content shrinks
-  //   taskNotes.style.height = taskNotes.scrollHeight + "px"; // grows to fit content
-  // });
-
-  // taskDate.addEventListener("click", () => {
-  //   taskDate.closest(".date-wrapper").classList.add("focused");
-  // });
-
-  // taskDate.addEventListener("change", () => {
-  //   taskDate.closest(".date-wrapper").classList.remove("focused");
-  // });
-
-  // taskDate.addEventListener("keydown", (e) => {
-  //   if (e.key === "Escape") {
-  //     taskDate.closest(".date-wrapper").classList.remove("focused");
-  //   }
-  // });
-
   // taskNotes.addEventListener("keydown", (e) => {
   //   e.stopImmediatePropagation();
   //   if (e.key === "Escape") {
   //     taskNotes.blur();
-  //   }
-  // });
-
-  // taskInput.addEventListener("keydown", (e) => {
-  //   e.stopPropagation();
-  //   if (e.key === "Enter" || e.key === "Escape") {
-  //     taskInput.style.width = taskInput.value.length + "ch";
-  //     taskInput.blur();
-  //   }
-  // });
-
-  // taskCheckBox.addEventListener("keydown", (e) => {
-  //   if (e.key === "Enter") {
-  //     taskCheckBox.click();
   //   }
   // });
 
