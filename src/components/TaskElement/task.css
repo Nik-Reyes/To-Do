@@ -174,17 +174,6 @@ input[type="date"] {
   border-radius: 0px;
 }
 
-::-webkit-calendar-picker-indicator {
-  filter: brightness(0) saturate(100%) invert(27%) sepia(77%) saturate(7127%)
-    hue-rotate(344deg) brightness(91%) contrast(95%);
-  transition: filter 250ms ease-in-out;
-}
-
-::-webkit-calendar-picker-indicator:hover {
-  filter: brightness(0) saturate(100%) invert(99%) sepia(5%) saturate(5342%)
-    hue-rotate(143deg) brightness(86%) contrast(94%);
-}
-
 .expandable-content-wrapper {
   grid-column: 2;
   display: grid;
