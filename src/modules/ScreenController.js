@@ -21,51 +21,39 @@ export default class ScreenController {
   get header() {
     return this.#header;
   }
-
   get sidebar() {
     return this.#sidebar;
   }
-
   get addListBtn() {
     return this.#addListBtn;
   }
-
   get currentList() {
     return this.#currentList;
   }
-
   get listCollection() {
     return this.#listCollection;
   }
-
   get mylistWrapper() {
     return this.#mylistWrapper;
   }
-
   get currentListId() {
     return this.#currentListId;
   }
-
   get taskCollection() {
     return this.#taskCollection;
   }
-
   get currentTaskIndex() {
     return this.#currentTaskIndex;
   }
-
   get currentListTitle() {
     return this.#currentList.title;
   }
-
   get activeTaskElement() {
     return this.#activeTaskElement;
   }
-
   get previousTaskElement() {
     return this.#previousTaskElement;
   }
-
   get Renderer() {
     return this.#Renderer;
   }
@@ -77,17 +65,14 @@ export default class ScreenController {
       ...this.#listCollection.myLists,
     ];
   }
-
   get currentTask() {
     return this.#currentTaskIndex !== null
       ? this.currentListTasks[this.#currentTaskIndex]
       : null;
   }
-
   get currentListTasks() {
     return this.currentList.tasks;
   }
-
   get numberOfLists() {
     return this.lists.length;
   }
@@ -151,19 +136,8 @@ export default class ScreenController {
   }
 
   ////////////// ACTION METHODS ///////////////
-  // Event listener listening for any textarea, input, checkbox, or priority button change within the taskCollection will call this function
-  // this.updateTask is responsible for dynamically updating the object data of the current list
-  // since the event listener is attached to the task collection, this function needs to
-  // get the current task (closest() function is handy here) and also get the value of the
-  // current input
-  // With the current input, update the lists task object
-  // This function is solely responsible for updating the data, the task elements
-  // appearance is handled by the individual task
-  updateTask() {}
-
   listElementToListObject(element) {
-    const elId = element.dataset.id;
-    return this.lists.at(elId);
+    return this.lists.at(element.dataset.id);
   }
 
   initializeDOMEelements() {
@@ -174,9 +148,50 @@ export default class ScreenController {
     this.mylistWrapper = this.sidebar.querySelector(".mylist-wrapper");
   }
 
-  // addListData, addEditableListElement, replaceEditableListElement work together to add a task
   addListData(newListObj) {
     this.listCollection.myLists.push(newListObj);
+  }
+
+  //changed
+  switchLists(list) {
+    this.currentList = list.id;
+    this.currentListTitle = list.title;
+    this.Renderer.renderTasks();
+    this.Renderer.headerTitle = this.currentListTitle;
+  }
+
+  getTaskIdxFromElement(taskWrapper) {
+    return Array.from(
+      this.taskCollection.querySelectorAll(".task-wrapper")
+    ).indexOf(taskWrapper);
+  }
+
+  updateTaskObject(taskIndex, property, value) {
+    if (taskIndex !== -1 && this.currentListTasks[taskIndex]) {
+      this.currentListTasks[taskIndex][property] = value;
+    }
+  }
+
+  removeActiveTask() {
+    const activeTask = this.taskCollection.querySelector(".active");
+    if (!activeTask) return;
+
+    const taskInput = activeTask.querySelector(".task-input");
+    if (taskInput) taskInput.style.width = `${taskInput.value.length + 2}ch`;
+
+    activeTask.classList.remove("active");
+    this.previousTaskElement = activeTask.offsetParent;
+    this.activeTaskElement = null;
+  }
+
+  setActiveTask(e, taskWrapper, taskContent, taskIndex) {
+    this.removeActiveTask();
+    if (taskContent && e.target) {
+      taskContent.classList.add("active");
+      e.target.style.width = "100%";
+      this.activeTaskElement = taskWrapper;
+      this.currentTaskIndex = taskIndex;
+    }
   }
 
   ////////////// EVENT LISTENER METHODS ///////////////
@@ -208,118 +223,44 @@ export default class ScreenController {
     }
   }
 
-  // expects a list object
-  switchLists(list) {
-    //if the current list is the selected list, return
-
-    this.currentList = list.id;
-    this.currentListTitle = list.title;
-    this.Renderer.renderTasks();
-    this.Renderer.headerTitle = this.currentListTitle;
-  }
-
   handleSidebarClick(e) {
     if (e.target.closest(".list-btn") && !e.target.closest(".new-list")) {
       const clickedList = this.listElementToListObject(
         e.target.closest(".list-btn-wrapper")
       );
 
-      if (clickedList === this.currentList) return;
-      this.switchLists(clickedList);
+      if (clickedList !== this.currentList) this.switchLists(clickedList);
     }
   }
 
   removeEditableList(newList) {
     newList.closest(".list-btn-wrapper").remove();
-    this.toggleButton();
   }
 
   handleDocumentClicks(e) {
     const newList = this.mylistWrapper.querySelector(".newList-input");
 
+    // handle new list removal
     if (
       newList &&
       !e.target.closest(".new-list") &&
       !e.target.closest(".addList-btn")
     ) {
       this.removeEditableList(newList);
+      this.toggleButton();
     }
-    if (e.target.closest(".priority-menu-option")) return;
 
-    // Any time i click outside the current task wrapper, remove active state from current task content
-    const withinActiveWrapper = e
-      .composedPath()
-      .includes(this.activeTaskElement);
-    if (withinActiveWrapper === false) {
+    //handle active task content collapse
+    if (
+      !e.target.closest(".priority-menu-option") &&
+      !e.composedPath().includes(this.activeTaskElement)
+    ) {
       this.removeActiveTask();
-    }
-  }
-
-  // the active task element is whichever task content has class active or whichever task checkbox is clicked
-  // class active is gained by double clicking or clicking the input of a task
-  removeActiveTask() {
-    const activeTask = this.taskCollection.querySelector(
-      ".task-content.active"
-    );
-    if (!activeTask) return;
-
-    const taskInput = activeTask.querySelector(".task-input");
-    if (taskInput) {
-      taskInput.style.width = `${taskInput.value.length + 2}ch`;
-    }
-    activeTask.classList.remove("active");
-    this.previousTaskElement = activeTask.offsetParent;
-    this.activeTaskElement = null;
-  }
-
-  setActiveTask(e, taskWrapper, taskContent, taskIndex) {
-    this.removeActiveTask();
-
-    if (taskContent && e.target) {
-      taskContent.classList.add("active");
-      e.target.style.width = "100%";
-      this.activeTaskElement = taskWrapper;
-      this.currentTaskIndex = taskIndex;
-    }
-  }
-
-  getTaskIdxFromElement(taskWrapper) {
-    const tasks = Array.from(
-      this.taskCollection.querySelectorAll(".task-wrapper")
-    );
-    return tasks.indexOf(taskWrapper);
-  }
-
-  updateTaskObject(taskIndex, property, value) {
-    if (taskIndex !== -1 && this.currentListTasks[taskIndex]) {
-      const currentTaskObj = this.currentTask;
-
-      switch (property) {
-        case "title":
-          currentTaskObj.title = value;
-          break;
-        case "completed":
-          currentTaskObj.completed = value;
-          break;
-        case "notes":
-          currentTaskObj.notes = value;
-          break;
-        case "priority":
-          currentTaskObj.priority = value;
-          break;
-        case "dueDate":
-          currentTaskObj.dueDate = value;
-      }
     }
   }
 
   handleTaskInputClick(e, taskWrapper, taskContent, taskIndex) {
     this.setActiveTask(e, taskWrapper, taskContent, taskIndex);
-  }
-
-  handleCheckboxClick(e, taskWrapper, taskIndex) {
-    this.currentTaskIndex = taskIndex;
-    this.updateTaskObject(taskIndex, "completed", e.target.checked);
   }
 
   handlePriorityOptionClick(e, taskWrapper, taskIndex) {
@@ -351,40 +292,48 @@ export default class ScreenController {
 
     if (e.target.classList.contains("task-input")) {
       this.handleTaskInputClick(e, taskWrapper, taskContent, taskIndex);
-    } else if (e.target.classList.contains("task-checkbox")) {
-      this.handleCheckboxClick(e, taskWrapper, taskIndex);
     } else if (e.target.closest(".priority-menu-option")) {
       this.handlePriorityOptionClick(e, taskWrapper, taskIndex);
     }
   }
 
   handleDoubleClicks(e) {
-    if (
-      e.target.tagName === "INPUT" ||
-      e.target.tagName === "TEXTAREA" ||
-      e.target.tagName === "BUTTON"
-    ) {
-      return;
-    }
-    if (e.target.closest(".task-content")) {
-      const taskWrapper = e.target.closest(".task-wrapper");
-      const taskContent = e.target.closest(".task-content");
-      const taskIndex = this.getTaskIdxFromElement(taskWrapper);
+    if (["INPUT", "TEXTAREA", "BUTTON"].includes(e.target.tagName)) return;
+    const taskContent = e.target.closest(".task-content");
+    if (!taskContent) return;
+    const taskWrapper = e.target.closest(".task-wrapper");
+    const taskIndex = this.getTaskIdxFromElement(taskWrapper);
 
-      if (taskContent.classList.contains("active")) {
-        taskContent.classList.remove("active");
-        this.previousTaskElement = taskWrapper;
-        this.activeTaskElement = null;
-      } else if (!taskContent.classList.contains("active")) {
-        taskContent.classList.add("active");
-        this.activeTaskElement = taskWrapper;
-        this.currentTaskIndex = taskIndex;
-      }
+    if (taskContent.classList.contains("active")) {
+      taskContent.classList.remove("active");
+      this.previousTaskElement = taskWrapper;
+      this.activeTaskElement = null;
+    } else {
+      taskContent.classList.add("active");
+      this.activeTaskElement = taskWrapper;
+      this.currentTaskIndex = taskIndex;
     }
   }
 
   handleTaskInput(e) {
-    console.log(e);
+    const taskWrapper = e.target.closest(".task-wrapper");
+    if (!taskWrapper) return;
+    const taskIndex = this.getTaskIdxFromElement(taskWrapper);
+
+    const propMap = {
+      "task-input": "title",
+      "task-notes": "notes",
+      "task-date": "dueDate",
+      "task-checkbox": "completed",
+    };
+
+    const property = Object.keys(propMap).find((className) =>
+      e.target.className.includes(className)
+    );
+
+    if (property)
+      if (property === "completed") this.currentTaskIndex = taskIndex;
+    this.updateTaskObject(taskIndex, propMap[property], e.target.value);
   }
 
   applyEventListeners() {
