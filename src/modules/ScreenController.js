@@ -5,12 +5,15 @@ import RenderUI from "./RenderUI.js";
 export default class ScreenController {
   #header = null;
   #sidebar = null;
+
   #addListBtn = null;
   #currentList = null;
   #listCollection = [];
   #mylistWrapper = null;
   #currentListId = null;
   #taskCollection = null;
+  #headerHamburger = null;
+  #sidebarHamburger = null;
   #currentTaskIndex = null;
   #currentListTitle = null;
   #activeTaskElement = null;
@@ -23,6 +26,12 @@ export default class ScreenController {
   }
   get sidebar() {
     return this.#sidebar;
+  }
+  get headerHamburger() {
+    return this.#headerHamburger;
+  }
+  get sidebarHamburger() {
+    return this.#sidebarHamburger;
   }
   get addListBtn() {
     return this.#addListBtn;
@@ -76,83 +85,75 @@ export default class ScreenController {
   get numberOfLists() {
     return this.lists.length;
   }
-
   get firstMyList() {
     return this.#listCollection.systemLists.length;
   }
-
   get hasListCollection() {
     return this.#listCollection.length >= 1;
   }
 
   ////////////// SETTER METHODS ///////////////
+  set header(header) {
+    this.#header = header;
+  }
+  set sidebar(aside) {
+    this.#sidebar = aside;
+  }
+  set headerHamburger(hamburger) {
+    this.#headerHamburger = hamburger;
+  }
+  set sidebarHamburger(hamburger) {
+    this.#sidebarHamburger = hamburger;
+  }
+  set addListBtn(button) {
+    this.#addListBtn = button;
+  }
   set currentList(listId) {
     this.#currentList = this.lists.at(listId);
     this.currentListId = listId;
   }
-
-  set currentListId(id) {
-    this.#currentListId = id;
-  }
-
   set listCollection(newList) {
     this.#listCollection = newList;
   }
-
-  set header(header) {
-    this.#header = header;
-  }
-
-  set currentListTitle(title) {
-    this.#currentListTitle = title;
-  }
-
-  set sidebar(aside) {
-    this.#sidebar = aside;
-  }
-
   set mylistWrapper(wrapper) {
     this.#mylistWrapper = wrapper;
   }
-
+  set currentListId(id) {
+    this.#currentListId = id;
+  }
+  set currentListTitle(title) {
+    this.#currentListTitle = title;
+  }
   set taskCollection(collection) {
     this.#taskCollection = collection;
   }
-
-  set addListBtn(button) {
-    this.#addListBtn = button;
-  }
-
-  set activeTaskElement(el) {
-    this.#activeTaskElement = el;
-  }
-
-  set previousTaskElement(el) {
-    this.#previousTaskElement = el;
-  }
-
   set currentTaskIndex(idx) {
     this.#currentTaskIndex = idx;
   }
-
-  ////////////// ACTION METHODS ///////////////
+  set activeTaskElement(el) {
+    this.#activeTaskElement = el;
+  }
+  set previousTaskElement(el) {
+    this.#previousTaskElement = el;
+  }
   listElementToListObject(element) {
     return this.lists.at(element.dataset.id);
   }
 
   initializeDOMEelements() {
-    this.header = this.Renderer.header;
-    this.taskCollection = this.Renderer.taskCollection;
-    this.sidebar = this.Renderer.sidebar;
-    this.addListBtn = this.sidebar.querySelector(".addList-btn");
-    this.mylistWrapper = this.sidebar.querySelector(".mylist-wrapper");
+    this.taskCollection = document.querySelector(".task-collection");
+    this.header = document.querySelector("header");
+    this.sidebar = document.querySelector("aside");
+    this.addListBtn = document.querySelector(".addList-btn");
+    this.mylistWrapper = document.querySelector(".mylist-wrapper");
+    this.headerHamburger = document.querySelector("header .hamburger");
+    this.sidebarHamburger = document.querySelector("aside .hamburger");
   }
 
   addListData(newListObj) {
     this.listCollection.myLists.push(newListObj);
   }
 
-  //changed
   switchLists(list) {
     this.currentList = list.id;
     this.currentListTitle = list.title;
@@ -176,8 +177,11 @@ export default class ScreenController {
     const activeTask = this.taskCollection.querySelector(".active");
     if (!activeTask) return;
 
-    const taskInput = activeTask.querySelector(".task-input");
-    if (taskInput) taskInput.style.width = `${taskInput.value.length + 2}ch`;
+    const activeTaskInput = activeTask.querySelector(".task-input");
+    if (activeTaskInput) {
+      const inputWidth = `${activeTaskInput.value.length + 2}ch`;
+      activeTaskInput.style.width = inputWidth;
+    }
 
     activeTask.classList.remove("active");
     this.previousTaskElement = activeTask.offsetParent;
@@ -194,7 +198,6 @@ export default class ScreenController {
     }
   }
 
-  ////////////// EVENT LISTENER METHODS ///////////////
   toggleButton() {
     this.addListBtn.disabled
       ? this.addListBtn.removeAttribute("disabled")
@@ -270,27 +273,27 @@ export default class ScreenController {
     this.setActiveTask(e, taskWrapper, taskContent, taskIndex);
   }
 
-  handlePriorityOptionClick(e, taskWrapper, taskIndex) {
-    const priorityMenuWrapper = taskWrapper.querySelector(
-      ".priority-menu-wrapper"
-    );
-    const menuId = priorityMenuWrapper.getAttribute("id");
-    const taskPriorityBtn = taskWrapper.querySelector("button.task-priority");
-    const taskPriorityColorPanel = taskWrapper.querySelector(".priority-panel");
-    priorityMenuWrapper.hidePopover();
-    taskPriorityBtn.blur();
+  // handlePriorityOptionClick(e, taskWrapper, taskIndex) {
+  //   const priorityMenuWrapper = taskWrapper.querySelector(
+  //     ".priority-menu-wrapper"
+  //   );
+  //   const menuId = priorityMenuWrapper.getAttribute("id");
+  //   const taskPriorityBtn = taskWrapper.querySelector("button.task-priority");
+  //   const taskPriorityColorPanel = taskWrapper.querySelector(".priority-panel");
+  //   priorityMenuWrapper.hidePopover();
+  //   taskPriorityBtn.blur();
 
-    // Change the color of the priority panel
-    const newPriority = Array.from(e.target.classList).find((className) => {
-      return className.includes("-priority");
-    });
-    taskPriorityColorPanel.classList.forEach((className) => {
-      if (className.includes("-priority")) {
-        taskPriorityColorPanel.classList.replace(className, newPriority);
-      }
-    });
-    this.updateTaskObject(taskIndex, "priority", newPriority);
-  }
+  //   // Change the color of the priority panel
+  //   const newPriority = Array.from(e.target.classList).find((className) => {
+  //     return className.includes("-priority");
+  //   });
+  //   taskPriorityColorPanel.classList.forEach((className) => {
+  //     if (className.includes("-priority")) {
+  //       taskPriorityColorPanel.classList.replace(className, newPriority);
+  //     }
+  //   });
+  //   this.updateTaskObject(taskIndex, "priority", newPriority);
+  // }
 
   handleTaskClicks(e) {
     const taskWrapper = e.target.closest(".task-wrapper");
@@ -382,6 +385,21 @@ export default class ScreenController {
     }
   }
 
+  toggleSidebar(e) {
+    if (e.target.offsetParent.tagName === "HEADER") {
+      console.log("hi");
+      this.sidebar.classList.add("opened-sidebar");
+    }
+
+    if (e.target.offsetParent.tagName === "ASIDE") {
+      console.log("hi");
+      this.sidebar.classList.remove("opened-sidebar");
+    }
+    // this.sidebar.classList.contains("opened-sidebar")
+    //   ? this.sidebar.classList.add("opened-sidebar")
+    //   : this.sidebar.classList.remove("opened-sidebar");
+  }
+
   applyEventListeners() {
     this.addListBtn.addEventListener(
       "click",
@@ -401,12 +419,17 @@ export default class ScreenController {
     );
     this.taskCollection.addEventListener("keydown", this.handleTaskKeydown);
     this.taskCollection.addEventListener("change", this.handleTaskChanges);
+    this.headerHamburger.addEventListener(
+      "click",
+      this.toggleSidebar.bind(this)
+    );
+    this.sidebarHamburger.addEventListener(
+      "click",
+      this.toggleSidebar.bind(this)
+    );
     this.sidebar.addEventListener("click", this.handleSidebarClick.bind(this));
     document.addEventListener("click", this.handleDocumentClicks.bind(this));
     document.addEventListener("dblclick", this.handleDoubleClicks.bind(this));
-    document
-      .querySelector(".hamburger")
-      .addEventListener("click", () => this.toggleSidebar);
   }
 
   initialize() {

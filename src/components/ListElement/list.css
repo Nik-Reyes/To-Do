@@ -2,6 +2,7 @@
   display: grid;
   position: relative;
   transition: transform var(--list-btn-transition-speed) ease-in-out;
+  align-self: self-start;
 }
 
 .list-btn {

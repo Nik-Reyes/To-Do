@@ -43,7 +43,8 @@ body {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: auto 1fr;
-  height: 100dvh;
+  min-height: 100dvh;
+  scrollbar-color: var(--cyber-red);
 }
 
 .stacked {

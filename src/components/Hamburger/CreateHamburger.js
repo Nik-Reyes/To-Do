@@ -3,8 +3,7 @@ import "./hamburger.css";
 
 export default function createHamburger() {
   const hamburger = generateElement("button", {
-    class: "hamburger close-sidepanel",
-    "aria-expanded": "true",
+    class: "hamburger",
     "aria-controls": "sidebar",
   });
 

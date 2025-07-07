@@ -20,3 +20,10 @@
   width: 100%;
   transition: background-color 200ms ease-in-out;
 }
+
+@media (min-width: 41.875rem) {
+  .hamburger {
+    display: none;
+    visibility: hidden;
+  }
+}

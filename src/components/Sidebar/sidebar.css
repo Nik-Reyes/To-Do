@@ -1,18 +1,19 @@
 aside {
   display: grid;
   grid-template-rows: repeat(3, min-content) 1fr;
-  --list-gap: 2rem;
-  gap: var(--list-gap);
-  height: 100dvh;
+  --list-gap: 1rem;
+  /* gap: var(--list-gap); */
+  min-height: 100vh;
+  overflow-x: hidden;
   background-repeat: no-repeat;
   background-size: cover;
-  padding-top: 32px;
   background: linear-gradient(
       to right,
       hsla(353, 79%, 50%, 0.15) 10%,
       var(--main-bg)
     ),
     url(../../assets/svgs/sidebar-bg.svg);
+  z-index: 999;
 }
 
 aside :where(label, .list-btn-wrapper) {
@@ -22,7 +23,15 @@ aside :where(label, .list-btn-wrapper) {
 .system-list-wrapper,
 .mylist-wrapper {
   display: grid;
-  gap: calc(var(--list-gap) / 2);
+  gap: var(--list-gap);
+}
+
+.mylist-wrapper {
+  grid-auto-rows: min-content;
+}
+
+.system-list-wrapper {
+  margin-bottom: var(--list-gap);
 }
 
 input[type="search"] {
@@ -46,6 +55,7 @@ label {
   display: flex;
   align-items: center;
   position: relative;
+  padding-bottom: var(--list-gap);
 }
 
 label::before {
@@ -106,18 +116,25 @@ label::before {
   transition: transform 150ms ease-in-out, z-index 0ms;
 }
 
+.opened-sidebar {
+  transform: translateX(0%);
+}
+
 @media (min-width: 41.875rem) {
   aside {
     grid-column: 1;
     grid-row: 1/-1;
-    transform: translateX(0);
+    transform: translateX(0%);
   }
 }
 
 @media (max-width: 41.875rem) {
   aside {
+    width: 65%;
     transform: translateX(-100%);
     position: fixed;
     inset: 0;
+    transition: transform 400ms ease-in-out;
+    grid-row: 2;
   }
 }

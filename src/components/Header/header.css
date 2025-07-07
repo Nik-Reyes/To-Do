@@ -41,10 +41,6 @@
 }
 
 @media (min-width: 41.875rem) {
-  .hamburger {
-    display: none;
-  }
-
   .header {
     grid-column: 2;
     grid-row: 1;
