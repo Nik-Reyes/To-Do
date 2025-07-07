@@ -359,24 +359,24 @@ export default class ScreenController {
   }
 
   handleTaskKeydown(e) {
-    if (e.target.closest(".task-date")) {
-      if (e.key === "Escape" || e.key === "Enter") {
+    if (e.key === "Enter" || e.key === "Escape") {
+      if (e.target.closest(".task-input")) {
+        e.target.style.width = e.target.value.length + 2 + "ch";
+        e.target.blur();
+      }
+      if (e.target.closest(".task-date")) {
         e.target.closest(".date-wrapper").classList.remove("focused");
       }
     }
-    if (e.target.closest(".task-checkbox")) {
-      if (e.key === "Enter") {
+
+    if (e.key === "Enter") {
+      if (e.target.closest(".task-checkbox")) {
         e.target.closest(".task-checkbox").click();
       }
     }
-    if (e.target.closest(".task-input")) {
-      if (e.key === "Enter" || e.key === "Escape") {
-        e.target.style.width = e.target.value.length + "ch";
-        e.target.blur();
-      }
-    }
-    if (e.target.closest(".task-notes")) {
-      if (e.key === "Escape") {
+
+    if (e.key === "Escape") {
+      if (e.target.closest(".task-notes")) {
         e.target.blur();
       }
     }
@@ -404,6 +404,9 @@ export default class ScreenController {
     this.sidebar.addEventListener("click", this.handleSidebarClick.bind(this));
     document.addEventListener("click", this.handleDocumentClicks.bind(this));
     document.addEventListener("dblclick", this.handleDoubleClicks.bind(this));
+    document
+      .querySelector(".hamburger")
+      .addEventListener("click", () => this.toggleSidebar);
   }
 
   initialize() {
