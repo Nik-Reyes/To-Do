@@ -391,7 +391,6 @@ export default class ScreenController {
       if (e.target.closest(".task-notes")) {
         e.target.blur();
       } else if (e.target.closest(".task-priority")) {
-        console.log(e.target);
         const taskWrapper = e.target.closest(".task-wrapper");
         const menu = taskWrapper.querySelector(".priority-menu-wrapper");
         if (menu.classList.contains("open-menu")) {

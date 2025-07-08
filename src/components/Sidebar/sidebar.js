@@ -33,17 +33,7 @@ export default function createSidebar() {
   const systemListTitle = createListTitle("SYSTEM LISTS");
   const myListTitle = createListTitle("MY LISTS");
 
-  const addListButtonWrapper = generateElement("div", {
-    class: "addList-btn-wrapper",
-  });
-  const addListButton = generateElement(
-    "button",
-    { class: "addList-btn" },
-    "+ ADD LIST"
-  );
-
   //////// ELEMENT ASSEMBLY ////////
-  addListButtonWrapper.appendChild(addListButton);
   systemListWrapper.appendChild(systemListTitle);
   myListWrapper.appendChild(myListTitle);
   searchLabel.appendChild(searchInput);
@@ -53,8 +43,7 @@ export default function createSidebar() {
     createHamburger(),
     searchWrapper,
     systemListWrapper,
-    myListWrapper,
-    addListButtonWrapper
+    myListWrapper
   );
 
   return sidebar;

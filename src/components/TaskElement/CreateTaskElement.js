@@ -45,7 +45,6 @@ export default function createTaskElement(task) {
   });
   taskNotes.textContent = task.notes;
   if (task.notes.length > 0) {
-    console.log(task.notes.length);
     requestAnimationFrame(() => {
       taskNotes.style.height = "auto";
       taskNotes.style.height = taskNotes.scrollHeight + "px";

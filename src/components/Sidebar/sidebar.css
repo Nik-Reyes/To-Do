@@ -70,8 +70,7 @@ label::before {
 }
 
 .addList-btn-wrapper {
-  align-self: self-end;
-  padding: 1.5rem;
+  align-self: center;
 }
 
 .addList-btn {
@@ -112,7 +111,7 @@ label::before {
   width: 100%;
   background: rgb(254, 215, 91);
   transform-origin: left;
-  transform: scaleX(0.01);
+  transform: scaleX(0);
   transition: transform 150ms ease-in-out, z-index 0ms;
 }
 
