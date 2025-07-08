@@ -5,6 +5,8 @@
 // no task is reponsible for updating its own states, even though it handles UI changes
 
 import generateElement from "../../utils/GenerateElement.js";
+import createPriorityMenu from "../PriorityMenu/CreatePriorityMenu.js";
+import "./task.css";
 
 export default function createTaskElement(task) {
   //////// ELEMENT CREATION ////////
@@ -36,15 +38,12 @@ export default function createTaskElement(task) {
   const expandableContent = generateElement("div", {
     class: "expandable-content",
   });
-  if (task.notes.length >= 1) {
-    console.log();
-  }
+
   const taskNotes = generateElement("textarea", {
     class: "task-notes",
     placeholder: "Notes",
   });
   taskNotes.textContent = task.notes;
-  // Alternative approach using requestAnimationFrame
   if (task.notes.length > 0) {
     console.log(task.notes.length);
     requestAnimationFrame(() => {
@@ -68,53 +67,15 @@ export default function createTaskElement(task) {
   const taskDateWrapper = generateElement("div", {
     class: "cyberpunk-clip-wrapper-br date-wrapper",
   });
+
   const taskPriority = generateElement(
     "button",
     {
       class: "inner-cyberpunk-clip-wrapper-br task-priority",
-      popovertarget: task.id,
-      style: `anchor-name: --${task.id}`,
     },
     "Priority"
   );
-  // const priorityMenuWrapper = generateElement("div", {
-  //   id: task.id,
-  //   class: "cyberpunk-clip-wrapper-br priority-menu-wrapper",
-  //   popover: "auto",
-  //   style: `position-anchor: --${task.id}`,
-  // });
-  // const priorityMenu = generateElement("menu", {
-  //   class: "priority-menu",
-  // });
-  // const priorityMenuOptionHigh = generateElement(
-  //   "button",
-  //   {
-  //     class: "priority-menu-option high-priority",
-  //   },
-  //   "High Priority"
-  // );
-  // const priorityMenuOptionMedium = generateElement(
-  //   "button",
-  //   {
-  //     class: "priority-menu-option medium-priority",
-  //   },
-  //   "Medium Priority"
-  // );
-  // const priorityMenuOptionLow = generateElement(
-  //   "button",
-  //   {
-  //     class: "priority-menu-option low-priority",
-  //   },
-  //   "Low Priority"
-  // );
-  // const priorityMenuOptionNone = generateElement(
-  //   "button",
-  //   {
-  //     class: "inner-cyberpunk-clip-wrapper-br priority-menu-option no-priority",
-  //   },
-  //   "No Priority"
-  // );
-  // const menuSpacer = generateElement("span", { class: "menu-spacer" });
+
   const taskPriorityColorPanel = generateElement("div", {
     class: `${task.priority} priority-panel`,
   });
@@ -123,22 +84,9 @@ export default function createTaskElement(task) {
   });
   const moreOptions = generateElement("div", { class: "more-options" });
 
-  //////// ELEMENT EVENT LISTENER APPLICATION ////////
+  const menu = createPriorityMenu();
 
-  // taskPriorityWrapper.addEventListener("keydown", (e) => {
-  //   if (e.key === "Enter") {
-  //     priorityMenuWrapper.togglePopover();
-  //   }
-  // });
-  //////// TASK ELEMENT ASSEMBLY ////////
-  // priorityMenu.append(
-  //   priorityMenuOptionHigh,
-  //   priorityMenuOptionMedium,
-  //   priorityMenuOptionLow,
-  //   menuSpacer,
-  //   priorityMenuOptionNone
-  // );
-  // priorityMenuWrapper.appendChild(priorityMenu);
+  //////// ELEMENT EVENT LISTENER APPLICATION ////////
   taskPriorityWrapper.append(taskPriority);
   taskPriorityColorPanel.appendChild(taskPriorityInnerDiv);
   taskDateWrapper.appendChild(taskDate);
@@ -147,11 +95,7 @@ export default function createTaskElement(task) {
   expandableContentWrapper.append(expandableContent);
   taskContent.append(taskCheckBox, taskInput, expandableContentWrapper);
   taskContentBorder.appendChild(taskContent);
-  taskWrapper.append(
-    taskPriorityColorPanel,
-    taskContentBorder
-    // priorityMenuWrapper
-  );
+  taskWrapper.append(taskPriorityColorPanel, taskContentBorder, menu);
 
   return taskWrapper;
 }

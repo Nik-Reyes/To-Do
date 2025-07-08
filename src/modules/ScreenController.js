@@ -5,7 +5,6 @@ import RenderUI from "./RenderUI.js";
 export default class ScreenController {
   #header = null;
   #sidebar = null;
-
   #addListBtn = null;
   #currentList = null;
   #listCollection = [];
@@ -27,6 +26,7 @@ export default class ScreenController {
   get sidebar() {
     return this.#sidebar;
   }
+
   get headerHamburger() {
     return this.#headerHamburger;
   }
@@ -99,6 +99,7 @@ export default class ScreenController {
   set sidebar(aside) {
     this.#sidebar = aside;
   }
+
   set headerHamburger(hamburger) {
     this.#headerHamburger = hamburger;
   }
@@ -245,6 +246,9 @@ export default class ScreenController {
     const focusedDateWrapper = this.taskCollection.querySelector(
       ".date-wrapper.focused"
     );
+    const opendMenu = this.taskCollection.querySelector(".open-menu");
+    console.log(e.target);
+
     // handle new list removal
     if (
       newList &&
@@ -267,33 +271,38 @@ export default class ScreenController {
     if (focusedDateWrapper && !e.target.closest(".date-wrapper")) {
       focusedDateWrapper.classList.remove("focused");
     }
+
+    if (opendMenu && !e.target.closest(".task-priority")) {
+      console.log("hell");
+      opendMenu.classList.remove("open-menu");
+    }
   }
 
   handleTaskInputClick(e, taskWrapper, taskContent, taskIndex) {
     this.setActiveTask(e, taskWrapper, taskContent, taskIndex);
   }
 
-  // handlePriorityOptionClick(e, taskWrapper, taskIndex) {
-  //   const priorityMenuWrapper = taskWrapper.querySelector(
-  //     ".priority-menu-wrapper"
-  //   );
-  //   const menuId = priorityMenuWrapper.getAttribute("id");
-  //   const taskPriorityBtn = taskWrapper.querySelector("button.task-priority");
-  //   const taskPriorityColorPanel = taskWrapper.querySelector(".priority-panel");
-  //   priorityMenuWrapper.hidePopover();
-  //   taskPriorityBtn.blur();
+  handlePriorityOptionClick(e, taskWrapper, taskIndex) {
+    const taskPriorityBtn = taskWrapper.querySelector("button.task-priority");
+    const taskPriorityColorPanel = taskWrapper.querySelector(".priority-panel");
+    taskPriorityBtn.blur();
 
-  //   // Change the color of the priority panel
-  //   const newPriority = Array.from(e.target.classList).find((className) => {
-  //     return className.includes("-priority");
-  //   });
-  //   taskPriorityColorPanel.classList.forEach((className) => {
-  //     if (className.includes("-priority")) {
-  //       taskPriorityColorPanel.classList.replace(className, newPriority);
-  //     }
-  //   });
-  //   this.updateTaskObject(taskIndex, "priority", newPriority);
-  // }
+    // Change the color of the priority panel
+    const newPriority = Array.from(e.target.classList).find((className) => {
+      return className.includes("-priority");
+    });
+    taskPriorityColorPanel.classList.forEach((className) => {
+      if (className.includes("-priority")) {
+        taskPriorityColorPanel.classList.replace(className, newPriority);
+      }
+    });
+    this.updateTaskObject(taskIndex, "priority", newPriority);
+  }
+
+  handlePriorityBtnClick(e, taskWrapper) {
+    const menu = taskWrapper.querySelector(".priority-menu-wrapper");
+    menu.classList.toggle("open-menu");
+  }
 
   handleTaskClicks(e) {
     const taskWrapper = e.target.closest(".task-wrapper");
@@ -302,10 +311,12 @@ export default class ScreenController {
 
     if (e.target.classList.contains("task-input")) {
       this.handleTaskInputClick(e, taskWrapper, taskContent, taskIndex);
-    } else if (e.target.closest(".priority-menu-option")) {
-      this.handlePriorityOptionClick(e, taskWrapper, taskIndex);
     } else if (e.target.closest(".task-date")) {
       e.target.closest(".date-wrapper").classList.add("focused");
+    } else if (e.target.classList.contains("task-priority")) {
+      this.handlePriorityBtnClick(e, taskWrapper);
+    } else if (e.target.closest(".priority-menu-option")) {
+      this.handlePriorityOptionClick(e, taskWrapper, taskIndex);
     }
   }
 
@@ -381,23 +392,22 @@ export default class ScreenController {
     if (e.key === "Escape") {
       if (e.target.closest(".task-notes")) {
         e.target.blur();
+      } else if (e.target.closest(".task-priority")) {
+        this.handlePriorityBtnClick(e, e.target.closest(".task-wrapper"));
       }
     }
   }
 
   toggleSidebar(e) {
     if (e.target.offsetParent.tagName === "HEADER") {
-      console.log("hi");
+      console.log("header");
       this.sidebar.classList.add("opened-sidebar");
     }
 
     if (e.target.offsetParent.tagName === "ASIDE") {
-      console.log("hi");
+      console.log("aide");
       this.sidebar.classList.remove("opened-sidebar");
     }
-    // this.sidebar.classList.contains("opened-sidebar")
-    //   ? this.sidebar.classList.add("opened-sidebar")
-    //   : this.sidebar.classList.remove("opened-sidebar");
   }
 
   applyEventListeners() {
@@ -417,7 +427,10 @@ export default class ScreenController {
       "input",
       this.handleTaskInput.bind(this)
     );
-    this.taskCollection.addEventListener("keydown", this.handleTaskKeydown);
+    this.taskCollection.addEventListener(
+      "keydown",
+      this.handleTaskKeydown.bind(this)
+    );
     this.taskCollection.addEventListener("change", this.handleTaskChanges);
     this.headerHamburger.addEventListener(
       "click",
