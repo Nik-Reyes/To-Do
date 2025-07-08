@@ -25,6 +25,22 @@
     0% 100%
   );
 
+  --cyberpunk-clip-br-md: polygon(
+    0% 0%,
+    100% 0%,
+    100% calc(100% - 9px),
+    calc(100% - 7px) 100%,
+    0% 100%
+  );
+
+  --cyberpunk-clip-br-sm: polygon(
+    0% 0%,
+    100% 0%,
+    100% calc(100% - 7px),
+    calc(100% - 5px) 100%,
+    0% 100%
+  );
+
   /* transition speeds */
   --list-btn-transition-speed: 100ms;
 }

@@ -69,52 +69,6 @@ label::before {
   position: absolute;
 }
 
-.addList-btn-wrapper {
-  align-self: center;
-}
-
-.addList-btn {
-  padding: 0.5em 0.75em;
-  padding-left: 0.75em;
-  position: relative;
-  border-radius: 0px;
-  border: none;
-  clip-path: var(--cyberpunk-clip-br);
-  isolation: isolate;
-  background-color: transparent;
-  color: rgb(254, 215, 91);
-  font-weight: 600;
-  transition: color 150ms ease-in-out;
-  text-shadow: 0px 0px 2.5px rgb(254, 115, 91);
-}
-
-.addList-btn:not(.addList-btn[disabled=""]):hover::after {
-  transform: scaleX(1);
-  z-index: -1;
-}
-
-.addList-btn:not(.addList-btn[disabled=""]):hover {
-  color: var(--main-bg);
-  text-shadow: none;
-}
-
-.addList-btn[disabled=""] {
-  cursor: auto;
-}
-
-.addList-btn::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: 100%;
-  background: rgb(254, 215, 91);
-  transform-origin: left;
-  transform: scaleX(0);
-  transition: transform 150ms ease-in-out, z-index 0ms;
-}
-
 .opened-sidebar {
   transform: translateX(0%);
 }

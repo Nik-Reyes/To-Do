@@ -1,4 +1,5 @@
-import generateElement from "../../utils/GenerateElement";
+import generateElement from "../../utils/GenerateElement.js";
+import createAddButton from "../AddingButton/CreateAddButton.js";
 import "./listTitle.css";
 
 export default function createListTitle(title) {
@@ -10,16 +11,8 @@ export default function createListTitle(title) {
 
   listTitleWrapper.appendChild(listTitle);
   if (title === "MY LISTS") {
-    const addListButtonWrapper = generateElement("div", {
-      class: "addList-btn-wrapper",
-    });
-    const addListButton = generateElement(
-      "button",
-      { class: "addList-btn" },
-      "+ ADD LIST"
-    );
-    addListButtonWrapper.appendChild(addListButton);
-    listTitleWrapper.append(addListButtonWrapper);
+    const addButton = createAddButton({ class: "addList" });
+    listTitleWrapper.append(addButton);
   }
 
   return listTitleWrapper;

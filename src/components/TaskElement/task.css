@@ -214,6 +214,13 @@ input[type="date"] {
   position: relative;
 }
 
+.inner-cyberpunk-clip-wrapper-br.task-priority,
+.cyberpunk-clip-wrapper-br.priority-btn-wrapper,
+.inner-cyberpunk-clip-wrapper-br.task-date,
+.cyberpunk-clip-wrapper-br.date-wrapper {
+  clip-path: var(--cyberpunk-clip-br-md);
+}
+
 @media (min-width: 41.875rem) {
   .task-collection {
     grid-column: 2;

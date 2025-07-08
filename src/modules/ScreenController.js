@@ -137,9 +137,6 @@ export default class ScreenController {
   set previousTaskElement(el) {
     this.#previousTaskElement = el;
   }
-  listElementToListObject(element) {
-    return this.lists.at(element.dataset.id);
-  }
 
   initializeDOMEelements() {
     this.taskCollection = document.querySelector(".task-collection");
@@ -149,6 +146,10 @@ export default class ScreenController {
     this.mylistWrapper = document.querySelector(".mylist-wrapper");
     this.headerHamburger = document.querySelector("header .hamburger");
     this.sidebarHamburger = document.querySelector("aside .hamburger");
+  }
+
+  listElementToListObject(element) {
+    return this.lists.at(element.dataset.id);
   }
 
   addListData(newListObj) {

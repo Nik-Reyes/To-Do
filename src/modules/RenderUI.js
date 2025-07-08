@@ -3,8 +3,8 @@ import createListElement from "../components/ListElement/CreateListElement.js";
 import createHeader from "../components/Header/CreateHeader.js";
 import createSidebar from "../components/Sidebar/Sidebar.js";
 import generateElement from "../utils/GenerateElement.js";
-import "../components/TaskElement/task.css";
 import CreateDefaultLists from "./DefaultLists.js";
+import "../components/TaskElement/task.css";
 
 // Purpose of this class is only to render any UI changes requested by ScreenController
 
@@ -76,7 +76,7 @@ export default class RenderUI {
   }
 
   ////////////// ACTION METHODS ///////////////
-  #sizeListSvgs() {
+  #resizeListSvgs() {
     const listButton = document.querySelector(".list-btn");
     const listSvgStrokes = document.querySelectorAll(
       ".list-btn-wrapper polygon"
@@ -143,12 +143,12 @@ export default class RenderUI {
     this.sidebar.querySelector(".mylist-wrapper").appendChild(newList);
     newList.querySelector(".newList-input").focus();
 
-    setTimeout(this.#sizeListSvgs(), 1);
+    setTimeout(this.#resizeListSvgs(), 1);
   }
 
   renderList(editableList, newListObj) {
     editableList.replaceWith(createListElement(newListObj));
-    setTimeout(() => this.#sizeListSvgs(), 1);
+    setTimeout(() => this.#resizeListSvgs(), 1);
   }
 
   render(callback) {
@@ -162,8 +162,8 @@ export default class RenderUI {
       this.#renderLists();
 
       // Update on load and resize
-      setTimeout(this.#sizeListSvgs, 1);
-      window.addEventListener("resize", this.#sizeListSvgs);
+      setTimeout(this.#resizeListSvgs, 1);
+      window.addEventListener("resize", this.#resizeListSvgs);
       if (callback) callback();
     } else {
       console.log("load stored lists");
