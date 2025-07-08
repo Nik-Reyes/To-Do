@@ -76,20 +76,28 @@ export default class RenderUI {
   }
 
   ////////////// ACTION METHODS ///////////////
-  #upDateSvg() {
-    const button = document.querySelector(".list-btn");
-    const svgStrokes = document.querySelectorAll("polygon");
+  #sizeListSvgs() {
+    const listButton = document.querySelector(".list-btn");
+    const listSvgStrokes = document.querySelectorAll(
+      ".list-btn-wrapper polygon"
+    );
+    const listSvgWrapper = document.querySelector(".list-btn-wrapper svg");
 
-    const buttonHeight = button.offsetHeight;
-    const buttonWidth = button.offsetWidth;
+    const listButtonHeight = listButton.offsetHeight;
+    const listButtonWidth = listButton.offsetWidth;
 
-    const bottomPoint = ((buttonHeight - 11) / buttonHeight) * 100;
-    const cornerPoint = ((buttonWidth - 8.5) / buttonWidth) * 100;
+    listSvgWrapper.setAttribute(
+      "viewBox",
+      `0 0 ${listButtonWidth} ${listButtonHeight}`
+    );
 
-    svgStrokes.forEach((stroke) => {
+    const listBottomPoint = listButtonHeight - 11;
+    const listCornerPoint = listButtonWidth - 9;
+
+    listSvgStrokes.forEach((stroke) => {
       stroke.setAttribute(
         "points",
-        `0 0 100 0 100 ${bottomPoint} ${cornerPoint} 100 0 100`
+        `0,0 ${listButtonWidth},0 ${listButtonWidth},${listBottomPoint} ${listCornerPoint},${listButtonHeight} 0,${listButtonHeight}`
       );
     });
   }
@@ -135,12 +143,12 @@ export default class RenderUI {
     this.sidebar.querySelector(".mylist-wrapper").appendChild(newList);
     newList.querySelector(".newList-input").focus();
 
-    setTimeout(this.#upDateSvg(), 1);
+    setTimeout(this.#sizeListSvgs(), 1);
   }
 
   renderList(editableList, newListObj) {
     editableList.replaceWith(createListElement(newListObj));
-    setTimeout(() => this.#upDateSvg(), 1);
+    setTimeout(() => this.#sizeListSvgs(), 1);
   }
 
   render(callback) {
@@ -154,8 +162,8 @@ export default class RenderUI {
       this.#renderLists();
 
       // Update on load and resize
-      setTimeout(() => this.#upDateSvg(), 1);
-      window.addEventListener("resize", this.#upDateSvg());
+      setTimeout(this.#sizeListSvgs, 1);
+      window.addEventListener("resize", this.#sizeListSvgs);
       if (callback) callback();
     } else {
       console.log("load stored lists");

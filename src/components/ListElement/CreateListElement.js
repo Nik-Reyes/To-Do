@@ -10,7 +10,6 @@ export default function createListElement(list) {
 
   const svgWrapper = generateElement("svg", {
     class: "svg-wrapper stacked",
-    viewBox: "0 0 100 100",
     overflow: "visible",
     preserveAspectRatio: "none",
   });
