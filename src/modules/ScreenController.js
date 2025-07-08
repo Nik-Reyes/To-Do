@@ -247,7 +247,6 @@ export default class ScreenController {
       ".date-wrapper.focused"
     );
     const opendMenu = this.taskCollection.querySelector(".open-menu");
-    console.log(e.target);
 
     // handle new list removal
     if (
@@ -273,7 +272,6 @@ export default class ScreenController {
     }
 
     if (opendMenu && !e.target.closest(".task-priority")) {
-      console.log("hell");
       opendMenu.classList.remove("open-menu");
     }
   }
@@ -393,19 +391,21 @@ export default class ScreenController {
       if (e.target.closest(".task-notes")) {
         e.target.blur();
       } else if (e.target.closest(".task-priority")) {
-        this.handlePriorityBtnClick(e, e.target.closest(".task-wrapper"));
+        console.log(e.target);
+        const taskWrapper = e.target.closest(".task-wrapper");
+        const menu = taskWrapper.querySelector(".priority-menu-wrapper");
+        if (menu.classList.contains("open-menu")) {
+          menu.classList.remove("open-menu");
+        }
       }
     }
   }
 
   toggleSidebar(e) {
     if (e.target.offsetParent.tagName === "HEADER") {
-      console.log("header");
       this.sidebar.classList.add("opened-sidebar");
     }
-
     if (e.target.offsetParent.tagName === "ASIDE") {
-      console.log("aide");
       this.sidebar.classList.remove("opened-sidebar");
     }
   }
