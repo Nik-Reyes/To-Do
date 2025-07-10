@@ -15,7 +15,6 @@ export default function createListElement(list) {
   });
 
   const svgStroke = generateElement("polygon", {
-    stroke: "rgb(120, 214, 204)",
     fill: "none",
     "vector-effect": "non-scaling-stroke",
   });
@@ -29,14 +28,6 @@ export default function createListElement(list) {
     taskCount = generateElement("span", {}, list.numberOfTasks.toString());
     listElement = generateElement("button", {
       class: "list-btn stacked",
-    });
-
-    buttonWrapper.addEventListener("mouseover", () => {
-      svgStroke.setAttribute("stroke", "hsl(48, 82%, 52%)");
-    });
-
-    buttonWrapper.addEventListener("mouseout", () => {
-      svgStroke.setAttribute("stroke", "rgb(120, 214, 204)");
     });
 
     buttonWrapper.setAttribute("data-id", `${count++}`);
