@@ -197,7 +197,7 @@ input[type="date"] {
 .date-wrapper:hover .task-date,
 .date-wrapper.focused .task-date,
 .priority-btn-wrapper:hover .task-priority,
-.priority-btn-wrapper:focus .task-priority {
+.priority-btn-wrapper.focused .task-priority {
   background-color: hsl(0, 65%, 20%);
   outline: none;
   border: none;
