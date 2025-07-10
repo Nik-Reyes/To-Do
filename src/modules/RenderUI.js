@@ -3,37 +3,17 @@ import createListElement from "../components/ListElement/CreateListElement.js";
 import createHeader from "../components/Header/CreateHeader.js";
 import createSidebar from "../components/Sidebar/Sidebar.js";
 import generateElement from "../utils/GenerateElement.js";
-import CreateDefaultLists from "./DefaultLists.js";
 import "../components/TaskElement/task.css";
 
-// Purpose of this class is only to render any UI changes requested by ScreenController
-
 export default class RenderUI {
-  #manager;
-  #pageWrapper;
-  #sidebar;
+  #taskElements = [];
+  #listElements = [];
   #header;
   #taskCollection;
-  #taskElements;
-  #listElements;
-
-  constructor(injectedManager) {
-    this.#manager = injectedManager;
-    this.#pageWrapper = document.querySelector(".page-wrapper");
-    this.#sidebar = createSidebar();
-    this.#header = null;
-    this.#taskCollection = generateElement("div", {
-      class: "task-collection",
-    });
-    this.#taskElements = [];
-    this.#listElements = [];
-  }
+  #pageWrapper;
+  #sidebar;
 
   ////////////// GETTER METHODS ///////////////
-  get manager() {
-    return this.#manager;
-  }
-
   get pageWrapper() {
     return this.#pageWrapper;
   }
@@ -46,12 +26,12 @@ export default class RenderUI {
     return this.#header;
   }
 
-  get taskCollection() {
-    return this.#taskCollection;
+  get headerTitle() {
+    return this.#header.firstChild.innerText;
   }
 
-  get tasks() {
-    return this.#taskElements;
+  get taskCollection() {
+    return this.#taskCollection;
   }
 
   get lists() {
@@ -66,23 +46,32 @@ export default class RenderUI {
     this.#header = header;
   }
 
-  set tasks(taskList) {
-    this.#taskElements.length = 0;
-    this.#taskElements.push(...taskList.map((task) => createTaskElement(task)));
+  set taskCollection(el) {
+    this.#taskCollection = el;
   }
 
-  set header(headerElement) {
-    this.#header = headerElement;
+  set pageWrapper(el) {
+    this.#pageWrapper = el;
   }
 
-  ////////////// ACTION METHODS ///////////////
-  #resizeListSvgs() {
+  set sidebar(el) {
+    this.#sidebar = el;
+  }
+
+  set header(el) {
+    this.#header = el;
+  }
+
+  set headerTitle(listTitle) {
+    this.#header.firstChild.innerText = listTitle.toUpperCase();
+  }
+
+  static resizeListSvgs() {
     const listButton = document.querySelector(".list-btn");
     const listSvgStrokes = document.querySelectorAll(
       ".list-btn-wrapper polygon"
     );
     const listSvgWrapper = document.querySelector(".list-btn-wrapper svg");
-
     const listButtonHeight = listButton.offsetHeight;
     const listButtonWidth = listButton.offsetWidth;
 
@@ -102,71 +91,100 @@ export default class RenderUI {
     });
   }
 
-  createTaskElements() {
-    this.tasks = this.manager.currentListTasks;
-  }
-
-  #createListElements() {
-    this.lists = this.manager.lists.map((list) => createListElement(list));
-  }
-
-  #createHeaderElement() {
-    this.header = createHeader(this.manager.currentListTitle);
-  }
-
-  #renderLists() {
-    this.lists.forEach((list, i) => {
-      i >= this.manager.firstMyList
-        ? this.sidebar.querySelector(".mylist-wrapper").appendChild(list)
-        : this.sidebar.querySelector(".system-list-wrapper").appendChild(list);
-    });
-  }
-
-  renderTasks() {
+  ////////////// ACTION METHODS ///////////////
+  clearTaskCollection() {
     this.taskCollection.innerText = "";
-    this.createTaskElements();
-    this.taskCollection.append(...this.tasks);
   }
 
-  set headerTitle(listTitle) {
-    this.header.querySelector(".header-title").innerText =
-      listTitle.toUpperCase();
+  createHeaderElement(title) {
+    if (!title) throw Error("Title DNE!");
+    this.header = createHeader(title);
   }
 
-  #assembleComponents() {
-    this.pageWrapper.append(this.header, this.sidebar, this.taskCollection);
+  createSidebarElement() {
+    this.sidebar = createSidebar();
   }
 
-  // appends list element to sidebar
+  //takes in array of objects, returns array of task elements
+  createTaskElements(objects) {
+    return [...objects].map((task) => createTaskElement(task));
+  }
+
+  //takes in list objects, returns array of list elements
+  createListElements(sysObjects, myObjects) {
+    const sysEls = [...sysObjects].map((list) => createListElement(list));
+    const myEls = [...myObjects].map((list) => createListElement(list));
+
+    return [sysEls, myEls];
+  }
+
+  //appends array of task elements to task collection section
+  renderTasks(taskObjects) {
+    if (!taskObjects) throw Error("Tasks DNE!");
+    this.clearTaskCollection();
+    this.taskCollection.append(...this.createTaskElements(taskObjects));
+  }
+
+  //appends array of list elements to systemList and myList
+  renderLists(sysObjects, myObjects) {
+    if (!sysObjects) throw Error("System List Objects DNE!");
+    if (!myObjects) throw Error("My List Objects DNE!");
+
+    const [permaLists, userLists] = this.createListElements(
+      sysObjects,
+      myObjects
+    );
+    if (!permaLists) throw Error("Perma Lists Elements DNE!");
+    if (!userLists) throw Error("User Lists Elements DNE!");
+
+    this.sidebar.querySelector(".system-list-wrapper").append(...permaLists);
+    this.sidebar.querySelector(".mylist-wrapper").append(...userLists);
+  }
+
+  //responsible for creating all the necessary compoenents needed for initial render
+  assembleComponents(title, systemLists, myLists, currentTasks, pageWrapper) {
+    this.createHeaderElement(title);
+    this.createSidebarElement();
+    this.renderTasks(currentTasks);
+    this.renderLists(systemLists, myLists);
+    pageWrapper.append(this.header, this.sidebar, this.taskCollection);
+  }
+
+  //places a list button on the sidebar whose title/name can be edited
   renderEditableList() {
     const newList = createListElement();
     this.sidebar.querySelector(".mylist-wrapper").appendChild(newList);
     newList.querySelector(".newList-input").focus();
 
-    setTimeout(this.#resizeListSvgs(), 1);
+    setTimeout(RenderUI.resizeListSvgs(), 1);
   }
 
+  //replaces the editable list button with a non-editable list of the same title/name
   renderList(editableList, newListObj) {
     editableList.replaceWith(createListElement(newListObj));
-    setTimeout(() => this.#resizeListSvgs(), 1);
+    setTimeout(() => RenderUI.resizeListSvgs(), 1);
   }
 
-  render(callback) {
-    if (this.manager.hasListCollection === false) {
-      this.manager.listCollection = CreateDefaultLists();
-      this.manager.currentList = this.manager.firstMyList;
-      this.renderTasks();
-      this.#createListElements();
-      this.#createHeaderElement();
-      this.#assembleComponents();
-      this.#renderLists();
+  //responsible for updating the task elements and header title for the current list based on Data.currentTasks and Data.currentListTitle
+  updateDisplay(newTitle, newTasks) {
+    this.headerTitle = newTitle;
+    console.log(this.headerTitle);
+    this.renderTasks(newTasks);
+  }
 
-      // Update on load and resize
-      setTimeout(this.#resizeListSvgs, 1);
-      window.addEventListener("resize", this.#resizeListSvgs);
-      if (callback) callback();
-    } else {
-      console.log("load stored lists");
-    }
+  init(title, systemLists, myLists, currentTasks, pageWrapper) {
+    this.taskCollection = generateElement("section", {
+      class: "task-collection",
+    });
+    this.assembleComponents(
+      title,
+      systemLists,
+      myLists,
+      currentTasks,
+      pageWrapper
+    );
+
+    setTimeout(RenderUI.resizeListSvgs, 1);
+    window.addEventListener("resize", RenderUI.resizeListSvgs);
   }
 }
