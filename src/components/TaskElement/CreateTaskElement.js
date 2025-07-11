@@ -38,12 +38,11 @@ export default function createTaskElement(task) {
     placeholder: "Notes",
   });
   taskNotes.textContent = task.notes;
-  if (task.notes.length > 0) {
-    requestAnimationFrame(() => {
-      taskNotes.style.height = "auto";
-      taskNotes.style.height = taskNotes.scrollHeight + "px";
-    });
-  }
+
+  requestAnimationFrame(() => {
+    taskNotes.style.height = "auto";
+    taskNotes.style.height = taskNotes.scrollHeight + "px";
+  });
 
   const taskDate = generateElement("input", {
     class: "inner-cyberpunk-clip-wrapper-br task-date",
@@ -76,8 +75,9 @@ export default function createTaskElement(task) {
     class: "inner-div",
   });
   const moreOptions = generateElement("div", { class: "more-options" });
-
   const menu = createPriorityMenu();
+  const svgWrapper = generateElement("div", { class: "delete-svg-wrapper" });
+  const row = generateElement("div", { class: "row" });
 
   //////// ELEMENT EVENT LISTENER APPLICATION ////////
   taskPriorityWrapper.append(taskPriority);
@@ -86,7 +86,8 @@ export default function createTaskElement(task) {
   moreOptions.append(taskDateWrapper, taskPriorityWrapper);
   expandableContent.append(taskNotes, moreOptions);
   expandableContentWrapper.append(expandableContent);
-  taskContent.append(taskCheckBox, taskInput, expandableContentWrapper);
+  row.append(taskInput, svgWrapper);
+  taskContent.append(taskCheckBox, row, expandableContentWrapper);
   taskContentBorder.appendChild(taskContent);
   taskWrapper.append(taskPriorityColorPanel, taskContentBorder, menu);
 
