@@ -1,8 +1,5 @@
 import Data from "./Data.js";
-import List from "./List.js";
 import RenderUI from "./RenderUI.js";
-// import List from "./List.js";
-// import Task from "./Task.js";
 
 export default class App {
   #elements = { pageWrapper: document.querySelector(".page-wrapper") };
@@ -33,57 +30,60 @@ export default class App {
     }
   }
 
-  // //accesses and sets currentListTasks, moved to Data.js
-  // updateTaskObject(taskIndex, property, value) {
-  //   if (taskIndex !== -1 && this.currentListTasks[taskIndex]) {
-  //     this.currentListTasks[taskIndex][property] = value;
-  //   }
-  // }
+  toggleButton(button) {
+    button.disabled
+      ? button.removeAttribute("disabled")
+      : button.setAttribute("disabled", "");
+  }
 
-  // toggleButton() {
-  //   this.addListBtn.disabled
-  //     ? this.addListBtn.removeAttribute("disabled")
-  //     : this.addListBtn.setAttribute("disabled", "");
-  // }
+  addEditableListElement() {
+    this.renderer.renderEditableList();
+    this.toggleButton(this.elements.addListBtn);
+  }
 
-  // addEditableListElement() {
-  //   this.renderer.renderEditableList();
-  //   this.toggleButton();
-  // }
+  replaceEditableList(editableList, target) {
+    const newList = this.data.createNewList(target.value);
+    this.data.addList(newList);
+    this.data.switchLists(newList.id);
+    this.renderer.replaceList(editableList, newList);
+    this.renderer.updateDisplay(
+      this.data.currentListTitle,
+      this.data.currentTasks
+    );
+  }
 
-  // //uses addListData, creates List
-  // replaceEditableListElement(e) {
-  //   if (e.target.value === "" && e.key === "Escape") {
-  //     e.target.closest(".list-btn-wrapper").remove();
-  //     this.toggleButton();
-  //   } else if (e.key === "Enter" || e.key === "Escape") {
-  //     if (e.target.value === "") return;
-  //     const newListObj = new List(e.target.value);
-  //     this.renderer.renderList(
-  //       e.target.closest(".list-btn-wrapper"),
-  //       newListObj
-  //     );
-  //     this.addListData(newListObj);
-  //     this.toggleButton();
-  //     this.switchLists(newListObj);
-  //   }
-  // }
+  handleNewList(e) {
+    const target = e.target;
+    const key = e.key;
+    const newList = target.closest(".new-list");
+    if (!newList) return;
+    const newlistWrapper = newList.closest(".list-btn-wrapper");
+
+    if (target.value === "" && key === "Escape") {
+      this.renderer.removeEditableList(newlistWrapper);
+      this.toggleButton(this.elements.addListBtn);
+    } else if (key === "Enter" || key === "Escape") {
+      if (target.value === "") return;
+      this.replaceEditableList(newlistWrapper, target);
+      this.toggleButton(this.elements.addListBtn);
+    }
+  }
 
   getListElementIdx(listBtnWrapper) {
     return parseInt(listBtnWrapper.dataset.id);
   }
 
-  //accesses currentList; uses elementToObj, switchLists
   handleListClicks(e) {
+    const target = e.target;
     // return if the clicked element is not a list
-    const listButton = e.target.closest(".list-btn");
+    const listButton = target.closest(".list-btn");
     if (!listButton) return;
 
     // return if the clicked element is a new list
     const classList = listButton.classList;
     if (classList.contains("new-list")) return;
 
-    const listBtnWrapper = e.target.closest(".list-btn-wrapper");
+    const listBtnWrapper = target.closest(".list-btn-wrapper");
     const listIdx = this.getListElementIdx(listBtnWrapper);
 
     // return if the user clicks the list they are already on
@@ -96,16 +96,13 @@ export default class App {
     );
   }
 
-  // removeEditableList(newList) {
-  //   newList.closest(".list-btn-wrapper").remove();
-  // }
-
   collapseActiveTaskElement(e) {
     if (e.composedPath().includes(this.activeTaskElement)) return;
     this.removeActiveTask();
   }
 
   handleDocumentClicks(e) {
+    const target = e.target;
     const newList = this.elements.mylistWrapper.querySelector(".newList-input");
     const opendMenu = this.elements.taskCollection.querySelector(".open-menu");
     const focusedDateWrapper = this.elements.taskCollection.querySelector(
@@ -123,34 +120,34 @@ export default class App {
     // removes the new editable list if the user clicks away from it
     if (
       newList &&
-      !e.target.closest(".new-list") &&
-      !e.target.closest(".addList-btn")
+      !target.closest(".new-list") &&
+      !target.closest(".addList-btn")
     ) {
-      this.removeEditableList(newList);
-      this.toggleButton();
+      const list = newList.closest(".list-btn-wrapper");
+      this.renderer.removeEditableList(list);
+      this.toggleButton(this.elements.addListBtn);
     }
 
     //forces unfocusing on the date wrapper when the user clicks away from it
-    if (focusedDateWrapper && !e.target.closest(".date-wrapper")) {
+    if (focusedDateWrapper && !target.closest(".date-wrapper")) {
       focusedDateWrapper.classList.remove("focused");
     }
 
-    if (focusedPriorityWrapper && !e.target.closest(".priority-btn-wrapper")) {
+    if (focusedPriorityWrapper && !target.closest(".priority-btn-wrapper")) {
       focusedPriorityWrapper.classList.remove("focused");
     }
 
     if (
       opendMenu &&
-      !e.target.closest(".task-priority") &&
-      !e.target.closest(".open-menu")
+      !target.closest(".task-priority") &&
+      !target.closest(".open-menu")
     ) {
-      console.log("here");
       opendMenu.classList.remove("open-menu");
     }
   }
 
-  getNewPriorityRating(clickedElement) {
-    return Array.from(clickedElement.classList).find((className) => {
+  getNewPriorityRating(target) {
+    return Array.from(target.classList).find((className) => {
       return className.includes("-priority");
     });
   }
@@ -168,13 +165,13 @@ export default class App {
     menu.classList.remove("open-menu");
   }
 
-  handlePriorityOptionClick(clickedElement, taskWrapper, taskIdx) {
+  handlePriorityOptionClick(target, taskWrapper, taskIdx) {
     const taskPriorityBtn = taskWrapper.querySelector("button.task-priority");
     const menu = this.elements.taskCollection.querySelector(".open-menu");
     this.closeMenu(menu);
 
     //retrieve the user-selected priority rating
-    const newPriority = this.getNewPriorityRating(clickedElement);
+    const newPriority = this.getNewPriorityRating(target);
     // Change the color of the priority panel
     this.changePriorityPanelColor(taskWrapper, newPriority);
     // update the task object priority property
@@ -198,12 +195,12 @@ export default class App {
     this.activeTaskElement = null;
   }
 
-  handleTaskInputClick(clickedElement, taskWrapper, taskContent) {
+  handleTaskInputClick(target, taskWrapper, taskContent) {
     if (!taskContent) return;
 
     this.removeActiveTask();
     taskContent.classList.add("active");
-    clickedElement.style.width = "100%";
+    target.style.width = "100%";
     this.activeTaskElement = taskWrapper;
   }
 
@@ -213,105 +210,81 @@ export default class App {
     ).indexOf(taskWrapper);
   }
 
+  deleteTask(taskWrapper, taskIdx) {
+    this.data.deleteTask(taskIdx);
+    this.renderer.deleteTaskElement(taskWrapper);
+
+    const listIdx = this.data.currentListId;
+    const lists = [
+      ...this.elements.sidebar.querySelectorAll(".list-btn-wrapper"),
+    ];
+
+    const listEl = lists.at(this.data.currentListIdx);
+    this.renderer.replaceList(listEl, this.data.currentList);
+  }
+
   handleTaskClicks(e) {
-    const clickedElement = e.target;
-    const classArr = clickedElement.classList;
-    const taskWrapper = clickedElement.closest(".task-wrapper");
-    const taskContent = clickedElement.closest(".task-content");
+    const target = e.target;
+    const classArr = target.classList;
+    const taskWrapper = target.closest(".task-wrapper");
+    const taskContent = target.closest(".task-content");
     const taskIdx = this.getTaskIdxFromElement(taskWrapper);
 
     if (classArr.contains("task-input")) {
-      this.handleTaskInputClick(clickedElement, taskWrapper, taskContent);
+      this.handleTaskInputClick(target, taskWrapper, taskContent);
     } else if (classArr.contains("task-priority")) {
       const menu = taskWrapper.querySelector(".priority-menu-wrapper");
-      clickedElement
-        .closest(".priority-btn-wrapper")
-        .classList.toggle("focused");
+      target.closest(".priority-btn-wrapper").classList.toggle("focused");
       this.togglePriorityMenu(menu);
-    } else if (clickedElement.closest(".task-date")) {
-      clickedElement.closest(".date-wrapper").classList.add("focused");
-    } else if (clickedElement.closest(".priority-menu-option")) {
-      this.handlePriorityOptionClick(clickedElement, taskWrapper, taskIdx);
+    } else if (classArr.contains("delete-svg-wrapper")) {
+      this.deleteTask(taskWrapper, taskIdx);
+    } else if (target.closest(".task-date")) {
+      target.closest(".date-wrapper").classList.add("focused");
+    } else if (target.closest(".priority-menu-option")) {
+      this.handlePriorityOptionClick(target, taskWrapper, taskIdx);
     }
   }
 
-  // handleTaskInput(e) {
-  //   const taskWrapper = e.target.closest(".task-wrapper");
-  //   if (!taskWrapper) return;
-  //   const taskIndex = this.getTaskIdxFromElement(taskWrapper);
+  handleTaskInput(e) {
+    const target = e.target;
+    const taskWrapper = target.closest(".task-wrapper");
+    if (!taskWrapper) return;
+    const taskIdx = this.getTaskIdxFromElement(taskWrapper);
 
-  //   const propMap = {
-  //     "task-input": "title",
-  //     "task-notes": "notes",
-  //     "task-date": "dueDate",
-  //     "task-checkbox": "checked",
-  //   };
+    const propMap = {
+      "task-input": "title",
+      "task-notes": "notes",
+      "task-date": "dueDate",
+      "task-checkbox": "checked",
+    };
 
-  //   const property = Object.keys(propMap).find((className) =>
-  //     e.target.className.includes(className)
-  //   );
+    const property = Object.keys(propMap).find((className) =>
+      target.className.includes(className)
+    );
 
-  //   // uses updateTaskObject
-  //   if (property) {
-  //     if (property === "task-notes") {
-  //       e.target.style.height = "auto"; // shrinks to auto when content shrinks
-  //       e.target.style.height = e.target.scrollHeight + "px"; // grows to fit content
-  //     }
-  //     property === "task-checkbox"
-  //       ? this.updateTaskObject(taskIndex, propMap[property], e.target.checked)
-  //       : this.updateTaskObject(taskIndex, propMap[property], e.target.value);
-  //   }
-  // }
-
-  // handleTaskChanges(e) {
-  //   if (e.target.closest(".task-date")) {
-  //     e.target.closest(".date-wrapper").classList.remove("focused");
-  //   }
-  // }
-
-  // handleTaskKeydown(e) {
-  //   if (e.key === "Enter" || e.key === "Escape") {
-  //     if (e.target.closest(".task-input")) {
-  //       e.target.style.width = e.target.value.length + 2 + "ch";
-  //       e.target.blur();
-  //     }
-  //     if (e.target.closest(".task-date")) {
-  //       e.target.closest(".date-wrapper").classList.remove("focused");
-  //     }
-  //   }
-
-  //   if (e.key === "Enter") {
-  //     if (e.target.closest(".task-checkbox")) {
-  //       e.target.closest(".task-checkbox").click();
-  //     }
-  //   }
-
-  //   if (e.key === "Escape") {
-  //     if (e.target.closest(".task-notes")) {
-  //       e.target.blur();
-  //     } else if (e.target.closest(".task-priority")) {
-  //       const taskWrapper = e.target.closest(".task-wrapper");
-  //       const menu = taskWrapper.querySelector(".priority-menu-wrapper");
-  //       if (menu.classList.contains("open-menu")) {
-  //         menu.classList.remove("open-menu");
-  //       }
-  //     }
-  //   }
-  // }
+    if (property) {
+      if (property === "task-notes") {
+        target.style.height = "auto"; // shrinks to auto when content shrinks
+        target.style.height = target.scrollHeight + "px"; // grows to fit content
+      }
+      property === "task-checkbox"
+        ? this.data.updateTaskObject(taskIdx, propMap[property], target.checked)
+        : this.data.updateTaskObject(taskIdx, propMap[property], target.value);
+    }
+  }
 
   //////////////// PURE UI-RESPONSIVE METHODS ///////////////
   toggleSidebar(e) {
-    if (e.target.offsetParent.tagName === "HEADER") {
-      this.elements.sidebar.classList.add("opened-sidebar");
-    }
-    if (e.target.offsetParent.tagName === "ASIDE") {
-      this.elements.sidebar.classList.remove("opened-sidebar");
-    }
+    const target = e.target;
+    target.offsetParent.tagName === "HEADER"
+      ? this.elements.sidebar.classList.add("opened-sidebar")
+      : this.elements.sidebar.classList.remove("opened-sidebar");
   }
 
   handleDoubleClicks(e) {
-    if (["INPUT", "TEXTAREA", "BUTTON"].includes(e.target.tagName)) return;
-    const taskContent = e.target.closest(".task-content");
+    const target = e.target;
+    if (["INPUT", "TEXTAREA", "BUTTON"].includes(target.tagName)) return;
+    const taskContent = target.closest(".task-content");
     if (!taskContent) return;
     const taskWrapper = taskContent.closest(".task-wrapper");
 
@@ -324,33 +297,80 @@ export default class App {
     }
   }
 
+  handleTaskChanges(e) {
+    const target = e.target;
+    if (target.closest(".task-date")) {
+      target.closest(".date-wrapper").classList.remove("focused");
+    }
+  }
+
+  handleTaskKeydown(e) {
+    const key = e.key;
+    const target = e.target;
+
+    if (key === "Enter" || key === "Escape") {
+      if (target.closest(".task-input")) {
+        target.style.width = target.value.length + 2 + "ch";
+        target.blur();
+      }
+      if (target.closest(".task-date")) {
+        target.closest(".date-wrapper").classList.remove("focused");
+      }
+    }
+
+    if (key === "Enter") {
+      if (target.closest(".task-checkbox")) {
+        target.closest(".task-checkbox").click();
+      }
+    }
+
+    if (key === "Escape") {
+      if (target.closest(".task-notes")) {
+        target.blur();
+      } else if (target.closest(".task-priority")) {
+        const priorityWrapper = target.closest(".priority-btn-wrapper");
+        const taskWrapper = target.closest(".task-wrapper");
+        const menu = taskWrapper.querySelector(
+          ".priority-menu-wrapper.open-menu"
+        );
+        if (menu) {
+          priorityWrapper.classList.remove("focused");
+          menu.classList.remove("open-menu");
+        }
+      }
+    }
+  }
+
   applyEventListeners() {
     this.elements.sidebar.addEventListener(
       "click",
       this.handleListClicks.bind(this)
     );
-    // this.elements.addListBtn.addEventListener(
-    //   "click",
-    //   this.addEditableListElement.bind(this)
-    // );
-    //   this.mylistWrapper.addEventListener(
-    //     "keydown",
-    //     this.replaceEditableListElement.bind(this)
-    //   );
+    this.elements.addListBtn.addEventListener(
+      "click",
+      this.addEditableListElement.bind(this)
+    );
+    this.elements.mylistWrapper.addEventListener(
+      "keydown",
+      this.handleNewList.bind(this)
+    );
     document.addEventListener("click", this.handleDocumentClicks.bind(this));
     this.elements.taskCollection.addEventListener(
       "click",
       this.handleTaskClicks.bind(this)
     );
-    //   this.taskCollection.addEventListener(
-    //     "input",
-    //     this.handleTaskInput.bind(this)
-    //   );
-    //   this.taskCollection.addEventListener(
-    //     "keydown",
-    //     this.handleTaskKeydown.bind(this)
-    //   );
-    //   this.taskCollection.addEventListener("change", this.handleTaskChanges);
+    this.elements.taskCollection.addEventListener(
+      "input",
+      this.handleTaskInput.bind(this)
+    );
+    this.elements.taskCollection.addEventListener(
+      "keydown",
+      this.handleTaskKeydown.bind(this)
+    );
+    this.elements.taskCollection.addEventListener(
+      "change",
+      this.handleTaskChanges
+    );
     this.elements.headerHamburger.addEventListener(
       "click",
       this.toggleSidebar.bind(this)

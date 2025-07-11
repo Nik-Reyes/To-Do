@@ -66,7 +66,7 @@ export default class RenderUI {
     this.#header.firstChild.innerText = listTitle.toUpperCase();
   }
 
-  static resizeListSvgs() {
+  resizeListSvgs() {
     const listButton = document.querySelector(".list-btn");
     const listSvgStrokes = document.querySelectorAll(
       ".list-btn-wrapper polygon"
@@ -156,19 +156,31 @@ export default class RenderUI {
     this.sidebar.querySelector(".mylist-wrapper").appendChild(newList);
     newList.querySelector(".newList-input").focus();
 
-    setTimeout(RenderUI.resizeListSvgs(), 1);
+    setTimeout(this.resizeListSvgs(), 1);
+  }
+
+  removeEditableList(list) {
+    list.remove();
+  }
+
+  deleteTaskElement(task) {
+    task.remove();
+  }
+
+  updateTaskCount(count, newCount) {
+    if (!count) return;
+    count.innerText = newCount.toString();
   }
 
   //replaces the editable list button with a non-editable list of the same title/name
-  renderList(editableList, newListObj) {
+  replaceList(editableList, newListObj) {
     editableList.replaceWith(createListElement(newListObj));
-    setTimeout(() => RenderUI.resizeListSvgs(), 1);
+    this.resizeListSvgs();
   }
 
   //responsible for updating the task elements and header title for the current list based on Data.currentTasks and Data.currentListTitle
   updateDisplay(newTitle, newTasks) {
-    this.headerTitle = newTitle;
-    console.log(this.headerTitle);
+    this.header.firstChild.firstChild.innerText = newTitle;
     this.renderTasks(newTasks);
   }
 
@@ -184,7 +196,7 @@ export default class RenderUI {
       pageWrapper
     );
 
-    setTimeout(RenderUI.resizeListSvgs, 1);
-    window.addEventListener("resize", RenderUI.resizeListSvgs);
+    setTimeout(this.resizeListSvgs, 1);
+    window.addEventListener("resize", this.resizeListSvgs);
   }
 }

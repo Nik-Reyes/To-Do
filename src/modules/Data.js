@@ -16,6 +16,10 @@ export default class Data {
     return this.#currentList.id;
   }
 
+  get currentListIdx() {
+    return this.lists.indexOf(this.currentList);
+  }
+
   get currentListTitle() {
     return this.#currentList.title;
   }
@@ -60,14 +64,22 @@ export default class Data {
   }
 
   //rename to pushListObj
-  addListData(newListObj) {
+  addList(newListObj) {
     this.listCollection.myLists.push(newListObj);
   }
 
-  updateTaskObject(taskIndex, property, value) {
-    if (taskIndex !== -1 && this.currentTasks[taskIndex]) {
-      this.currentTasks[taskIndex][property] = value;
+  deleteTask(idx) {
+    this.currentList.deleteTask(idx);
+  }
+
+  updateTaskObject(taskIdx, property, value) {
+    if (taskIdx !== -1 && this.currentTasks[taskIdx]) {
+      this.currentTasks[taskIdx][property] = value;
     }
+  }
+
+  createNewList(title) {
+    return new List(title);
   }
 
   init() {
