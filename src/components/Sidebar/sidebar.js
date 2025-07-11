@@ -10,18 +10,6 @@ export default function createSidebar() {
     class: "side-panel",
   });
 
-  const searchWrapper = generateElement("div", { class: "search" });
-  const searchLabel = generateElement("label", {
-    for: "search",
-    "aria-label": "search",
-  });
-  const searchInput = generateElement("input", {
-    type: "search",
-    name: "searchBar",
-    id: "search",
-    placeholder: "search",
-  });
-
   const systemListWrapper = generateElement("div", {
     class: "system-list-wrapper",
   });
@@ -36,15 +24,8 @@ export default function createSidebar() {
   //////// ELEMENT ASSEMBLY ////////
   systemListWrapper.appendChild(systemListTitle);
   myListWrapper.appendChild(myListTitle);
-  searchLabel.appendChild(searchInput);
-  searchWrapper.appendChild(searchLabel);
 
-  sidebar.append(
-    createHamburger(),
-    searchWrapper,
-    systemListWrapper,
-    myListWrapper
-  );
+  sidebar.append(createHamburger(), systemListWrapper, myListWrapper);
 
   return sidebar;
 }
