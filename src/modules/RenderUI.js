@@ -167,20 +167,15 @@ export default class RenderUI {
     task.remove();
   }
 
-  updateTaskCount(count, newCount) {
-    if (!count) return;
-    count.innerText = newCount.toString();
-  }
-
-  //replaces the editable list button with a non-editable list of the same title/name
-  replaceList(editableList, newListObj) {
-    editableList.replaceWith(createListElement(newListObj));
+  //replaces a list button with its own list list object (a re-render function)
+  replaceList(currentListEl, currentListObj, attributes) {
+    currentListEl.replaceWith(createListElement(currentListObj, attributes));
     this.resizeListSvgs();
   }
 
   //responsible for updating the task elements and header title for the current list based on Data.currentTasks and Data.currentListTitle
   updateDisplay(newTitle, newTasks) {
-    this.header.firstChild.firstChild.innerText = newTitle;
+    this.header.firstChild.firstChild.innerText = newTitle.toUpperCase();
     this.renderTasks(newTasks);
   }
 

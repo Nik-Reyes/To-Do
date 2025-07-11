@@ -1,7 +1,7 @@
 import generateElement from "../../utils/GenerateElement.js";
 import "./list.css";
 
-export default function createListElement(list) {
+export default function createListElement(list, attributes) {
   //////// ELEMENT CREATION ////////
   const buttonWrapper = generateElement("div", {
     class: "list-btn-wrapper",
@@ -34,7 +34,7 @@ export default function createListElement(list) {
       list.numberOfTasks.toString()
     );
     listElement = generateElement("button", {
-      class: "list-btn stacked",
+      class: `list-btn stacked ${attributes ? attributes.class : ""}`,
     });
 
     buttonWrapper.setAttribute("data-id", `${list.id}`);

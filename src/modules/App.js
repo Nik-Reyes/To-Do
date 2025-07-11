@@ -45,7 +45,7 @@ export default class App {
     const newList = this.data.createNewList(target.value);
     this.data.addList(newList);
     this.data.switchLists(newList.id);
-    this.renderer.replaceList(editableList, newList);
+    this.rerenderList(editableList);
     this.renderer.updateDisplay(
       this.data.currentListTitle,
       this.data.currentTasks
@@ -73,6 +73,30 @@ export default class App {
     return parseInt(listBtnWrapper.dataset.id);
   }
 
+  switchFocusedLists(listButton) {
+    // listButton is my clicked list
+    // if my clicked list already has focus, do nothing, just return
+    if (listButton.classList.contains("focused-list")) return;
+
+    //if the clicked listButton does not have focus then remove the focus from the previous focused list
+    const prevList = this.elements.sidebar.querySelector(".focused-list");
+
+    //if list button is not a clicked button, and is a newList, just remove the old focused list and early return
+    if (listButton.classList.contains("new-list")) {
+      prevList.classList.remove("focused-list");
+      return;
+    }
+
+    // if there is no previous focused list, apply the focused list to the clicked list (this is the first ever clicked list)
+    if (!prevList) {
+      listButton.classList.add("focused-list");
+    } else {
+      //if there is a previous list, then remove the class and add it to the clicked list
+      prevList.classList.remove("focused-list");
+      listButton.classList.add("focused-list");
+    }
+  }
+
   handleListClicks(e) {
     const target = e.target;
     // return if the clicked element is not a list
@@ -88,7 +112,9 @@ export default class App {
 
     // return if the user clicks the list they are already on
     if (listIdx === this.data.currentListId) return;
+    console.log("here");
 
+    this.switchFocusedLists(listButton);
     this.data.switchLists(listIdx);
     this.renderer.updateDisplay(
       this.data.currentListTitle,
@@ -113,7 +139,6 @@ export default class App {
     );
 
     //collapses the active content if the user clicks away from it
-
     if (this.activeTaskElement) {
       this.collapseActiveTaskElement(e);
     }
@@ -210,6 +235,17 @@ export default class App {
     ).indexOf(taskWrapper);
   }
 
+  // re-render either the newList or the list when deleting tasks
+  rerenderList(currList) {
+    const listBtn = currList.querySelector(".focused-list");
+    const newList = currList.querySelector(".new-list");
+    const list = listBtn || newList;
+    this.switchFocusedLists(list);
+    this.renderer.replaceList(currList, this.data.currentList, {
+      class: "focused-list",
+    });
+  }
+
   deleteTask(taskWrapper, taskIdx) {
     this.data.deleteTask(taskIdx);
     this.renderer.deleteTaskElement(taskWrapper);
@@ -220,7 +256,7 @@ export default class App {
     ];
 
     const listEl = lists.at(this.data.currentListIdx);
-    this.renderer.replaceList(listEl, this.data.currentList);
+    this.rerenderList(listEl);
   }
 
   handleTaskClicks(e) {
@@ -385,8 +421,19 @@ export default class App {
     );
   }
 
+  focusStartingList() {
+    const listElements = [
+      ...this.elements.sidebar.querySelectorAll(".list-btn"),
+    ];
+    const startListIdx = this.data.currentListIdx;
+    const startListBtn = listElements.at(startListIdx);
+    startListBtn.classList.add("focused-list");
+  }
+
   initialize() {
+    // initialize all data
     this.data.init();
+    // render all elements with data
     this.renderer.init(
       this.data.currentListTitle,
       this.data.listCollection.systemLists,
@@ -394,15 +441,20 @@ export default class App {
       this.data.currentTasks,
       this.elements.pageWrapper
     );
+    // app sets up all needed elements
     this.queryElements({
       taskCollection: ".task-collection",
       header: "header",
       sidebar: "aside",
       addListBtn: ".addList-btn",
       mylistWrapper: ".mylist-wrapper",
+      systemlistWrapper: ".system-list-wrapper",
       headerHamburger: "header .hamburger",
       sidebarHamburger: "aside .hamburger",
     });
+    // app applies functionality
     this.applyEventListeners();
+    // app sets the focused state on the starting list
+    this.focusStartingList();
   }
 }
