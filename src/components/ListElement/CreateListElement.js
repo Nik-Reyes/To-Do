@@ -1,7 +1,6 @@
 import generateElement from "../../utils/GenerateElement.js";
 import "./list.css";
 
-let count = 0;
 export default function createListElement(list) {
   //////// ELEMENT CREATION ////////
   const buttonWrapper = generateElement("div", {
@@ -24,13 +23,21 @@ export default function createListElement(list) {
   let taskCount = undefined;
 
   if (list) {
-    buttonName = generateElement("span", {}, list.title.toUpperCase());
-    taskCount = generateElement("span", {}, list.numberOfTasks.toString());
+    buttonName = generateElement(
+      "span",
+      { class: "list-title" },
+      list.title.toUpperCase()
+    );
+    taskCount = generateElement(
+      "span",
+      { class: "task-count" },
+      list.numberOfTasks.toString()
+    );
     listElement = generateElement("button", {
       class: "list-btn stacked",
     });
 
-    buttonWrapper.setAttribute("data-id", `${count++}`);
+    buttonWrapper.setAttribute("data-id", `${list.id}`);
   } else {
     buttonName = generateElement("input", {
       type: "text",
