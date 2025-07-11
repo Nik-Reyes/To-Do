@@ -7,7 +7,11 @@ export default function createListTitle(title) {
     class: "list-title-wrapper",
   });
 
-  const listTitle = generateElement("h3", { class: "list-title" }, title);
+  const listTitle = generateElement(
+    "h3",
+    { class: "list-section-title" },
+    title
+  );
 
   listTitleWrapper.appendChild(listTitle);
   if (title === "MY LISTS") {
