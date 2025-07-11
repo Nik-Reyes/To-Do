@@ -5,6 +5,8 @@
   transition: background-color 200ms ease-in-out;
   border: none;
   background-color: transparent;
+  margin: 0.5rem 1.5rem 0.5rem auto;
+  z-index: 1;
 }
 
 .ham-line-wrapper {

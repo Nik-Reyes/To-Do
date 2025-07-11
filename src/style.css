@@ -43,6 +43,8 @@
 
   /* transition speeds */
   --list-btn-transition-speed: 100ms;
+
+  --sidebar-width: 17rem;
 }
 
 button {
@@ -70,6 +72,6 @@ body {
 
 @media (min-width: 41.875rem) {
   .page-wrapper {
-    grid-template-columns: minmax(auto, 17rem) 1fr;
+    grid-template-columns: var(--sidebar-width) 1fr;
   }
 }

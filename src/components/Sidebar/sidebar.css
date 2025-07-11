@@ -1,19 +1,27 @@
 aside {
-  display: grid;
   grid-template-rows: repeat(3, min-content) 1fr;
   --list-gap: 1rem;
-  /* gap: var(--list-gap); */
   min-height: 100vh;
   overflow-x: hidden;
-  background-repeat: no-repeat;
-  background-size: cover;
+  background-color: rgb(0, 0, 0);
+  z-index: 999;
+  padding-bottom: 2rem;
+  position: relative;
+  isolation: isolate;
+}
+
+aside::before {
+  content: "";
   background: linear-gradient(
       to right,
       hsla(353, 79%, 50%, 0.15) 10%,
       var(--main-bg)
     ),
-    url(../../assets/svgs/sidebar-bg.svg);
-  z-index: 999;
+    url("../../assets/svgs/sidebar-bg.svg");
+  position: absolute;
+  inset: 0;
+  background-size: contain;
+  opacity: 0.8;
 }
 
 aside :where(label, .list-btn-wrapper) {
@@ -71,23 +79,26 @@ label::before {
 
 .opened-sidebar {
   transform: translateX(0%);
+  display: grid;
+  visibility: visible;
 }
 
 @media (min-width: 41.875rem) {
   aside {
     grid-column: 1;
     grid-row: 1/-1;
-    transform: translateX(0%);
+    transform: none;
   }
 }
 
 @media (max-width: 41.875rem) {
   aside {
-    width: 65%;
+    visibility: hidden;
     transform: translateX(-100%);
+    width: 65%;
     position: fixed;
     inset: 0;
-    transition: transform 400ms ease-in-out;
     grid-row: 2;
+    z-index: 9999999;
   }
 }

@@ -17,7 +17,6 @@
   clip-path: var(--cyberpunk-clip-br-sm);
   color: rgb(254, 215, 91);
   font-size: 1.125rem;
-  text-shadow: 0px 0px 2.5px rgb(254, 115, 91);
 }
 
 .addList-btn:not(.addList-btn[disabled=""]):hover::after {
@@ -27,7 +26,6 @@
 
 .addList-btn:not(.addList-btn[disabled=""]):hover {
   color: var(--main-bg);
-  text-shadow: none;
 }
 
 .addList-btn[disabled=""] {
