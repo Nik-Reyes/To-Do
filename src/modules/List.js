@@ -40,11 +40,8 @@ export default class List {
   }
 
   ////////////// ACTION METHODS ///////////////
-  deleteTask(taskId) {
-    this.tasks.splice(
-      this.tasks.findIndex((item) => parseInt(item.id) === taskId),
-      1
-    );
+  deleteTask(idx) {
+    this.tasks.splice(idx, 1);
   }
 
   addTask(newTask) {
