@@ -1,9 +1,11 @@
 aside {
-  grid-template-rows: repeat(3, min-content) 1fr;
+  grid-row: 1/-1;
+  grid-column: 1;
+  transform: translateX(-100%);
   --list-gap: 1rem;
   min-height: 100vh;
   overflow-x: hidden;
-  background-color: rgb(0, 0, 0);
+  background-color: var(--main-bg);
   z-index: 999;
   padding-bottom: 2rem;
   position: relative;
@@ -21,7 +23,6 @@ aside::before {
   position: absolute;
   inset: 0;
   background-size: contain;
-  opacity: 0.8;
 }
 
 aside :where(label, .list-btn-wrapper) {
@@ -42,28 +43,24 @@ aside :where(label, .list-btn-wrapper) {
   margin-bottom: var(--list-gap);
 }
 
-.opened-sidebar {
-  transform: translateX(0%);
-  display: grid;
-  visibility: visible;
+.side-panel.mobile {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 65%;
+  transform: translateX(-100%);
 }
 
-@media (min-width: 41.875rem) {
-  aside {
-    grid-column: 1;
-    grid-row: 1/-1;
-    transform: none;
-  }
+.side-panel.mobile.open {
+  transform: translateX(0);
 }
 
-@media (max-width: 41.875rem) {
-  aside {
-    visibility: hidden;
-    transform: translateX(-100%);
-    width: 65%;
-    position: fixed;
-    inset: 0;
-    grid-row: 2;
-    z-index: 9999999;
-  }
+.side-panel.desktop {
+  position: static;
+  width: 17rem;
+  transform: translateX(0);
+}
+
+.side-panel.desktop.hidden {
+  transform: translateX(-100%);
 }

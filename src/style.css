@@ -43,7 +43,6 @@
 
   /* transition speeds */
   --list-btn-transition-speed: 100ms;
-
   --sidebar-width: 17rem;
 }
 
@@ -62,16 +61,13 @@ body {
   grid-template-columns: 1fr;
   grid-template-rows: auto 1fr;
   min-height: 100dvh;
-  scrollbar-color: var(--cyber-red);
+}
+
+.page-wrapper.desktop-sidebar {
+  grid-template-columns: 17rem 1fr;
 }
 
 .stacked {
   grid-row: 1/-1;
   grid-column: 1/-1;
-}
-
-@media (min-width: 41.875rem) {
-  .page-wrapper {
-    grid-template-columns: var(--sidebar-width) 1fr;
-  }
 }

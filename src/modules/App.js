@@ -1,5 +1,6 @@
 import Data from "./Data.js";
 import RenderUI from "./RenderUI.js";
+import SidebarManager from "./SidebarManager.js";
 
 export default class App {
   #elements = { pageWrapper: document.querySelector(".page-wrapper") };
@@ -8,6 +9,7 @@ export default class App {
   constructor() {
     this.data = new Data();
     this.renderer = new RenderUI();
+    this.sidebarManager = undefined;
   }
 
   ////////////// FIELD GETTER METHODS ///////////////
@@ -310,13 +312,6 @@ export default class App {
   }
 
   //////////////// PURE UI-RESPONSIVE METHODS ///////////////
-  toggleSidebar(e) {
-    const target = e.target;
-    target.offsetParent.tagName === "HEADER"
-      ? this.elements.sidebar.classList.add("opened-sidebar")
-      : this.elements.sidebar.classList.remove("opened-sidebar");
-  }
-
   handleDoubleClicks(e) {
     const target = e.target;
     if (["INPUT", "TEXTAREA", "BUTTON"].includes(target.tagName)) return;
@@ -407,14 +402,6 @@ export default class App {
       "change",
       this.handleTaskChanges
     );
-    this.elements.headerHamburger.addEventListener(
-      "click",
-      this.toggleSidebar.bind(this)
-    );
-    this.elements.sidebarHamburger.addEventListener(
-      "click",
-      this.toggleSidebar.bind(this)
-    );
     this.elements.taskCollection.addEventListener(
       "dblclick",
       this.handleDoubleClicks.bind(this)
@@ -448,10 +435,15 @@ export default class App {
       sidebar: "aside",
       addListBtn: ".addList-btn",
       mylistWrapper: ".mylist-wrapper",
-      systemlistWrapper: ".system-list-wrapper",
       headerHamburger: "header .hamburger",
-      sidebarHamburger: "aside .hamburger",
     });
+    this.sidebarManager = new SidebarManager(
+      this.elements.pageWrapper,
+      this.elements.sidebar,
+      this.elements.headerHamburger
+    );
+    console.log(this.sidebarManager);
+    this.sidebarManager.init();
     // app applies functionality
     this.applyEventListeners();
     // app sets the focused state on the starting list

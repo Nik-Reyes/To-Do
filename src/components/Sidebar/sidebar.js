@@ -1,5 +1,4 @@
 import generateElement from "../../utils/GenerateElement.js";
-import createHamburger from "../Hamburger/CreateHamburger.js";
 import createListTitle from "../ListTitle/CreateListTitle.js";
 import "./sidebar.css";
 
@@ -25,7 +24,7 @@ export default function createSidebar() {
   systemListWrapper.appendChild(systemListTitle);
   myListWrapper.appendChild(myListTitle);
 
-  sidebar.append(createHamburger(), systemListWrapper, myListWrapper);
+  sidebar.append(systemListWrapper, myListWrapper);
 
   return sidebar;
 }

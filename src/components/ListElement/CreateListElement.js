@@ -42,6 +42,7 @@ export default function createListElement(list, attributes) {
     buttonName = generateElement("input", {
       type: "text",
       class: "newList-input",
+      maxlength: "11",
       placeholder: "List Name",
     });
     taskCount = generateElement("span", {}, "0");

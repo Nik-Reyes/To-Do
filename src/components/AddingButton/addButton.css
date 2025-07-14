@@ -1,6 +1,5 @@
 .add-btn {
   display: grid;
-  place-content: center;
   text-align: center;
   position: relative;
   border-radius: 0px;
@@ -19,28 +18,43 @@
   font-size: 1.125rem;
 }
 
-.addList-btn:not(.addList-btn[disabled=""]):hover::after {
-  transform: scaleX(1);
-  z-index: -1;
+@media (pointer: fine) {
+  .addList-btn:not(.addList-btn[disabled=""]):hover::after {
+    transform: scaleX(1);
+    z-index: -1;
+  }
+
+  .addList-btn:not(.addList-btn[disabled=""]):hover {
+    color: var(--main-bg);
+  }
+
+  .addList-btn[disabled=""] {
+    cursor: auto;
+  }
+
+  .addList-btn::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    background: rgb(254, 215, 91);
+    transform-origin: left;
+    transform: scaleX(0);
+    transition: transform 150ms ease-in-out, z-index 0ms;
+  }
 }
 
-.addList-btn:not(.addList-btn[disabled=""]):hover {
-  color: var(--main-bg);
+nav .add-task-btn {
+  color: var(--cyber-red-text);
+  border: 1px solid var(--cyber-red-text);
+  padding: 0.25em 0.75em;
+  margin-left: auto;
+  transition: background-color 100ms ease-in-out;
+  font-size: inherit;
 }
 
-.addList-btn[disabled=""] {
-  cursor: auto;
-}
-
-.addList-btn::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: 100%;
-  background: rgb(254, 215, 91);
-  transform-origin: left;
-  transform: scaleX(0);
-  transition: transform 150ms ease-in-out, z-index 0ms;
+nav .add-task-btn:hover {
+  background-color: hsl(0, 65%, 20%);
 }
