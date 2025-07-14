@@ -3,6 +3,7 @@ import createListElement from "../components/ListElement/CreateListElement.js";
 import createHeader from "../components/Header/CreateHeader.js";
 import createSidebar from "../components/Sidebar/Sidebar.js";
 import generateElement from "../utils/GenerateElement.js";
+import resizeListSvgs from "../utils/ResizeSvgs.js";
 import "../components/TaskElement/task.css";
 
 export default class RenderUI {
@@ -64,31 +65,6 @@ export default class RenderUI {
 
   set headerTitle(listTitle) {
     this.#header.firstChild.innerText = listTitle.toUpperCase();
-  }
-
-  resizeListSvgs() {
-    const listButton = document.querySelector(".list-btn");
-    const listSvgStrokes = document.querySelectorAll(
-      ".list-btn-wrapper polygon"
-    );
-    const listSvgWrapper = document.querySelector(".list-btn-wrapper svg");
-    const listButtonHeight = listButton.offsetHeight;
-    const listButtonWidth = listButton.offsetWidth;
-
-    listSvgWrapper.setAttribute(
-      "viewBox",
-      `0 0 ${listButtonWidth} ${listButtonHeight}`
-    );
-
-    const listBottomPoint = listButtonHeight - 11;
-    const listCornerPoint = listButtonWidth - 9;
-
-    listSvgStrokes.forEach((stroke) => {
-      stroke.setAttribute(
-        "points",
-        `0,0 ${listButtonWidth},0 ${listButtonWidth},${listBottomPoint} ${listCornerPoint},${listButtonHeight} 0,${listButtonHeight}`
-      );
-    });
   }
 
   ////////////// ACTION METHODS ///////////////
@@ -156,7 +132,7 @@ export default class RenderUI {
     this.sidebar.querySelector(".mylist-wrapper").appendChild(newList);
     newList.querySelector(".newList-input").focus();
 
-    setTimeout(this.resizeListSvgs(), 1);
+    setTimeout(resizeListSvgs(), 10);
   }
 
   removeEditableList(list) {
@@ -170,7 +146,7 @@ export default class RenderUI {
   //replaces a list button with its own list list object (a re-render function)
   replaceList(currentListEl, currentListObj, attributes) {
     currentListEl.replaceWith(createListElement(currentListObj, attributes));
-    this.resizeListSvgs();
+    resizeListSvgs();
   }
 
   //responsible for updating the task elements and header title for the current list based on Data.currentTasks and Data.currentListTitle
@@ -191,7 +167,7 @@ export default class RenderUI {
       pageWrapper
     );
 
-    setTimeout(this.resizeListSvgs, 1);
-    window.addEventListener("resize", this.resizeListSvgs);
+    setTimeout(resizeListSvgs, 1);
+    window.addEventListener("resize", resizeListSvgs);
   }
 }
