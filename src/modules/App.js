@@ -3,7 +3,10 @@ import RenderUI from "./RenderUI.js";
 import SidebarManager from "./SidebarManager.js";
 
 export default class App {
-  #elements = { pageWrapper: document.querySelector(".page-wrapper") };
+  #elements = {
+    pageWrapper: document.querySelector(".page-wrapper"),
+    overlay: document.querySelector(".overlay"),
+  };
   #activeTaskElement = null;
 
   constructor() {
@@ -433,16 +436,13 @@ export default class App {
       taskCollection: ".task-collection",
       header: "header",
       sidebar: "aside",
+      nav: "nav",
       addListBtn: ".addList-btn",
       mylistWrapper: ".mylist-wrapper",
       headerHamburger: "header .hamburger",
     });
-    this.sidebarManager = new SidebarManager(
-      this.elements.pageWrapper,
-      this.elements.sidebar,
-      this.elements.headerHamburger
-    );
-    console.log(this.sidebarManager);
+    //app passes elements object to sidebar manager for contstruction
+    this.sidebarManager = new SidebarManager(this.elements);
     this.sidebarManager.init();
     // app applies functionality
     this.applyEventListeners();

@@ -1,3 +1,13 @@
+@font-face {
+  font-family: "Rajdhani Medium";
+  src: url("Rajdhani-Medium.woff2") format("woff2"),
+    url("Rajdhani-Medium.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+  font-stretch: normal;
+  unicode-range: U+0020-0912;
+}
+
 .header {
   display: grid;
   grid-template-columns: 1fr auto;
@@ -5,19 +15,28 @@
   grid-row: 1;
   grid-column: 1/-1;
   --header-content-padding: 1rem;
-  position: relative;
-  row-gap: 16px;
+  --header-row-gap: 16px;
+  row-gap: var(--header-row-gap);
 }
 
 .page-wrapper.desktop-sidebar .header {
   grid-column: 2;
 }
 
-.header-title {
+.header-title-wrapper {
   padding: var(--header-content-padding);
-  background-color: rgb(249, 114, 108);
+  background-color: var(--header-bg);
   box-shadow: inset 0px 0px 100rem 5px rgb(255, 97, 89),
     0px 0px 8px 0px rgba(249, 115, 108, 0.71);
+}
+
+.header-title {
+  font-family: "Rajdhani Medium";
+  line-height: 1;
+  padding-top: 3px;
+  letter-spacing: -1px;
+  text-size-adjust: geometricPrecision;
+  font-size: 1.75rem;
 }
 
 nav {
@@ -25,12 +44,8 @@ nav {
   padding: 0px 16px;
 }
 
-.page-wrapper:has(.side-panel .system-list-wrapper .focused-list)
-  .header
-  :where(nav) {
-  display: none;
-}
-
+/* temp firefox broswer fix: allows the .task-collection:has(.task-wrapper)::after selector in task.css to register */
+/* perm fix, add empty class to task collection when list has no tasks */
 .page-wrapper:has(.side-panel .system-list-wrapper .focused-list) .header {
-  row-gap: 0px;
+  position: relative;
 }
