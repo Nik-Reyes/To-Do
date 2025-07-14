@@ -1,9 +1,11 @@
+import resizeSvgs from "../utils/ResizeSvgs.js";
+
 export default class SidebarManager {
-  constructor(pageWrapper, sidebar, hamburger) {
-    this.pageWrapper = pageWrapper;
-    this.sidebar = sidebar;
-    console.log(hamburger);
-    this.hamburger = hamburger;
+  constructor(els) {
+    this.pageWrapper = els.pageWrapper;
+    this.sidebar = els.sidebar;
+    this.hamburger = els.headerHamburger;
+    this.overlay = els.overlay;
     this.isSmallScreen = false;
     this.isSidebarOpen = false;
     this.isDeskPanelHidden = false;
@@ -26,6 +28,7 @@ export default class SidebarManager {
     //if the user is on desktop and switches to mobile the sidebar is hidden
     this.isDeskPanelHidden = false;
     this.isSidebarOpen = false;
+    setTimeout(resizeSvgs, 1);
   }
 
   updateElementClasses() {
@@ -34,11 +37,13 @@ export default class SidebarManager {
       this.sidebar.classList.add("mobile");
       this.sidebar.classList.remove("desktop", "hidden");
       this.sidebar.classList.toggle("open", this.isSidebarOpen);
+      this.overlay.classList.toggle("active-overlay", this.isSidebarOpen);
     }
     //first updateElementClasses() in init() sees this.isDeskPanelHidden = false and adds the desktop sidebar
     else {
       this.sidebar.classList.add("desktop");
       this.sidebar.classList.remove("mobile", "open");
+      this.overlay.classList.remove("active-overlay");
       if (this.isDeskPanelHidden) {
         //if the user is on desktop and closes the sidebar, turn on mobile mode and hide the sidebar
         this.pageWrapper.classList.remove("desktop-sidebar");
@@ -70,6 +75,7 @@ export default class SidebarManager {
 
   applyEventListeners() {
     this.hamburger.addEventListener("click", this.toggleSidebar.bind(this));
+    this.overlay.addEventListener("click", this.closeSidebar.bind(this));
     window.addEventListener("resize", this.handleScreenResize.bind(this));
   }
 
