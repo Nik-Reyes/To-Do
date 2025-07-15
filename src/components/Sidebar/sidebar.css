@@ -3,13 +3,12 @@ aside {
   grid-column: 1;
   transform: translateX(-100%);
   --list-gap: 1rem;
-  min-height: 100vh;
+  height: 100%;
   overflow-x: hidden;
   background-color: var(--main-bg);
   z-index: 999;
   padding-bottom: 2rem;
   position: relative;
-  isolation: isolate;
 }
 
 aside::before {

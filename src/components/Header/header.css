@@ -10,6 +10,9 @@
 
 .header {
   display: grid;
+  align-self: self-start;
+  top: 0;
+  position: sticky;
   grid-template-columns: 1fr auto;
   grid-template-rows: auto auto;
   grid-row: 1;
@@ -17,6 +20,8 @@
   --header-content-padding: 1rem;
   --header-row-gap: 16px;
   row-gap: var(--header-row-gap);
+  z-index: 100;
+  border-right-color: transparent;
 }
 
 .page-wrapper.desktop-sidebar .header {

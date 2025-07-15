@@ -53,6 +53,7 @@ nav .add-task-btn {
   margin-left: auto;
   transition: background-color 100ms ease-in-out;
   font-size: inherit;
+  backdrop-filter: blur(10px);
 }
 
 nav .add-task-btn:hover {

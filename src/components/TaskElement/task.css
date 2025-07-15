@@ -14,7 +14,6 @@
   --task-collection-padding: 16px;
   padding: var(--task-collection-padding);
   padding-bottom: 4rem;
-  height: 100%;
   position: relative;
   font-family: "Rajdhani";
 }
