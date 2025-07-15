@@ -1,6 +1,7 @@
 import Data from "./Data.js";
 import RenderUI from "./RenderUI.js";
 import SidebarManager from "./SidebarManager.js";
+import resizeListSvgs from "../utils/ResizeSvgs.js";
 
 export default class App {
   #elements = {
@@ -42,8 +43,10 @@ export default class App {
   }
 
   addEditableListElement() {
-    this.renderer.renderEditableList();
+    const list = this.renderer.renderEditableList(this.elements.mylistWrapper);
+    list.querySelector(".newList-input").focus();
     this.toggleButton(this.elements.addListBtn);
+    resizeListSvgs();
   }
 
   replaceEditableList(editableList, target) {
@@ -76,6 +79,13 @@ export default class App {
 
   getListElementIdx(listBtnWrapper) {
     return parseInt(listBtnWrapper.dataset.id);
+  }
+
+  getCurrentListElement() {
+    const lists = [
+      ...this.elements.sidebar.querySelectorAll(".list-btn-wrapper"),
+    ];
+    return lists.at(this.data.currentListIdx);
   }
 
   switchFocusedLists(listButton) {
@@ -117,7 +127,6 @@ export default class App {
 
     // return if the user clicks the list they are already on
     if (listIdx === this.data.currentListId) return;
-    console.log("here");
 
     this.switchFocusedLists(listButton);
     this.data.switchLists(listIdx);
@@ -143,8 +152,9 @@ export default class App {
       ".priority-btn-wrapper.focused"
     );
 
-    //collapses the active content if the user clicks away from it
-    if (this.activeTaskElement) {
+    //collapses the opened task if the user clicks away from it and the click isnt adding a task
+    if (this.activeTaskElement && !target.closest(".add-task-btn")) {
+      console.log("bubble 1");
       this.collapseActiveTaskElement(e);
     }
     // removes the new editable list if the user clicks away from it
@@ -153,6 +163,7 @@ export default class App {
       !target.closest(".new-list") &&
       !target.closest(".addList-btn")
     ) {
+      console.log("bubble 2");
       const list = newList.closest(".list-btn-wrapper");
       this.renderer.removeEditableList(list);
       this.toggleButton(this.elements.addListBtn);
@@ -160,10 +171,12 @@ export default class App {
 
     //forces unfocusing on the date wrapper when the user clicks away from it
     if (focusedDateWrapper && !target.closest(".date-wrapper")) {
+      console.log("bubble 3");
       focusedDateWrapper.classList.remove("focused");
     }
 
     if (focusedPriorityWrapper && !target.closest(".priority-btn-wrapper")) {
+      console.log("bubble 4");
       focusedPriorityWrapper.classList.remove("focused");
     }
 
@@ -172,6 +185,7 @@ export default class App {
       !target.closest(".task-priority") &&
       !target.closest(".open-menu")
     ) {
+      console.log("bubble 5");
       opendMenu.classList.remove("open-menu");
     }
   }
@@ -227,7 +241,6 @@ export default class App {
 
   handleTaskInputClick(target, taskWrapper, taskContent) {
     if (!taskContent) return;
-
     this.removeActiveTask();
     taskContent.classList.add("active");
     target.style.width = "100%";
@@ -240,7 +253,7 @@ export default class App {
     ).indexOf(taskWrapper);
   }
 
-  // re-render either the newList or the list when deleting tasks
+  // re-render either the newList or the list when deleting
   rerenderList(currList) {
     const listBtn = currList.querySelector(".focused-list");
     const newList = currList.querySelector(".new-list");
@@ -251,17 +264,29 @@ export default class App {
     });
   }
 
-  deleteTask(taskWrapper, taskIdx) {
+  deleteTaskElement(taskWrapper, taskIdx) {
     this.data.deleteTask(taskIdx);
     this.renderer.deleteTaskElement(taskWrapper);
-
-    const listIdx = this.data.currentListId;
-    const lists = [
-      ...this.elements.sidebar.querySelectorAll(".list-btn-wrapper"),
-    ];
-
-    const listEl = lists.at(this.data.currentListIdx);
+    const listEl = this.getCurrentListElement();
     this.rerenderList(listEl);
+  }
+
+  addTaskElement(e) {
+    const target = e.target;
+    if (target.className.includes("add-task-btn")) {
+      const newTask = this.data.createNewTask();
+      this.data.addTask(newTask);
+      const newTaskElement = this.renderer.renderTask(
+        this.elements.taskCollection,
+        newTask
+      );
+      const target = newTaskElement.querySelector(".task-input");
+      const taskContent = newTaskElement.querySelector(".task-content");
+      this.handleTaskInputClick(target, newTaskElement, taskContent);
+      newTaskElement.querySelector(".task-input").focus();
+      const listEl = this.getCurrentListElement();
+      this.rerenderList(listEl);
+    }
   }
 
   handleTaskClicks(e) {
@@ -278,7 +303,7 @@ export default class App {
       target.closest(".priority-btn-wrapper").classList.toggle("focused");
       this.togglePriorityMenu(menu);
     } else if (classArr.contains("delete-svg-wrapper")) {
-      this.deleteTask(taskWrapper, taskIdx);
+      this.deleteTaskElement(taskWrapper, taskIdx);
     } else if (target.closest(".task-date")) {
       target.closest(".date-wrapper").classList.add("focused");
     } else if (target.closest(".priority-menu-option")) {
@@ -409,6 +434,7 @@ export default class App {
       "dblclick",
       this.handleDoubleClicks.bind(this)
     );
+    this.elements.nav.addEventListener("click", this.addTaskElement.bind(this));
   }
 
   focusStartingList() {

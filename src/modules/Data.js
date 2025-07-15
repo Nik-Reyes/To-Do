@@ -68,6 +68,14 @@ export default class Data {
     this.listCollection.myLists.push(newListObj);
   }
 
+  createNewTask() {
+    return new Task();
+  }
+
+  addTask(newTask) {
+    this.currentList.addTask(newTask);
+  }
+
   deleteTask(idx) {
     this.currentList.deleteTask(idx);
   }

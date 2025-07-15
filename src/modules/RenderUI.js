@@ -126,13 +126,17 @@ export default class RenderUI {
     pageWrapper.append(this.header, this.sidebar, this.taskCollection);
   }
 
-  //places a list button on the sidebar whose title/name can be edited
-  renderEditableList() {
-    const newList = createListElement();
-    this.sidebar.querySelector(".mylist-wrapper").appendChild(newList);
-    newList.querySelector(".newList-input").focus();
+  renderTask(taskCollection, taskObj) {
+    const newTask = createTaskElement(taskObj);
+    taskCollection.appendChild(newTask);
+    return newTask;
+  }
 
-    setTimeout(resizeListSvgs(), 10);
+  //places a list button on the sidebar whose title/name can be edited
+  renderEditableList(mylistWrapper) {
+    const newList = createListElement();
+    mylistWrapper.appendChild(newList);
+    return newList;
   }
 
   removeEditableList(list) {

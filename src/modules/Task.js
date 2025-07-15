@@ -8,7 +8,7 @@ export default class Task {
     .toString(36)
     .substring(2)}`;
   constructor(title, notes, dueDate, priority, checked) {
-    this.#title = title;
+    this.#title = title || "New Task";
     this.#dueDate = dueDate || "";
     this.#priority = priority || "no-priority";
     this.#notes = notes || "";
