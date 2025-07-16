@@ -53,7 +53,7 @@ export default class App {
     const newList = this.data.createNewList(target.value);
     this.data.addList(newList);
     this.data.switchLists(newList.id);
-    this.rerenderList(editableList);
+    this.rerenderCurrentList(editableList);
     this.renderer.updateDisplay(
       this.data.currentListTitle,
       this.data.currentTasks
@@ -81,11 +81,30 @@ export default class App {
     return parseInt(listBtnWrapper.dataset.id);
   }
 
-  getCurrentListElement() {
-    const lists = [
-      ...this.elements.sidebar.querySelectorAll(".list-btn-wrapper"),
+  getTargetSystemList(targetListName) {
+    return this.getSystemListElements().find((list) => {
+      return list
+        .querySelector(".list-title")
+        .innerText.includes(targetListName.toUpperCase());
+    });
+  }
+
+  getListElements() {
+    return [...this.elements.sidebar.querySelectorAll(".list-btn-wrapper")];
+  }
+
+  getSystemListElements() {
+    return [
+      ...this.elements.systemListWrapper.querySelectorAll(".list-btn-wrapper"),
     ];
-    return lists.at(this.data.currentListIdx);
+  }
+
+  getCurrentListElementBtn() {
+    return this.getCurrentListElement().querySelector(".list-btn");
+  }
+
+  getCurrentListElement() {
+    return this.getListElements().at(this.data.currentListIdx);
   }
 
   switchFocusedLists(listButton) {
@@ -254,7 +273,7 @@ export default class App {
   }
 
   // re-render either the newList or the list when deleting
-  rerenderList(currList) {
+  rerenderCurrentList(currList) {
     const listBtn = currList.querySelector(".focused-list");
     const newList = currList.querySelector(".new-list");
     const list = listBtn || newList;
@@ -264,29 +283,49 @@ export default class App {
     });
   }
 
+  rerenderTargetList(targetListElement, targetListData) {
+    this.renderer.replaceList(targetListElement, targetListData);
+  }
+
   deleteTaskElement(taskWrapper, taskIdx) {
     this.data.deleteTask(taskIdx);
     this.renderer.deleteTaskElement(taskWrapper);
     const listEl = this.getCurrentListElement();
-    this.rerenderList(listEl);
+    this.rerenderCurrentList(listEl);
   }
 
   addTaskElement(e) {
     const target = e.target;
-    if (target.className.includes("add-task-btn")) {
-      const newTask = this.data.createNewTask();
-      this.data.addTask(newTask);
-      const newTaskElement = this.renderer.renderTask(
-        this.elements.taskCollection,
-        newTask
-      );
-      const target = newTaskElement.querySelector(".task-input");
-      const taskContent = newTaskElement.querySelector(".task-content");
-      this.handleTaskInputClick(target, newTaskElement, taskContent);
-      newTaskElement.querySelector(".task-input").focus();
-      const listEl = this.getCurrentListElement();
-      this.rerenderList(listEl);
-    }
+    //clicking on the add task button counts as clicking outside the task
+    //when user clicks outside of task, the task closes
+    //condition makes sure the task stays open
+    if (!target.className.includes("add-task-btn")) return;
+
+    //create the data, add data to current list, port data to all tasks list
+    const destinationList = "All Tasks";
+    const newTask = this.data.createNewTask();
+    this.data.addTask(newTask);
+    this.data.portTask(destinationList, newTask);
+
+    //render the task in DOM
+    const newTaskElement = this.renderer.renderTask(
+      this.elements.taskCollection,
+      newTask
+    );
+
+    //Make sure the task is added to the DOM in active mode
+    const input = newTaskElement.querySelector(".task-input");
+    input.focus();
+    const taskContent = newTaskElement.querySelector(".task-content");
+    this.handleTaskInputClick(input, newTaskElement, taskContent);
+    const listEl = this.getCurrentListElement();
+
+    //Rerender the current list and the destination list to update its task count
+    this.rerenderCurrentList(listEl);
+
+    //get the targetListelement from that data index. Their indeceds are the same
+    const targetListEl = this.getTargetSystemList(destinationList);
+    this.rerenderTargetList(targetListEl, this.data.allTasksList);
   }
 
   handleTaskClicks(e) {
@@ -438,11 +477,7 @@ export default class App {
   }
 
   focusStartingList() {
-    const listElements = [
-      ...this.elements.sidebar.querySelectorAll(".list-btn"),
-    ];
-    const startListIdx = this.data.currentListIdx;
-    const startListBtn = listElements.at(startListIdx);
+    const startListBtn = this.getCurrentListElementBtn();
     startListBtn.classList.add("focused-list");
   }
 
@@ -465,6 +500,7 @@ export default class App {
       nav: "nav",
       addListBtn: ".addList-btn",
       mylistWrapper: ".mylist-wrapper",
+      systemListWrapper: ".system-list-wrapper",
       headerHamburger: "header .hamburger",
     });
     //app passes elements object to sidebar manager for contstruction

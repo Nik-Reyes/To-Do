@@ -6,10 +6,31 @@ export default class Data {
   #listCollection = [];
   #currentList = null;
   #currentListTitle = null;
+  #destinationService = {};
 
   ////////////// GETTER METHODS ///////////////
   get currentList() {
     return this.#currentList;
+  }
+
+  get todayList() {
+    return this.destinationService.Today;
+  }
+
+  get scheduledList() {
+    return this.destinationService.Scheduled;
+  }
+
+  get allTasksList() {
+    return this.destinationService["All Tasks"];
+  }
+
+  get completedList() {
+    return this.destinationService.Completed;
+  }
+
+  get destinationService() {
+    return this.#destinationService;
   }
 
   get currentListId() {
@@ -90,9 +111,20 @@ export default class Data {
     return new List(title);
   }
 
+  //data can only ever be ported to a system list. All other lists are added to the current list the user is on
+  portTask(destination, task) {
+    this.destinationService[destination].tasks.push(task);
+  }
+
   init() {
     this.listCollection = CreateDefaultLists();
     this.currentList = this.startingListIDX;
     this.currentListTitle = this.currentList.title;
+    this.#destinationService = {
+      Today: this.listCollection.systemLists[0],
+      Scheduled: this.listCollection.systemLists[1],
+      "All Tasks": this.listCollection.systemLists[2],
+      Completed: this.listCollection.systemLists[3],
+    };
   }
 }
