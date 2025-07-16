@@ -87,11 +87,11 @@ export default class RenderUI {
   }
 
   //takes in list objects, returns array of list elements
-  createListElements(sysObjects, myObjects) {
-    const sysEls = [...sysObjects].map((list) => createListElement(list));
-    const myEls = [...myObjects].map((list) => createListElement(list));
-
-    return [sysEls, myEls];
+  createListElements(systemLists, myLists) {
+    return [
+      Object.values(systemLists).map((list) => createListElement(list)),
+      Object.values(myLists).map((list) => createListElement(list)),
+    ];
   }
 
   //appends array of task elements to task collection section
@@ -170,7 +170,6 @@ export default class RenderUI {
       currentTasks,
       pageWrapper
     );
-
     setTimeout(resizeListSvgs, 1);
     window.addEventListener("resize", resizeListSvgs);
   }

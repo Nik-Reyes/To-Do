@@ -1,19 +1,15 @@
 import List from "./List.js";
 import Task from "./Task.js";
-import CreateDefaultLists from "./Storage.js";
+import CreateLists from "./Storage.js";
 
 export default class Data {
-  #listCollection = [];
+  #listCollection = undefined;
   #currentList = null;
   #currentListTitle = null;
 
   ////////////// GETTER METHODS ///////////////
   get currentList() {
     return this.#currentList;
-  }
-
-  get currentListId() {
-    return this.#currentList.id;
   }
 
   get currentListIdx() {
@@ -30,69 +26,86 @@ export default class Data {
 
   get lists() {
     return [
-      ...this.#listCollection.systemLists,
-      ...this.#listCollection.myLists,
+      ...Object.values(this.#listCollection.systemLists),
+      ...Object.values(this.#listCollection.myLists),
     ];
   }
 
-  //was firstMyList()
-  get startingListIDX() {
-    return this.#listCollection.systemLists.length;
+  get startingList() {
+    return this.#listCollection.myLists[
+      Object.keys(this.#listCollection.myLists)[0]
+    ];
   }
 
-  //was currentListTasks
   get currentTasks() {
     return this.#currentList.tasks;
   }
 
-  ////////////// SETTER METHODS ///////////////
-  set currentList(idx) {
-    this.#currentList = this.lists.at(idx);
+  // ////////////// SETTER METHODS ///////////////
+  set currentList(currentList) {
+    this.#currentList = currentList;
   }
 
   set listCollection(collection) {
     this.#listCollection = collection;
   }
 
-  set currentListTitle(title) {
-    this.#currentListTitle = title;
+  set currentListTitle(currentList) {
+    this.#currentListTitle = this.currentList.title;
   }
 
-  ////////////// ACTION METHODS ///////////////
-  switchLists(idx) {
-    this.currentList = idx;
+  //////////////// ACTION METHODS ///////////////
+
+  //takes in the title of the new list
+  switchLists(listToSwitchTo) {
+    this.currentList = this.lists.at(listToSwitchTo);
   }
 
-  //rename to pushListObj
+  // //rename to pushListObj
   addList(newListObj) {
-    this.listCollection.myLists.push(newListObj);
-  }
-
-  createNewTask() {
-    return new Task();
-  }
-
-  addTask(newTask) {
-    this.currentList.addTask(newTask);
-  }
-
-  deleteTask(idx) {
-    this.currentList.deleteTask(idx);
-  }
-
-  updateTaskObject(taskIdx, property, value) {
-    if (taskIdx !== -1 && this.currentTasks[taskIdx]) {
-      this.currentTasks[taskIdx][property] = value;
+    if (this.listCollection.myLists[newListObj.title]) {
+      this.listCollection.myLists[`newListObj.title`] = newListObj;
+    } else {
+      console.log("unique");
     }
+    this.listCollection.myLists[newListObj.title] = newListObj;
   }
+
+  // createNewTask() {
+  //   return new Task();
+  // }
+
+  // addTask(newTask) {
+  //   this.currentList.addTask(newTask);
+  // }
+
+  // deleteTask(idx) {
+  //   this.currentList.deleteTask(idx);
+  // }
+
+  // updateTaskObject(taskIdx, property, value) {
+  //   if (taskIdx !== -1 && this.currentTasks[taskIdx]) {
+  //     this.currentTasks[taskIdx][property] = value;
+  //   }
+  // }
 
   createNewList(title) {
     return new List(title);
   }
 
+  // //responsible for pushing dynamically created tasks to their proper system lists
+  // portData(destinationList, taskIdx) {
+  //   destinationService = {
+  //     Today: this.listCollection.systemLists.completed,
+  //     Scheduled: this.listCollection.systemLists.Scheduled,
+  //     "All Tasks": this.listCollection.systemLists[destinationList],
+  //     Completed: this.listCollection.systemLists.Completed,
+  //   };
+  // }
+
   init() {
-    this.listCollection = CreateDefaultLists();
-    this.currentList = this.startingListIDX;
-    this.currentListTitle = this.currentList.title;
+    this.listCollection = CreateLists();
+    this.currentList = this.startingList;
+    this.currentListTitle = this.#currentList;
   }
 }

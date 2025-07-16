@@ -51,8 +51,13 @@ export default class App {
 
   replaceEditableList(editableList, target) {
     const newList = this.data.createNewList(target.value);
+    const newListIdx = this.getClickedListElementIdx(newList);
+
+    console.log(this.data.listCollection);
     this.data.addList(newList);
-    this.data.switchLists(newList.id);
+    this.data.switchLists(newListIdx);
+    console.log(this.data.currentListTitle);
+    console.log(this.data.currentList);
     this.rerenderList(editableList);
     this.renderer.updateDisplay(
       this.data.currentListTitle,
@@ -77,15 +82,29 @@ export default class App {
     }
   }
 
-  getListElementIdx(listBtnWrapper) {
-    return parseInt(listBtnWrapper.dataset.id);
+  // to get the currentList, all we need is the list element index.
+  // the list element was created from the list object, so
+  // if we have the index of the list element then we have the index of the list object that the list element came from
+  getListElements() {
+    return [...this.elements.sidebar.querySelectorAll(".list-btn-wrapper")];
+  }
+  getClickedListElementIdx(listBtnWrapper) {
+    const listElements = this.getListElements();
+    return listElements.findIndex((el) => el === listBtnWrapper);
   }
 
   getCurrentListElement() {
-    const lists = [
-      ...this.elements.sidebar.querySelectorAll(".list-btn-wrapper"),
-    ];
-    return lists.at(this.data.currentListIdx);
+    const listElements = this.getListElements();
+    return listElements.at(this.data.currentListIdx);
+  }
+
+  getCurrentListElementBtn() {
+    return this.getCurrentListElement().querySelector(".list-btn");
+  }
+
+  // the current list index IS the currentListIdx from the object
+  getCurrentListElementIdx() {
+    return this.data.currentListIdx;
   }
 
   switchFocusedLists(listButton) {
@@ -112,6 +131,10 @@ export default class App {
     }
   }
 
+  //currentListID is unreliable.
+  //when localstorage comes around the list class will restart its count, and boom, list switchig breaks
+  //need a way to compare the list element with the currentList object
+  //each list object is an element. So if I can get the list elementID, then I can check to see if the list element idx is the matches the currentListelement index. If they match then the element is the list object (just in element form)
   handleListClicks(e) {
     const target = e.target;
     // return if the clicked element is not a list
@@ -123,13 +146,14 @@ export default class App {
     if (classList.contains("new-list")) return;
 
     const listBtnWrapper = target.closest(".list-btn-wrapper");
-    const listIdx = this.getListElementIdx(listBtnWrapper);
+    const clickedListIdx = this.getClickedListElementIdx(listBtnWrapper);
+    const currentListIdx = this.getCurrentListElementIdx();
 
     // return if the user clicks the list they are already on
-    if (listIdx === this.data.currentListId) return;
+    if (clickedListIdx === currentListIdx) return;
 
     this.switchFocusedLists(listButton);
-    this.data.switchLists(listIdx);
+    this.data.switchLists(clickedListIdx);
     this.renderer.updateDisplay(
       this.data.currentListTitle,
       this.data.currentTasks
@@ -154,7 +178,6 @@ export default class App {
 
     //collapses the opened task if the user clicks away from it and the click isnt adding a task
     if (this.activeTaskElement && !target.closest(".add-task-btn")) {
-      console.log("bubble 1");
       this.collapseActiveTaskElement(e);
     }
     // removes the new editable list if the user clicks away from it
@@ -163,7 +186,6 @@ export default class App {
       !target.closest(".new-list") &&
       !target.closest(".addList-btn")
     ) {
-      console.log("bubble 2");
       const list = newList.closest(".list-btn-wrapper");
       this.renderer.removeEditableList(list);
       this.toggleButton(this.elements.addListBtn);
@@ -171,12 +193,10 @@ export default class App {
 
     //forces unfocusing on the date wrapper when the user clicks away from it
     if (focusedDateWrapper && !target.closest(".date-wrapper")) {
-      console.log("bubble 3");
       focusedDateWrapper.classList.remove("focused");
     }
 
     if (focusedPriorityWrapper && !target.closest(".priority-btn-wrapper")) {
-      console.log("bubble 4");
       focusedPriorityWrapper.classList.remove("focused");
     }
 
@@ -185,7 +205,6 @@ export default class App {
       !target.closest(".task-priority") &&
       !target.closest(".open-menu")
     ) {
-      console.log("bubble 5");
       opendMenu.classList.remove("open-menu");
     }
   }
@@ -311,6 +330,14 @@ export default class App {
     }
   }
 
+  handleCompletedTask(taskIdx, prop, value) {
+    this.data.updateTaskObject(taskIdx, prop, value);
+    // this.data.listCollection.systemLists.com
+    // portData("completed", taskIdx);
+  }
+
+  // when user clicks, checkbox, not only does the currentList have to be updated, the
+  // completed list must also gain the task
   handleTaskInput(e) {
     const target = e.target;
     const taskWrapper = target.closest(".task-wrapper");
@@ -334,7 +361,7 @@ export default class App {
         target.style.height = target.scrollHeight + "px"; // grows to fit content
       }
       property === "task-checkbox"
-        ? this.data.updateTaskObject(taskIdx, propMap[property], target.checked)
+        ? this.handleCompletedTask(taskIdx, propMap[property], target.checked)
         : this.data.updateTaskObject(taskIdx, propMap[property], target.value);
     }
   }
@@ -438,11 +465,7 @@ export default class App {
   }
 
   focusStartingList() {
-    const listElements = [
-      ...this.elements.sidebar.querySelectorAll(".list-btn"),
-    ];
-    const startListIdx = this.data.currentListIdx;
-    const startListBtn = listElements.at(startListIdx);
+    const startListBtn = this.getCurrentListElementBtn();
     startListBtn.classList.add("focused-list");
   }
 

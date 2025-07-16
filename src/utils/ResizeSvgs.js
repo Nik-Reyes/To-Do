@@ -5,12 +5,12 @@ export default function resizeSvgs() {
   const listButtonHeight = listButton.offsetHeight;
   const listButtonWidth = listButton.offsetWidth;
 
-  //ran into bug where browser set improper line height for input, even when I applied inline styles or the !important flag
-  //explcitly setting the height seems to work
-  let newList = document.querySelector(".new-list.list-btn input");
-  if (newList) {
+  //ran into bug where browser set improper line height for new list input, even when I applied inline styles or the !important flag
+  //non-newList button elements have the correct height, so retrieve their correct height and force the input to the correct height
+  let newListInput = document.querySelector(".new-list.list-btn input");
+  if (newListInput) {
     const correctListTitleHeight = listButton.querySelector(".list-title");
-    newList.style.height = `${correctListTitleHeight.offsetHeight}px`;
+    newListInput.style.height = `${correctListTitleHeight.offsetHeight}px`;
   }
   listSvgWrapper.setAttribute(
     "viewBox",

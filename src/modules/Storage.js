@@ -1,40 +1,56 @@
 import List from "./List.js";
 import { defaultItems } from "./DefaultTasks.js";
 
-export default function CreateDefaultLists() {
+export default function CreateLists() {
   const lists = {};
-  const myListStage = [];
-  const systemListStage = [];
-  const myLists = ["Groceries"];
-  const systemLists = ["Today", "Scheduled", "All Tasks", "Completed"];
+  const myLists = {};
+  const systemLists = {};
+
+  const createSystemLists = (storedSystemLists) => {
+    storedSystemLists.map((list) => {
+      systemLists[list] = new List(list);
+    });
+  };
+
+  const createMyLists = (storedMyLists) => {
+    storedMyLists.forEach((list) => {
+      myLists[list] = new List(list);
+    });
+  };
 
   const createLists = () => {
-    systemLists.forEach((title) => {
-      systemListStage.push(new List(title));
-    });
+    const storedSystemLists = [
+      "Today-0",
+      "Scheduled-0",
+      "All Tasks-0",
+      "Completed-0",
+    ];
+    const storedMyLists = ["Groceries-0", "Scheduled-0"];
 
-    myLists.forEach((title) => {
-      myListStage.push(new List(title));
-    });
+    createSystemLists(storedSystemLists);
+    createMyLists(storedMyLists);
+
+    lists.systemLists = systemLists;
+    lists.myLists = myLists;
+
+    console.log(lists.myLists);
   };
 
-  const addMyListItems = () => {
-    defaultItems.forEach((item) => {
-      myListStage[0].addTask(item);
-    });
+  //every task will be part of All Tasks
+  //some tasks might be part of Completed
+  //Some tasks might be part of Scheduled
+  //Some tasks might be part of Today
+  const assignTasks = () => {
+    for (let [key, value] of Object.entries(lists.myLists)) {
+      value.tasks = defaultItems;
+    }
+    lists.systemLists["All Tasks-0"].tasks = defaultItems;
   };
 
-  const stageLists = () => {
+  const init = (() => {
     createLists();
-    addMyListItems();
-  };
+    assignTasks();
+  })();
 
-  const pushLists = () => {
-    stageLists();
-    lists.systemLists = systemListStage;
-    lists.myLists = myListStage;
-    return lists;
-  };
-
-  return pushLists();
+  return lists;
 }

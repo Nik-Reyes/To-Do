@@ -36,8 +36,6 @@ export default function createListElement(list, attributes) {
     listElement = generateElement("button", {
       class: `list-btn stacked ${attributes ? attributes.class : ""}`,
     });
-
-    buttonWrapper.setAttribute("data-id", `${list.id}`);
   } else {
     buttonName = generateElement("input", {
       type: "text",
