@@ -39,11 +39,6 @@ export default function createTaskElement(task) {
   });
   taskNotes.textContent = task.notes;
 
-  requestAnimationFrame(() => {
-    taskNotes.style.height = "auto";
-    taskNotes.style.height = taskNotes.scrollHeight + "px";
-  });
-
   const taskDate = generateElement("input", {
     class: "inner-cyberpunk-clip-wrapper-br task-date",
     type: "date",
