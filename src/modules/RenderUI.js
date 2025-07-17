@@ -68,10 +68,6 @@ export default class RenderUI {
   }
 
   ////////////// ACTION METHODS ///////////////
-  clearTaskCollection() {
-    this.taskCollection.innerText = "";
-  }
-
   createHeaderElement(title) {
     if (!title) throw Error("Title DNE!");
     this.header = createHeader(title);
@@ -86,19 +82,28 @@ export default class RenderUI {
     return [...objects].map((task) => createTaskElement(task));
   }
 
-  //takes in list objects, returns array of list elements
-  createListElements(sysObjects, myObjects) {
-    const sysEls = [...sysObjects].map((list) => createListElement(list));
-    const myEls = [...myObjects].map((list) => createListElement(list));
+  //takes in list objects (and optional attributes), returns array of list elements
+  createListElements(sysObjects, myObjects, attributes) {
+    let i = 0;
+    const sysEls = [...sysObjects].map((list) =>
+      createListElement(list, attributes?.[i++])
+    );
+    const myEls = [...myObjects].map((list) =>
+      createListElement(list, attributes?.[i++])
+    );
 
     return [sysEls, myEls];
   }
 
   //appends array of task elements to task collection section
-  renderTasks(taskObjects) {
+  async renderTasks(taskObjects) {
     if (!taskObjects) throw Error("Tasks DNE!");
-    this.clearTaskCollection();
-    this.taskCollection.append(...this.createTaskElements(taskObjects));
+    this.taskCollection.innerText = "";
+    await new Promise((resolve) => setTimeout(resolve, 25));
+    const taskElements = this.createTaskElements(taskObjects);
+    const taskCollectionFrag = document.createDocumentFragment();
+    taskCollectionFrag.append(...taskElements);
+    this.taskCollection.append(taskCollectionFrag);
   }
 
   //appends array of list elements to systemList and myList
@@ -113,8 +118,36 @@ export default class RenderUI {
     if (!permaLists) throw Error("Perma Lists Elements DNE!");
     if (!userLists) throw Error("User Lists Elements DNE!");
 
-    this.sidebar.querySelector(".system-list-wrapper").append(...permaLists);
-    this.sidebar.querySelector(".mylist-wrapper").append(...userLists);
+    this.sidebar
+      .querySelector(".inner-system-list-wrapper")
+      .append(...permaLists);
+    this.sidebar.querySelector(".inner-mylist-wrapper").append(...userLists);
+  }
+
+  rerenderLists(
+    sysObjects,
+    myObjects,
+    systemListWrapper,
+    mylistWrapper,
+    classes
+  ) {
+    const [permaLists, userLists] = this.createListElements(
+      sysObjects,
+      myObjects,
+      classes
+    );
+
+    mylistWrapper.innerText = "";
+    systemListWrapper.innerText = "";
+    systemListWrapper.append(...permaLists);
+    mylistWrapper.append(...userLists);
+    resizeListSvgs();
+  }
+
+  //replaces a list button with its own list list object (a re-render function)
+  replaceList(currentListEl, currentListObj, attributes) {
+    currentListEl.replaceWith(createListElement(currentListObj, attributes));
+    resizeListSvgs();
   }
 
   //responsible for creating all the necessary compoenents needed for initial render
@@ -136,6 +169,7 @@ export default class RenderUI {
   renderEditableList(mylistWrapper) {
     const newList = createListElement();
     mylistWrapper.appendChild(newList);
+    resizeListSvgs();
     return newList;
   }
 
@@ -147,15 +181,12 @@ export default class RenderUI {
     task.remove();
   }
 
-  //replaces a list button with its own list list object (a re-render function)
-  replaceList(currentListEl, currentListObj, attributes) {
-    currentListEl.replaceWith(createListElement(currentListObj, attributes));
-    resizeListSvgs();
+  //responsible for updating the task elements and header title for the current list based on Data.currentTasks and Data.currentListTitle
+  updateHeader(newTitle) {
+    this.header.firstChild.firstChild.innerText = newTitle.toUpperCase();
   }
 
-  //responsible for updating the task elements and header title for the current list based on Data.currentTasks and Data.currentListTitle
-  updateDisplay(newTitle, newTasks) {
-    this.header.firstChild.firstChild.innerText = newTitle.toUpperCase();
+  updateTasks(newTasks) {
     this.renderTasks(newTasks);
   }
 

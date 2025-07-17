@@ -34,7 +34,7 @@ export default function createListElement(list, attributes) {
       list.numberOfTasks.toString()
     );
     listElement = generateElement("button", {
-      class: `list-btn stacked ${attributes ? attributes.class : ""}`,
+      class: attributes?.class || "list-btn stacked",
     });
 
     buttonWrapper.setAttribute("data-id", `${list.id}`);

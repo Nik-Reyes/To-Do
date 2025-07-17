@@ -1,7 +1,6 @@
 import Data from "./Data.js";
 import RenderUI from "./RenderUI.js";
 import SidebarManager from "./SidebarManager.js";
-import resizeListSvgs from "../utils/ResizeSvgs.js";
 
 export default class App {
   #elements = {
@@ -41,12 +40,21 @@ export default class App {
       ? button.removeAttribute("disabled")
       : button.setAttribute("disabled", "");
   }
+  // re-render either the newList or the list when deleting
+  rerenderCurrentList(currList) {
+    const newList = currList.querySelector(".new-list");
+    this.switchFocusedLists(newList);
+    this.renderer.replaceList(currList, this.data.currentList, {
+      class: "list-btn stacked focused-list",
+    });
+  }
 
   addEditableListElement() {
-    const list = this.renderer.renderEditableList(this.elements.mylistWrapper);
+    const list = this.renderer.renderEditableList(
+      this.elements.innerMylistWrapper
+    );
     list.querySelector(".newList-input").focus();
     this.toggleButton(this.elements.addListBtn);
-    resizeListSvgs();
   }
 
   replaceEditableList(editableList, target) {
@@ -54,10 +62,8 @@ export default class App {
     this.data.addList(newList);
     this.data.switchLists(newList.id);
     this.rerenderCurrentList(editableList);
-    this.renderer.updateDisplay(
-      this.data.currentListTitle,
-      this.data.currentTasks
-    );
+    this.renderer.updateHeader(this.data.currentListTitle);
+    this.renderer.updateTasks(this.data.currentTasks);
   }
 
   handleNewList(e) {
@@ -103,6 +109,14 @@ export default class App {
     return this.getCurrentListElement().querySelector(".list-btn");
   }
 
+  getAllListElementBtnClasses() {
+    return Array.from(this.elements.sidebar.querySelectorAll(".list-btn")).map(
+      (btn) => {
+        return { class: btn.className };
+      }
+    );
+  }
+
   getCurrentListElement() {
     return this.getListElements().at(this.data.currentListIdx);
   }
@@ -118,16 +132,21 @@ export default class App {
     //if list button is not a clicked button, and is a newList, just remove the old focused list and early return
     if (listButton.classList.contains("new-list")) {
       prevList.classList.remove("focused-list");
+      console.log("removed");
       return;
     }
 
     // if there is no previous focused list, apply the focused list to the clicked list (this is the first ever clicked list)
     if (!prevList) {
       listButton.classList.add("focused-list");
+      console.log("added");
     } else {
       //if there is a previous list, then remove the class and add it to the clicked list
       prevList.classList.remove("focused-list");
+      console.log("removed");
+
       listButton.classList.add("focused-list");
+      console.log("added");
     }
   }
 
@@ -149,10 +168,10 @@ export default class App {
 
     this.switchFocusedLists(listButton);
     this.data.switchLists(listIdx);
-    this.renderer.updateDisplay(
-      this.data.currentListTitle,
-      this.data.currentTasks
-    );
+    this.renderer.updateHeader(this.data.currentListTitle);
+    setTimeout(() => {
+      this.renderer.updateTasks(this.data.currentTasks);
+    }, 0);
   }
 
   collapseActiveTaskElement(e) {
@@ -272,26 +291,25 @@ export default class App {
     ).indexOf(taskWrapper);
   }
 
-  // re-render either the newList or the list when deleting
-  rerenderCurrentList(currList) {
-    const listBtn = currList.querySelector(".focused-list");
-    const newList = currList.querySelector(".new-list");
-    const list = listBtn || newList;
-    this.switchFocusedLists(list);
-    this.renderer.replaceList(currList, this.data.currentList, {
-      class: "focused-list",
-    });
-  }
-
   rerenderTargetList(targetListElement, targetListData) {
     this.renderer.replaceList(targetListElement, targetListData);
+  }
+
+  rerenderLists() {
+    const classes = this.getAllListElementBtnClasses();
+    this.renderer.rerenderLists(
+      this.data.listCollection.systemLists,
+      this.data.listCollection.myLists,
+      this.elements.innerSystemListWrapper,
+      this.elements.innerMylistWrapper,
+      classes
+    );
   }
 
   deleteTaskElement(taskWrapper, taskIdx) {
     this.data.deleteTask(taskIdx);
     this.renderer.deleteTaskElement(taskWrapper);
-    const listEl = this.getCurrentListElement();
-    this.rerenderCurrentList(listEl);
+    this.rerenderLists();
   }
 
   addTaskElement(e) {
@@ -318,14 +336,9 @@ export default class App {
     input.focus();
     const taskContent = newTaskElement.querySelector(".task-content");
     this.handleTaskInputClick(input, newTaskElement, taskContent);
-    const listEl = this.getCurrentListElement();
 
-    //Rerender the current list and the destination list to update its task count
-    this.rerenderCurrentList(listEl);
-
-    //get the targetListelement from that data index. Their indeceds are the same
-    const targetListEl = this.getTargetSystemList(destinationList);
-    this.rerenderTargetList(targetListEl, this.data.allTasksList);
+    //Rerender all lists to update the list task count
+    this.rerenderLists();
   }
 
   handleTaskClicks(e) {
@@ -501,6 +514,8 @@ export default class App {
       addListBtn: ".addList-btn",
       mylistWrapper: ".mylist-wrapper",
       systemListWrapper: ".system-list-wrapper",
+      innerMylistWrapper: ".inner-mylist-wrapper",
+      innerSystemListWrapper: ".inner-system-list-wrapper",
       headerHamburger: "header .hamburger",
     });
     //app passes elements object to sidebar manager for contstruction

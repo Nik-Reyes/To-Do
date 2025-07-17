@@ -97,8 +97,17 @@ export default class Data {
     this.currentList.addTask(newTask);
   }
 
-  deleteTask(idx) {
-    this.currentList.deleteTask(idx);
+  //deletes the task from every list
+  deleteTask(taskElementIdx) {
+    const taskToDelete = this.currentTasks.at(taskElementIdx);
+    const lists = this.lists;
+    let idx = -1;
+    for (let list of lists) {
+      idx = list.tasks.indexOf(taskToDelete);
+      if (idx !== -1) {
+        list.tasks.splice(idx, 1);
+      }
+    }
   }
 
   updateTaskObject(taskIdx, property, value) {

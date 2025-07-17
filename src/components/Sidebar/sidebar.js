@@ -17,12 +17,20 @@ export default function createSidebar() {
     class: "mylist-wrapper",
   });
 
+  const innerSystemListsWrapper = generateElement("div", {
+    class: "inner-system-list-wrapper",
+  });
+
+  const innerMyListsWrapper = generateElement("div", {
+    class: "inner-mylist-wrapper",
+  });
+
   const systemListTitle = createListTitle("SYSTEM LISTS");
   const myListTitle = createListTitle("MY LISTS");
 
   //////// ELEMENT ASSEMBLY ////////
-  systemListWrapper.appendChild(systemListTitle);
-  myListWrapper.appendChild(myListTitle);
+  systemListWrapper.append(systemListTitle, innerSystemListsWrapper);
+  myListWrapper.append(myListTitle, innerMyListsWrapper);
 
   sidebar.append(systemListWrapper, myListWrapper);
 
