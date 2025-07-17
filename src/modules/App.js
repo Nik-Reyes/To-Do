@@ -281,11 +281,23 @@ export default class App {
       if (property === "task-notes") {
         target.style.height = "auto"; // shrinks to auto when content shrinks
         target.style.height = target.scrollHeight + "px"; // grows to fit content
+      } else if (property === "task-checkbox") {
+        this.handleTaskCheckBoxInput(
+          taskIdx,
+          propMap[property],
+          target.checked
+        );
+      } else if (property === "task-date") {
+      } else {
+        this.data.updateTaskObject(taskIdx, propMap[property], target.value);
       }
-      property === "task-checkbox"
-        ? this.data.updateTaskObject(taskIdx, propMap[property], target.checked)
-        : this.data.updateTaskObject(taskIdx, propMap[property], target.value);
     }
+  }
+
+  handleTaskCheckBoxInput(taskIdx, taskProperty, checkedValue) {
+    this.data.updateTaskObject(taskIdx, taskProperty, checkedValue);
+    this.data.portTask("Completed", taskIdx);
+    this.rerenderLists();
   }
 
   applyEventListeners() {
@@ -302,6 +314,7 @@ export default class App {
       this.handleNewList.bind(this)
     );
     document.addEventListener("click", this.handleDocumentClicks.bind(this));
+    this.elements.nav.addEventListener("click", this.addTaskElement.bind(this));
     this.elements.taskCollection.addEventListener(
       "click",
       this.handleTaskClicks.bind(this)
@@ -322,7 +335,6 @@ export default class App {
       "dblclick",
       this.handleDoubleClicks.bind(this)
     );
-    this.elements.nav.addEventListener("click", this.addTaskElement.bind(this));
   }
 
   initialize() {

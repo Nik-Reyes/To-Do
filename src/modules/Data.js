@@ -56,12 +56,10 @@ export default class Data {
     ];
   }
 
-  //was firstMyList()
   get startingListIDX() {
     return this.#listCollection.systemLists.length;
   }
 
-  //was currentListTasks
   get currentTasks() {
     return this.#currentList.tasks;
   }
@@ -80,6 +78,9 @@ export default class Data {
   }
 
   ////////////// ACTION METHODS ///////////////
+  getTask(elementIdx) {
+    return this.currentTasks.at(elementIdx);
+  }
   switchLists(idx) {
     this.currentList = idx;
   }
@@ -110,9 +111,9 @@ export default class Data {
     }
   }
 
-  updateTaskObject(taskIdx, property, value) {
+  updateTaskObject(taskIdx, taskProperty, value) {
     if (taskIdx !== -1 && this.currentTasks[taskIdx]) {
-      this.currentTasks[taskIdx][property] = value;
+      this.currentTasks[taskIdx][taskProperty] = value;
     }
   }
 
@@ -120,9 +121,12 @@ export default class Data {
     return new List(title);
   }
 
+  //Accepts a task object or existing element index
   //data can only ever be ported to a system list. All other lists are added to the current list the user is on
   portTask(destination, task) {
-    this.destinationService[destination].tasks.push(task);
+    !isNaN(task)
+      ? this.destinationService[destination].tasks.push(this.getTask(task))
+      : this.destinationService[destination].tasks.push(task);
   }
 
   init() {
