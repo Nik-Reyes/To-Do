@@ -3,43 +3,22 @@ import RenderUI from "./RenderUI.js";
 import SidebarManager from "./SidebarManager.js";
 
 export default class App {
-  #elements = {
-    pageWrapper: document.querySelector(".page-wrapper"),
-    overlay: document.querySelector(".overlay"),
-  };
-  #activeTaskElement = null;
-
   constructor() {
     this.data = new Data();
     this.renderer = new RenderUI();
-    this.sidebarManager = undefined;
-  }
-
-  ////////////// FIELD GETTER METHODS ///////////////
-  get activeTaskElement() {
-    return this.#activeTaskElement;
-  }
-
-  get elements() {
-    return this.#elements;
-  }
-
-  // ////////////// SETTER METHODS ///////////////
-  set activeTaskElement(el) {
-    this.#activeTaskElement = el;
+    this.elements = {
+      pageWrapper: document.querySelector(".page-wrapper"),
+      overlay: document.querySelector(".overlay"),
+    };
+    this.activeTaskElement;
   }
 
   queryElements(selectors) {
     for (let key of Object.keys(selectors)) {
-      this.#elements[key] = document.querySelector(selectors[key]);
+      this.elements[key] = document.querySelector(selectors[key]);
     }
   }
 
-  toggleButton(button) {
-    button.disabled
-      ? button.removeAttribute("disabled")
-      : button.setAttribute("disabled", "");
-  }
   // re-render either the newList or the list when deleting
   rerenderCurrentList(currList) {
     const newList = currList.querySelector(".new-list");
@@ -121,35 +100,6 @@ export default class App {
     return this.getListElements().at(this.data.currentListIdx);
   }
 
-  switchFocusedLists(listButton) {
-    // listButton is my clicked list
-    // if my clicked list already has focus, do nothing, just return
-    if (listButton.classList.contains("focused-list")) return;
-
-    //if the clicked listButton does not have focus then remove the focus from the previous focused list
-    const prevList = this.elements.sidebar.querySelector(".focused-list");
-
-    //if list button is not a clicked button, and is a newList, just remove the old focused list and early return
-    if (listButton.classList.contains("new-list")) {
-      prevList.classList.remove("focused-list");
-      console.log("removed");
-      return;
-    }
-
-    // if there is no previous focused list, apply the focused list to the clicked list (this is the first ever clicked list)
-    if (!prevList) {
-      listButton.classList.add("focused-list");
-      console.log("added");
-    } else {
-      //if there is a previous list, then remove the class and add it to the clicked list
-      prevList.classList.remove("focused-list");
-      console.log("removed");
-
-      listButton.classList.add("focused-list");
-      console.log("added");
-    }
-  }
-
   handleListClicks(e) {
     const target = e.target;
     // return if the clicked element is not a list
@@ -183,9 +133,8 @@ export default class App {
     const target = e.target;
     const newList = this.elements.mylistWrapper.querySelector(".newList-input");
     const opendMenu = this.elements.taskCollection.querySelector(".open-menu");
-    const focusedDateWrapper = this.elements.taskCollection.querySelector(
-      ".date-wrapper.focused"
-    );
+    const focusedDate =
+      this.elements.taskCollection.querySelector(".task-date.focused");
     const focusedPriorityWrapper = this.elements.taskCollection.querySelector(
       ".priority-btn-wrapper.focused"
     );
@@ -208,9 +157,9 @@ export default class App {
     }
 
     //forces unfocusing on the date wrapper when the user clicks away from it
-    if (focusedDateWrapper && !target.closest(".date-wrapper")) {
+    if (focusedDate && !target.closest(".task-date")) {
       console.log("bubble 3");
-      focusedDateWrapper.classList.remove("focused");
+      focusedDate.classList.remove("focused");
     }
 
     if (focusedPriorityWrapper && !target.closest(".priority-btn-wrapper")) {
@@ -234,19 +183,6 @@ export default class App {
     });
   }
 
-  changePriorityPanelColor(taskWrapper, newPriority) {
-    const taskPriorityColorPanel = taskWrapper.querySelector(".priority-panel");
-    taskPriorityColorPanel.classList.forEach((className) => {
-      if (className.includes("-priority")) {
-        taskPriorityColorPanel.classList.replace(className, newPriority);
-      }
-    });
-  }
-
-  closeMenu(menu) {
-    menu.classList.remove("open-menu");
-  }
-
   handlePriorityOptionClick(target, taskWrapper, taskIdx) {
     const taskPriorityBtn = taskWrapper.querySelector("button.task-priority");
     const menu = this.elements.taskCollection.querySelector(".open-menu");
@@ -258,23 +194,6 @@ export default class App {
     this.changePriorityPanelColor(taskWrapper, newPriority);
     // update the task object priority property
     this.data.updateTaskObject(taskIdx, "priority", newPriority);
-  }
-
-  togglePriorityMenu(menu) {
-    menu.classList.toggle("open-menu");
-  }
-
-  removeActiveTask() {
-    const activeTask = this.elements.taskCollection.querySelector(".active");
-    if (!activeTask) return;
-
-    const activeTaskInput = activeTask.querySelector(".task-input");
-    if (!activeTaskInput) return;
-
-    const inputWidth = `${activeTaskInput.value.length + 2}ch`;
-    activeTaskInput.style.width = inputWidth;
-    activeTask.classList.remove("active");
-    this.activeTaskElement = null;
   }
 
   handleTaskInputClick(target, taskWrapper, taskContent) {
@@ -341,28 +260,6 @@ export default class App {
     this.rerenderLists();
   }
 
-  handleTaskClicks(e) {
-    const target = e.target;
-    const classArr = target.classList;
-    const taskWrapper = target.closest(".task-wrapper");
-    const taskContent = target.closest(".task-content");
-    const taskIdx = this.getTaskIdxFromElement(taskWrapper);
-
-    if (classArr.contains("task-input")) {
-      this.handleTaskInputClick(target, taskWrapper, taskContent);
-    } else if (classArr.contains("task-priority")) {
-      const menu = taskWrapper.querySelector(".priority-menu-wrapper");
-      target.closest(".priority-btn-wrapper").classList.toggle("focused");
-      this.togglePriorityMenu(menu);
-    } else if (classArr.contains("delete-svg-wrapper")) {
-      this.deleteTaskElement(taskWrapper, taskIdx);
-    } else if (target.closest(".task-date")) {
-      target.closest(".date-wrapper").classList.add("focused");
-    } else if (target.closest(".priority-menu-option")) {
-      this.handlePriorityOptionClick(target, taskWrapper, taskIdx);
-    }
-  }
-
   handleTaskInput(e) {
     const target = e.target;
     const taskWrapper = target.closest(".task-wrapper");
@@ -388,67 +285,6 @@ export default class App {
       property === "task-checkbox"
         ? this.data.updateTaskObject(taskIdx, propMap[property], target.checked)
         : this.data.updateTaskObject(taskIdx, propMap[property], target.value);
-    }
-  }
-
-  //////////////// PURE UI-RESPONSIVE METHODS ///////////////
-  handleDoubleClicks(e) {
-    const target = e.target;
-    if (["INPUT", "TEXTAREA", "BUTTON"].includes(target.tagName)) return;
-    const taskContent = target.closest(".task-content");
-    if (!taskContent) return;
-    const taskWrapper = taskContent.closest(".task-wrapper");
-
-    if (taskContent.classList.contains("active")) {
-      taskContent.classList.remove("active");
-      this.activeTaskElement = null;
-    } else {
-      taskContent.classList.add("active");
-      this.activeTaskElement = taskWrapper;
-    }
-  }
-
-  handleTaskChanges(e) {
-    const target = e.target;
-    if (target.closest(".task-date")) {
-      target.closest(".date-wrapper").classList.remove("focused");
-    }
-  }
-
-  handleTaskKeydown(e) {
-    const key = e.key;
-    const target = e.target;
-
-    if (key === "Enter" || key === "Escape") {
-      if (target.closest(".task-input")) {
-        target.style.width = target.value.length + 2 + "ch";
-        target.blur();
-      }
-      if (target.closest(".task-date")) {
-        target.closest(".date-wrapper").classList.remove("focused");
-      }
-    }
-
-    if (key === "Enter") {
-      if (target.closest(".task-checkbox")) {
-        target.closest(".task-checkbox").click();
-      }
-    }
-
-    if (key === "Escape") {
-      if (target.closest(".task-notes")) {
-        target.blur();
-      } else if (target.closest(".task-priority")) {
-        const priorityWrapper = target.closest(".priority-btn-wrapper");
-        const taskWrapper = target.closest(".task-wrapper");
-        const menu = taskWrapper.querySelector(
-          ".priority-menu-wrapper.open-menu"
-        );
-        if (menu) {
-          priorityWrapper.classList.remove("focused");
-          menu.classList.remove("open-menu");
-        }
-      }
     }
   }
 
@@ -489,11 +325,6 @@ export default class App {
     this.elements.nav.addEventListener("click", this.addTaskElement.bind(this));
   }
 
-  focusStartingList() {
-    const startListBtn = this.getCurrentListElementBtn();
-    startListBtn.classList.add("focused-list");
-  }
-
   initialize() {
     // initialize all data
     this.data.init();
@@ -525,5 +356,168 @@ export default class App {
     this.applyEventListeners();
     // app sets the focused state on the starting list
     this.focusStartingList();
+  }
+
+  //////////////// PURE UI-RESPONSIVE METHODS ///////////////
+
+  handleTaskClicks(e) {
+    const target = e.target;
+    const taskWrapper = target.closest(".task-wrapper");
+    const taskContent = target.closest(".task-content");
+    const taskIdx = this.getTaskIdxFromElement(taskWrapper);
+
+    const taskClickHandlers = {
+      "task-input": () =>
+        this.handleTaskInputClick(target, taskWrapper, taskContent),
+      "task-priority": () => this.handleTaskPriorityCLick(target, taskWrapper),
+      "delete-svg-wrapper": () => this.deleteTaskElement(taskWrapper, taskIdx),
+      "task-date": () => target.classList.add("focused"),
+      "priority-menu-option": () =>
+        this.handlePriorityOptionClick(target, taskWrapper, taskIdx),
+      "task-notes": () => (target.style.height = target.scrollHeight + "px"),
+    };
+
+    for (let [selector, handler] of Object.entries(taskClickHandlers)) {
+      if (target.className.includes(selector)) {
+        handler();
+        break;
+      }
+    }
+  }
+
+  handleTaskPriorityCLick(target, taskWrapper) {
+    const menu = taskWrapper.querySelector(".priority-menu-wrapper");
+    target.closest(".priority-btn-wrapper").classList.toggle("focused");
+    this.togglePriorityMenu(menu);
+  }
+
+  focusStartingList() {
+    const startListBtn = this.getCurrentListElementBtn();
+    startListBtn.classList.add("focused-list");
+  }
+
+  toggleButton(button) {
+    button.disabled
+      ? button.removeAttribute("disabled")
+      : button.setAttribute("disabled", "");
+  }
+
+  switchFocusedLists(listButton) {
+    // listButton is my clicked list
+    // if my clicked list already has focus, do nothing, just return
+    if (listButton.classList.contains("focused-list")) return;
+
+    //if the clicked listButton does not have focus then remove the focus from the previous focused list
+    const prevList = this.elements.sidebar.querySelector(".focused-list");
+
+    //if list button is not a clicked button, and is a newList, just remove the old focused list and early return
+    if (listButton.classList.contains("new-list")) {
+      prevList.classList.remove("focused-list");
+      console.log("removed");
+      return;
+    }
+
+    // if there is no previous focused list, apply the focused list to the clicked list (this is the first ever clicked list)
+    if (!prevList) {
+      listButton.classList.add("focused-list");
+      console.log("added");
+    } else {
+      //if there is a previous list, then remove the class and add it to the clicked list
+      prevList.classList.remove("focused-list");
+      console.log("removed");
+
+      listButton.classList.add("focused-list");
+      console.log("added");
+    }
+  }
+
+  changePriorityPanelColor(taskWrapper, newPriority) {
+    const taskPriorityColorPanel = taskWrapper.querySelector(".priority-panel");
+    taskPriorityColorPanel.classList.forEach((className) => {
+      if (className.includes("-priority")) {
+        taskPriorityColorPanel.classList.replace(className, newPriority);
+      }
+    });
+  }
+
+  closeMenu(menu) {
+    menu.classList.remove("open-menu");
+  }
+
+  togglePriorityMenu(menu) {
+    menu.classList.toggle("open-menu");
+  }
+
+  removeActiveTask() {
+    const activeTask = this.elements.taskCollection.querySelector(".active");
+    if (!activeTask) return;
+
+    const activeTaskInput = activeTask.querySelector(".task-input");
+    if (!activeTaskInput) return;
+
+    const inputWidth = `${activeTaskInput.value.length + 2}ch`;
+    activeTaskInput.style.width = inputWidth;
+    activeTask.classList.remove("active");
+    this.activeTaskElement = null;
+  }
+
+  handleDoubleClicks(e) {
+    const target = e.target;
+    if (["INPUT", "TEXTAREA", "BUTTON"].includes(target.tagName)) return;
+    const taskContent = target.closest(".task-content");
+    if (!taskContent) return;
+    const taskWrapper = taskContent.closest(".task-wrapper");
+
+    if (taskContent.classList.contains("active")) {
+      taskContent.classList.remove("active");
+      this.activeTaskElement = null;
+    } else {
+      taskContent.classList.add("active");
+      this.activeTaskElement = taskWrapper;
+    }
+  }
+
+  handleTaskChanges(e) {
+    const target = e.target;
+    if (target.closest(".task-date")) {
+      target.classList.remove("focused");
+    }
+  }
+
+  handleTaskKeydown(e) {
+    const key = e.key;
+    const target = e.target;
+
+    if (key === "Enter" || key === "Escape") {
+      if (target.closest(".task-input")) {
+        target.style.width = target.value.length + 2 + "ch";
+        target.blur();
+      }
+      if (target.closest(".task-date")) {
+        target.closest(".date-wrapper").classList.remove("focused");
+      }
+    }
+
+    if (key === "Enter") {
+      if (target.closest(".task-checkbox")) {
+        target.closest(".task-checkbox").click();
+      }
+    }
+
+    if (key === "Escape") {
+      if (target.closest(".task-notes")) {
+        target.blur();
+      } else if (target.closest(".task-priority")) {
+        const priorityWrapper = target.closest(".priority-btn-wrapper");
+        const taskWrapper = target.closest(".task-wrapper");
+        const menu = taskWrapper.querySelector(
+          ".priority-menu-wrapper.open-menu"
+        );
+        if (menu) {
+          priorityWrapper.classList.remove("focused");
+          menu.classList.remove("open-menu");
+        }
+      }
+    }
   }
 }

@@ -86,7 +86,7 @@
   display: grid;
   column-gap: 0.5rem;
   grid-template-columns: auto 1fr;
-  padding: 0.5em;
+  padding: 8px;
   background-color: var(--task-bg);
   align-items: center;
 }
@@ -258,13 +258,21 @@ input[type="date"] {
   grid-column: 2;
   display: grid;
   grid-template-rows: 0fr;
-  transition: grid-template-rows 250ms;
+  transition: grid-template-rows 200ms;
 }
 
 .expandable-content {
   display: grid;
   overflow: hidden;
   row-gap: 0.25rem;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 300ms ease-in-out;
+}
+
+.task-content.active .expandable-content {
+  opacity: 1;
+  visibility: visible;
 }
 
 .more-options {
@@ -286,7 +294,6 @@ input[type="date"] {
   clip-path: var(--cyberpunk-clip-br);
   background-color: var(--cyber-red-neon-bg);
   padding: 1px;
-  overflow: hidden;
   transition: background-color 200ms;
 }
 
@@ -294,8 +301,8 @@ input[type="date"] {
   clip-path: var(--cyberpunk-clip-br);
 }
 
-.date-wrapper:hover .task-date,
-.date-wrapper.focused .task-date,
+.task-date:hover,
+.task-date.focused,
 .priority-btn-wrapper:hover .task-priority,
 .priority-btn-wrapper.focused .task-priority {
   background-color: hsl(0, 65%, 20%);
@@ -319,10 +326,4 @@ input[type="date"] {
 .inner-cyberpunk-clip-wrapper-br.task-date,
 .cyberpunk-clip-wrapper-br.date-wrapper {
   clip-path: var(--cyberpunk-clip-br-md);
-}
-
-@media (min-width: 41.875rem) {
-  .task-collection {
-    padding: calc(var(--task-collection-padding) * 2);
-  }
 }
