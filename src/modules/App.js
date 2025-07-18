@@ -253,6 +253,7 @@ export default class App {
     //Make sure the task is added to the DOM in active mode
     const input = newTaskElement.querySelector(".task-input");
     input.focus();
+    input.select();
     const taskContent = newTaskElement.querySelector(".task-content");
     this.handleTaskInputClick(input, newTaskElement, taskContent);
 
@@ -281,6 +282,7 @@ export default class App {
       if (property === "task-notes") {
         target.style.height = "auto"; // shrinks to auto when content shrinks
         target.style.height = target.scrollHeight + "px"; // grows to fit content
+        this.data.updateTaskObject(taskIdx, propMap[property], target.value);
       } else if (property === "task-checkbox") {
         this.handleTaskCheckBoxInput(
           taskIdx,
@@ -288,16 +290,42 @@ export default class App {
           target.checked
         );
       } else if (property === "task-date") {
+        this.handleTaskDateInput(taskIdx, propMap[property], target.value);
+        this.data.updateTaskObject(taskIdx, propMap[property], target.value);
       } else {
         this.data.updateTaskObject(taskIdx, propMap[property], target.value);
       }
     }
   }
 
-  handleTaskCheckBoxInput(taskIdx, taskProperty, checkedValue) {
-    this.data.updateTaskObject(taskIdx, taskProperty, checkedValue);
-    this.data.portTask("Completed", taskIdx);
+  handleTaskDateInput(taskIdx, taskProperty, date) {
+    const dateObject = new Date();
+    console.log(date);
+    const selectedDate = new Date(date).getUTCDate();
+    const todaysDate = dateObject.getDate();
+
+    if (selectedDate > todaysDate) {
+      this.data.portTask("Scheduled", taskIdx);
+    } else {
+      this.data.portTask("Scheduled", taskIdx);
+      this.data.portTask("Today", taskIdx);
+    }
     this.rerenderLists();
+  }
+
+  //wehn task is checked:
+  //1. traverse all lists
+  //2. if list was unchecked, add it to the completed list
+  //3. if list was already checked uncheck it, remove it from the completed tasks, rerender lists
+  //4. if list was already checked and it was unchecked and the current list is the completed list, rerender the tasks
+
+  handleTaskCheckBoxInput(taskIdx, taskProperty, checkedValue) {
+    //prevent from sending in another completed task
+    this.data.handleCheckedTask(taskIdx, taskProperty, checkedValue);
+    this.rerenderLists();
+    if (this.data.currentListTitle === "Completed") {
+      this.renderer.renderTasks(this.data.currentTasks);
+    }
   }
 
   applyEventListeners() {

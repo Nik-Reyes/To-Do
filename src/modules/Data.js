@@ -106,7 +106,7 @@ export default class Data {
     for (let list of lists) {
       idx = list.tasks.indexOf(taskToDelete);
       if (idx !== -1) {
-        list.tasks.splice(idx, 1);
+        list.deleteTask(idx);
       }
     }
   }
@@ -119,6 +119,31 @@ export default class Data {
 
   createNewList(title) {
     return new List(title);
+  }
+
+  listContainsTask(taskElementIdx) {
+    const taskToCheck = this.getTask(taskElementIdx);
+  }
+
+  //delete task from completed list and make sure its unchecked to uncheck it from all other lists
+  deleteCheckedTask(taskToDelete) {
+    this.completedList.tasks.forEach((task, i) => {
+      if (task === taskToDelete) {
+        this.completedList.deleteTask(i);
+        taskToDelete.checked = false;
+        return;
+      }
+    });
+  }
+
+  handleCheckedTask(taskElementIdx, taskProperty, checkedValue) {
+    const checkedTask = this.getTask(taskElementIdx);
+    if (checkedTask.checked) {
+      this.deleteCheckedTask(checkedTask);
+    } else {
+      this.portTask("Completed", taskElementIdx);
+      this.updateTaskObject(taskElementIdx, taskProperty, checkedValue);
+    }
   }
 
   //Accepts a task object or existing element index
