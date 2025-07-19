@@ -1,6 +1,7 @@
 import List from "./List.js";
 import Task from "./Task.js";
 import CreateDefaultLists from "./Storage.js";
+import { format, isAfter, isBefore, isEqual, isPast, parseISO } from "date-fns";
 
 export default class Data {
   #listCollection = [];
@@ -11,6 +12,10 @@ export default class Data {
   ////////////// GETTER METHODS ///////////////
   get currentList() {
     return this.#currentList;
+  }
+
+  get todaysDate() {
+    return format(new Date(), "yyy-MM-dd");
   }
 
   get todayList() {
@@ -78,6 +83,12 @@ export default class Data {
   }
 
   ////////////// ACTION METHODS ///////////////
+
+  isDateInPast(date) {
+    const todaysDate = format(new Date(), "yyyy-MM-dd");
+    return isBefore(date, todaysDate);
+  }
+
   getTask(elementIdx) {
     return this.currentTasks.at(elementIdx);
   }
@@ -111,18 +122,18 @@ export default class Data {
     }
   }
 
-  updateTaskObject(taskIdx, taskProperty, value) {
+  updateTaskObjectWithIndex(taskIdx, taskProperty, value) {
     if (taskIdx !== -1 && this.currentTasks[taskIdx]) {
       this.currentTasks[taskIdx][taskProperty] = value;
     }
   }
 
-  createNewList(title) {
-    return new List(title);
+  updateTaskObjectWithObject(taskObj, taskProperty, value) {
+    taskObj[taskProperty] = value;
   }
 
-  listContainsTask(taskElementIdx) {
-    const taskToCheck = this.getTask(taskElementIdx);
+  createNewList(title) {
+    return new List(title);
   }
 
   //delete task from completed list and make sure its unchecked to uncheck it from all other lists
@@ -142,7 +153,85 @@ export default class Data {
       this.deleteCheckedTask(checkedTask);
     } else {
       this.portTask("Completed", taskElementIdx);
-      this.updateTaskObject(taskElementIdx, taskProperty, checkedValue);
+      this.updateTaskObjectWithIndex(
+        taskElementIdx,
+        taskProperty,
+        checkedValue
+      );
+    }
+  }
+
+  deleteTaskFromScheduled(taskToDelete) {
+    const scheduledList = this.scheduledList;
+    const scheduledListTasks = scheduledList.tasks;
+
+    let idx = scheduledListTasks.indexOf(taskToDelete);
+    if (idx !== -1) {
+      scheduledList.deleteTask(idx);
+    }
+  }
+
+  deleteTaskFromToday(taskToDelete) {
+    const todayList = this.todayList;
+    const todayListTasks = todayList.tasks;
+
+    let idx = todayListTasks.indexOf(taskToDelete);
+    if (idx !== -1) {
+      todayList.deleteTask(idx);
+    }
+  }
+
+  handleNewDate(taskElementIdx, taskProperty, newDate) {
+    const dateTask = this.getTask(taskElementIdx);
+    //account for user clearing the date
+    if (newDate === "") {
+      this.updateTaskObjectWithObject(dateTask, taskProperty, newDate);
+      this.deleteTaskFromToday(dateTask);
+      this.deleteTaskFromScheduled(dateTask);
+      return;
+    }
+    const dateFormat = "yyyy-MM-dd";
+    const todaysDate = format(new Date(), dateFormat);
+    const selectedDate = format(parseISO(newDate), dateFormat);
+
+    let scheduledTaskIdx = this.scheduledList.tasks.indexOf(dateTask);
+    let todaysTaskIdx = this.todayList.tasks.indexOf(dateTask);
+
+    if (isBefore(selectedDate, todaysDate)) {
+      console.log("task is in the past");
+      return;
+    }
+
+    if (scheduledTaskIdx !== -1 || todaysTaskIdx !== -1) {
+      const prevDate = dateTask.dueDate;
+      if (isBefore(selectedDate, prevDate)) {
+        if (isEqual(selectedDate, todaysDate)) {
+          this.portTask("Today", dateTask);
+        }
+        this.updateTaskObjectWithIndex(
+          taskElementIdx,
+          taskProperty,
+          selectedDate
+        );
+      } else if (
+        isAfter(selectedDate, todaysDate) &&
+        isAfter(selectedDate, prevDate)
+      ) {
+        this.deleteTaskFromToday(dateTask);
+        this.updateTaskObjectWithObject(dateTask, "dueDate", selectedDate);
+      }
+    } else {
+      if (isAfter(selectedDate, todaysDate)) {
+        this.portTask("Scheduled", dateTask);
+      } else if (isEqual(selectedDate, todaysDate)) {
+        this.portTask("Scheduled", dateTask);
+        this.portTask("Today", dateTask);
+      }
+      this.updateTaskObjectWithIndex(
+        taskElementIdx,
+        taskProperty,
+        selectedDate
+      );
     }
   }
 

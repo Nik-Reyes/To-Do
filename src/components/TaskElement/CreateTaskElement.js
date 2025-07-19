@@ -1,5 +1,6 @@
 import generateElement from "../../utils/GenerateElement.js";
 import createPriorityMenu from "../PriorityMenu/CreatePriorityMenu.js";
+import { format } from "date-fns";
 import "./task.css";
 
 export default function createTaskElement(task) {
@@ -43,8 +44,7 @@ export default function createTaskElement(task) {
     class: "inner-cyberpunk-clip-wrapper-br task-date",
     type: "date",
     name: "due-date",
-    min: "2025-01-01",
-    max: "2025-12-31",
+    min: format(new Date(), "yyyy-MM-dd"),
     value: task.dueDate,
   });
   const taskPriorityWrapper = generateElement("div", {

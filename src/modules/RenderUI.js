@@ -98,12 +98,11 @@ export default class RenderUI {
   //appends array of task elements to task collection section
   async renderTasks(taskObjects) {
     if (!taskObjects) throw Error("Tasks DNE!");
-    this.taskCollection.innerText = "";
     await new Promise((resolve) => setTimeout(resolve, 25));
     const taskElements = this.createTaskElements(taskObjects);
     const taskCollectionFrag = document.createDocumentFragment();
     taskCollectionFrag.append(...taskElements);
-    this.taskCollection.append(taskCollectionFrag);
+    this.taskCollection.appendChild(taskCollectionFrag);
   }
 
   //appends array of list elements to systemList and myList
@@ -187,6 +186,7 @@ export default class RenderUI {
   }
 
   updateTasks(newTasks) {
+    this.taskCollection.innerText = "";
     this.renderTasks(newTasks);
   }
 

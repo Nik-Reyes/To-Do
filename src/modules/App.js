@@ -119,9 +119,7 @@ export default class App {
     this.switchFocusedLists(listButton);
     this.data.switchLists(listIdx);
     this.renderer.updateHeader(this.data.currentListTitle);
-    setTimeout(() => {
-      this.renderer.updateTasks(this.data.currentTasks);
-    }, 0);
+    this.renderer.updateTasks(this.data.currentTasks);
   }
 
   collapseActiveTaskElement(e) {
@@ -141,8 +139,8 @@ export default class App {
 
     //collapses the opened task if the user clicks away from it and the click isnt adding a task
     if (this.activeTaskElement && !target.closest(".add-task-btn")) {
-      console.log("bubble 1");
       this.collapseActiveTaskElement(e);
+      return;
     }
     // removes the new editable list if the user clicks away from it
     if (
@@ -150,21 +148,21 @@ export default class App {
       !target.closest(".new-list") &&
       !target.closest(".addList-btn")
     ) {
-      console.log("bubble 2");
       const list = newList.closest(".list-btn-wrapper");
       this.renderer.removeEditableList(list);
       this.toggleButton(this.elements.addListBtn);
+      return;
     }
 
     //forces unfocusing on the date wrapper when the user clicks away from it
     if (focusedDate && !target.closest(".task-date")) {
-      console.log("bubble 3");
       focusedDate.classList.remove("focused");
+      return;
     }
 
     if (focusedPriorityWrapper && !target.closest(".priority-btn-wrapper")) {
-      console.log("bubble 4");
       focusedPriorityWrapper.classList.remove("focused");
+      return;
     }
 
     if (
@@ -172,8 +170,8 @@ export default class App {
       !target.closest(".task-priority") &&
       !target.closest(".open-menu")
     ) {
-      console.log("bubble 5");
       opendMenu.classList.remove("open-menu");
+      return;
     }
   }
 
@@ -193,7 +191,7 @@ export default class App {
     // Change the color of the priority panel
     this.changePriorityPanelColor(taskWrapper, newPriority);
     // update the task object priority property
-    this.data.updateTaskObject(taskIdx, "priority", newPriority);
+    this.data.updateTaskObjectWithIndex(taskIdx, "priority", newPriority);
   }
 
   handleTaskInputClick(target, taskWrapper, taskContent) {
@@ -241,8 +239,15 @@ export default class App {
     //create the data, add data to current list, port data to all tasks list
     const destinationList = "All Tasks";
     const newTask = this.data.createNewTask();
+    if (this.data.currentListTitle === "Today") {
+      newTask.dueDate = this.data.todaysDate;
+      this.data.portTask("Scheduled", newTask);
+    }
     this.data.addTask(newTask);
-    this.data.portTask(destinationList, newTask);
+    //prohibit adding the task twice if user is on the All Tasks list
+    if (this.data.currentListTitle !== "All Tasks") {
+      this.data.portTask(destinationList, newTask);
+    }
 
     //render the task in DOM
     const newTaskElement = this.renderer.renderTask(
@@ -282,7 +287,11 @@ export default class App {
       if (property === "task-notes") {
         target.style.height = "auto"; // shrinks to auto when content shrinks
         target.style.height = target.scrollHeight + "px"; // grows to fit content
-        this.data.updateTaskObject(taskIdx, propMap[property], target.value);
+        this.data.updateTaskObjectWithIndex(
+          taskIdx,
+          propMap[property],
+          target.value
+        );
       } else if (property === "task-checkbox") {
         this.handleTaskCheckBoxInput(
           taskIdx,
@@ -290,41 +299,50 @@ export default class App {
           target.checked
         );
       } else if (property === "task-date") {
-        this.handleTaskDateInput(taskIdx, propMap[property], target.value);
-        this.data.updateTaskObject(taskIdx, propMap[property], target.value);
+        this.handleTaskDateInput(
+          target,
+          taskIdx,
+          propMap[property],
+          target.value
+        );
       } else {
-        this.data.updateTaskObject(taskIdx, propMap[property], target.value);
+        this.data.updateTaskObjectWithIndex(
+          taskIdx,
+          propMap[property],
+          target.value
+        );
       }
     }
   }
 
-  handleTaskDateInput(taskIdx, taskProperty, date) {
-    const dateObject = new Date();
-    console.log(date);
-    const selectedDate = new Date(date).getUTCDate();
-    const todaysDate = dateObject.getDate();
-
-    if (selectedDate > todaysDate) {
-      this.data.portTask("Scheduled", taskIdx);
-    } else {
-      this.data.portTask("Scheduled", taskIdx);
-      this.data.portTask("Today", taskIdx);
+  handleTaskDateInput(dateInput, taskIdx, taskProperty, date) {
+    dateInput.classList.remove("focused");
+    //for mobile devices that don't abide by the html date input min attribute, remove the value, do not update object
+    if (this.data.isDateInPast(date)) {
+      dateInput.value = "";
+      dateInput.blur();
+      dateInput.focus();
+      return;
     }
+
+    this.data.handleNewDate(taskIdx, taskProperty, date);
+    if (this.data.currentListTitle === "Today") {
+      //task in today has been deleted, rerender to show deletion
+      this.renderer.updateTasks(this.data.currentTasks);
+    }
+    if (dateInput.value === "" && this.data.currentListTitle === "Scheduled") {
+      this.renderer.updateTasks(this.data.currentTasks);
+    }
+
+    dateInput.setAttribute("value", date);
     this.rerenderLists();
   }
 
-  //wehn task is checked:
-  //1. traverse all lists
-  //2. if list was unchecked, add it to the completed list
-  //3. if list was already checked uncheck it, remove it from the completed tasks, rerender lists
-  //4. if list was already checked and it was unchecked and the current list is the completed list, rerender the tasks
-
   handleTaskCheckBoxInput(taskIdx, taskProperty, checkedValue) {
-    //prevent from sending in another completed task
     this.data.handleCheckedTask(taskIdx, taskProperty, checkedValue);
     this.rerenderLists();
     if (this.data.currentListTitle === "Completed") {
-      this.renderer.renderTasks(this.data.currentTasks);
+      this.renderer.updateTasks(this.data.currentTasks);
     }
   }
 
@@ -354,10 +372,6 @@ export default class App {
     this.elements.taskCollection.addEventListener(
       "keydown",
       this.handleTaskKeydown.bind(this)
-    );
-    this.elements.taskCollection.addEventListener(
-      "change",
-      this.handleTaskChanges
     );
     this.elements.taskCollection.addEventListener(
       "dblclick",
@@ -411,7 +425,9 @@ export default class App {
         this.handleTaskInputClick(target, taskWrapper, taskContent),
       "task-priority": () => this.handleTaskPriorityCLick(target, taskWrapper),
       "delete-svg-wrapper": () => this.deleteTaskElement(taskWrapper, taskIdx),
-      "task-date": () => target.classList.add("focused"),
+      "task-date": () => {
+        target.classList.add("focused");
+      },
       "priority-menu-option": () =>
         this.handlePriorityOptionClick(target, taskWrapper, taskIdx),
       "task-notes": () => (target.style.height = target.scrollHeight + "px"),
@@ -453,21 +469,17 @@ export default class App {
     //if list button is not a clicked button, and is a newList, just remove the old focused list and early return
     if (listButton.classList.contains("new-list")) {
       prevList.classList.remove("focused-list");
-      console.log("removed");
       return;
     }
 
     // if there is no previous focused list, apply the focused list to the clicked list (this is the first ever clicked list)
     if (!prevList) {
       listButton.classList.add("focused-list");
-      console.log("added");
     } else {
       //if there is a previous list, then remove the class and add it to the clicked list
       prevList.classList.remove("focused-list");
-      console.log("removed");
 
       listButton.classList.add("focused-list");
-      console.log("added");
     }
   }
 
@@ -514,13 +526,6 @@ export default class App {
     } else {
       taskContent.classList.add("active");
       this.activeTaskElement = taskWrapper;
-    }
-  }
-
-  handleTaskChanges(e) {
-    const target = e.target;
-    if (target.closest(".task-date")) {
-      target.classList.remove("focused");
     }
   }
 
