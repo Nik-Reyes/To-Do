@@ -40,7 +40,6 @@
   line-height: 1;
   padding-top: 3px;
   letter-spacing: -1px;
-  text-size-adjust: geometricPrecision;
   font-size: 1.75rem;
 }
 
@@ -53,4 +52,17 @@ nav {
 /* perm fix, add empty class to task collection when list has no tasks */
 .page-wrapper:has(.side-panel .system-list-wrapper .focused-list) .header {
   position: relative;
+}
+
+.page-wrapper:has(
+    :where(
+        aside
+          .inner-system-list-wrapper
+          .list-btn-wrapper:nth-of-type(even)
+          .list-btn.focused-list
+      )
+  )
+  nav
+  .add-task-btn {
+  display: none;
 }
