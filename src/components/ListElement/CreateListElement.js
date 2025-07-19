@@ -23,11 +23,7 @@ export default function createListElement(list, attributes) {
   let taskCount = undefined;
 
   if (list) {
-    buttonName = generateElement(
-      "span",
-      { class: "list-title" },
-      list.title.toUpperCase()
-    );
+    buttonName = generateElement("span", { class: "list-title" }, list.title);
     taskCount = generateElement(
       "span",
       { class: "task-count" },

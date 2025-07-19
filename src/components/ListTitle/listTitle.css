@@ -1,23 +1,36 @@
+@font-face {
+  font-family: "Rajdhani Medium";
+  src: url("Rajdhani-Medium.woff2") format("woff2"),
+    url("Rajdhani-Medium.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+  font-stretch: normal;
+  unicode-range: U+0020-0912;
+}
+
 .list-title-wrapper {
   display: flex;
   background: var(--main-bg);
   align-items: center;
   position: relative;
-  padding: 0.5em 1.25em;
+  padding: 0.7em 1em 0.5em;
   gap: 0.75rem;
   justify-content: space-between;
+  font-size: 1.3rem;
 }
 
 .list-section-title {
   color: var(--cyber-red-text);
   position: relative;
+  font-family: "Rajdhani Medium";
+  line-height: 1;
+  font-size: inherit;
 }
 
 .list-title-wrapper::before {
   content: "";
   height: 1.5px;
   background: linear-gradient(to right, var(--cyber-red) 50%, var(--main-bg));
-  /* box-shadow: 0px 0px 1px 0.1px var(--cyber-red); */
   width: 100%;
   position: absolute;
   top: 0;

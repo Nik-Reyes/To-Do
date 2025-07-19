@@ -14,7 +14,7 @@ export default function createListTitle(title) {
   );
 
   listTitleWrapper.appendChild(listTitle);
-  if (title === "MY LISTS") {
+  if (title === "my lists") {
     const addButton = createAddButton({ class: "addList" });
     listTitleWrapper.append(addButton);
   }

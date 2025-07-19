@@ -25,8 +25,8 @@ export default function createSidebar() {
     class: "inner-mylist-wrapper",
   });
 
-  const systemListTitle = createListTitle("SYSTEM LISTS");
-  const myListTitle = createListTitle("MY LISTS");
+  const systemListTitle = createListTitle("system lists");
+  const myListTitle = createListTitle("my lists");
 
   //////// ELEMENT ASSEMBLY ////////
   systemListWrapper.append(systemListTitle, innerSystemListsWrapper);

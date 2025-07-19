@@ -32,7 +32,7 @@
   font-size: 1.125rem;
   font-family: "Rajdhani";
   line-height: 1;
-  padding-top: 3px;
+  padding-top: 0.2em;
 }
 
 polygon {
@@ -79,7 +79,6 @@ polygon {
   width: 17ch;
   color: inherit;
   outline: none;
-  text-transform: uppercase;
 }
 
 .list-btn-wrapper:has(.newList-input):hover {

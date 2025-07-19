@@ -16,7 +16,7 @@ export default function createHeader(listName) {
   const headerTitle = generateElement(
     "h2",
     { class: "header-title" },
-    listName.toUpperCase()
+    listName
   );
 
   titleWrapper.appendChild(headerTitle);

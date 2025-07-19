@@ -58,6 +58,10 @@ body {
   overflow-x: hidden;
 }
 
+body * {
+  text-transform: uppercase;
+}
+
 .page-wrapper {
   display: grid;
   grid-template-columns: 1fr;

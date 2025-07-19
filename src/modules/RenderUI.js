@@ -162,7 +162,7 @@ export default class RenderUI {
 
   //responsible for updating the task elements and header title for the current list based on Data.currentTasks and Data.currentListTitle
   updateHeaderTitle(headerTitleElement, newTitle) {
-    headerTitleElement.innerText = newTitle.toUpperCase();
+    headerTitleElement.innerText = newTitle;
   }
 
   updateTasks(newTasks) {

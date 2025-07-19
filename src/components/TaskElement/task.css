@@ -91,10 +91,6 @@
   align-items: center;
 }
 
-.task-content :is(input, textarea, button) {
-  text-transform: uppercase;
-}
-
 input[type="text"],
 textarea {
   background-color: transparent;
