@@ -41,7 +41,10 @@ export default class App {
     this.data.addList(newList);
     this.data.switchLists(newList.id);
     this.rerenderCurrentList(editableList);
-    this.renderer.updateHeader(this.data.currentListTitle);
+    this.renderer.updateHeaderTitle(
+      this.elements.headerTitle,
+      this.data.currentListTitle
+    );
     this.renderer.updateTasks(this.data.currentTasks);
   }
 
@@ -66,22 +69,8 @@ export default class App {
     return parseInt(listBtnWrapper.dataset.id);
   }
 
-  getTargetSystemList(targetListName) {
-    return this.getSystemListElements().find((list) => {
-      return list
-        .querySelector(".list-title")
-        .innerText.includes(targetListName.toUpperCase());
-    });
-  }
-
   getListElements() {
     return [...this.elements.sidebar.querySelectorAll(".list-btn-wrapper")];
-  }
-
-  getSystemListElements() {
-    return [
-      ...this.elements.systemListWrapper.querySelectorAll(".list-btn-wrapper"),
-    ];
   }
 
   getCurrentListElementBtn() {
@@ -118,7 +107,10 @@ export default class App {
 
     this.switchFocusedLists(listButton);
     this.data.switchLists(listIdx);
-    this.renderer.updateHeader(this.data.currentListTitle);
+    this.renderer.updateHeaderTitle(
+      this.elements.headerTitle,
+      this.data.currentListTitle
+    );
     this.renderer.updateTasks(this.data.currentTasks);
   }
 
@@ -206,10 +198,6 @@ export default class App {
     return Array.from(
       this.elements.taskCollection.querySelectorAll(".task-wrapper")
     ).indexOf(taskWrapper);
-  }
-
-  rerenderTargetList(targetListElement, targetListData) {
-    this.renderer.replaceList(targetListElement, targetListData);
   }
 
   rerenderLists() {
@@ -402,6 +390,7 @@ export default class App {
       innerMylistWrapper: ".inner-mylist-wrapper",
       innerSystemListWrapper: ".inner-system-list-wrapper",
       headerHamburger: "header .hamburger",
+      headerTitle: ".header .header-title",
     });
     //app passes elements object to sidebar manager for contstruction
     this.sidebarManager = new SidebarManager(this.elements);

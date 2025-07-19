@@ -7,8 +7,6 @@ import resizeListSvgs from "../utils/ResizeSvgs.js";
 import "../components/TaskElement/task.css";
 
 export default class RenderUI {
-  #taskElements = [];
-  #listElements = [];
   #header;
   #taskCollection;
   #pageWrapper;
@@ -27,21 +25,11 @@ export default class RenderUI {
     return this.#header;
   }
 
-  get headerTitle() {
-    return this.#header.firstChild.innerText;
-  }
-
   get taskCollection() {
     return this.#taskCollection;
   }
 
-  get lists() {
-    return this.#listElements;
-  }
   ////////////// SETTER METHODS ///////////////
-  set lists(lists) {
-    this.#listElements = lists;
-  }
 
   set header(header) {
     this.#header = header;
@@ -57,14 +45,6 @@ export default class RenderUI {
 
   set sidebar(el) {
     this.#sidebar = el;
-  }
-
-  set header(el) {
-    this.#header = el;
-  }
-
-  set headerTitle(listTitle) {
-    this.#header.firstChild.innerText = listTitle.toUpperCase();
   }
 
   ////////////// ACTION METHODS ///////////////
@@ -181,8 +161,8 @@ export default class RenderUI {
   }
 
   //responsible for updating the task elements and header title for the current list based on Data.currentTasks and Data.currentListTitle
-  updateHeader(newTitle) {
-    this.header.firstChild.firstChild.innerText = newTitle.toUpperCase();
+  updateHeaderTitle(headerTitleElement, newTitle) {
+    headerTitleElement.innerText = newTitle.toUpperCase();
   }
 
   updateTasks(newTasks) {

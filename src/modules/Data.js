@@ -6,7 +6,6 @@ import { format, isAfter, isBefore, isEqual, isPast, parseISO } from "date-fns";
 export default class Data {
   #listCollection = [];
   #currentList = null;
-  #currentListTitle = null;
   #destinationService = {};
 
   ////////////// GETTER METHODS ///////////////
@@ -76,10 +75,6 @@ export default class Data {
 
   set listCollection(collection) {
     this.#listCollection = collection;
-  }
-
-  set currentListTitle(title) {
-    this.#currentListTitle = title;
   }
 
   ////////////// ACTION METHODS ///////////////
@@ -246,7 +241,6 @@ export default class Data {
   init() {
     this.listCollection = CreateDefaultLists();
     this.currentList = this.startingListIDX;
-    this.currentListTitle = this.currentList.title;
     this.#destinationService = {
       Today: this.listCollection.systemLists[0],
       Scheduled: this.listCollection.systemLists[1],
