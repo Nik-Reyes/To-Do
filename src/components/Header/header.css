@@ -48,12 +48,6 @@ nav {
   padding: 0px 16px;
 }
 
-/* temp firefox broswer fix: allows the .task-collection:has(.task-wrapper)::after selector in task.css to register */
-/* perm fix, add empty class to task collection when list has no tasks */
-.page-wrapper:has(.side-panel .system-list-wrapper .focused-list) .header {
-  position: relative;
-}
-
 .page-wrapper:has(
     :where(
         aside
