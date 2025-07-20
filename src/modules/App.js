@@ -132,7 +132,6 @@ export default class App {
     //collapses the opened task if the user clicks away from it and the click isnt adding a task
     if (this.activeTaskElement && !target.closest(".add-task-btn")) {
       this.collapseActiveTaskElement(e);
-      return;
     }
     // removes the new editable list if the user clicks away from it
     if (
@@ -143,18 +142,15 @@ export default class App {
       const list = newList.closest(".list-btn-wrapper");
       this.renderer.removeEditableList(list);
       this.toggleButton(this.elements.addListBtn);
-      return;
     }
 
     //forces unfocusing on the date wrapper when the user clicks away from it
     if (focusedDate && !target.closest(".task-date")) {
       focusedDate.classList.remove("focused");
-      return;
     }
 
     if (focusedPriorityWrapper && !target.closest(".priority-btn-wrapper")) {
       focusedPriorityWrapper.classList.remove("focused");
-      return;
     }
 
     if (
@@ -163,7 +159,6 @@ export default class App {
       !target.closest(".open-menu")
     ) {
       opendMenu.classList.remove("open-menu");
-      return;
     }
   }
 
@@ -174,7 +169,6 @@ export default class App {
   }
 
   handlePriorityOptionClick(target, taskWrapper, taskIdx) {
-    const taskPriorityBtn = taskWrapper.querySelector("button.task-priority");
     const menu = this.elements.taskCollection.querySelector(".open-menu");
     this.closeMenu(menu);
 
@@ -419,7 +413,6 @@ export default class App {
       },
       "priority-menu-option": () =>
         this.handlePriorityOptionClick(target, taskWrapper, taskIdx),
-      "task-notes": () => (target.style.height = target.scrollHeight + "px"),
     };
 
     for (let [selector, handler] of Object.entries(taskClickHandlers)) {
@@ -432,8 +425,10 @@ export default class App {
 
   handleTaskPriorityCLick(target, taskWrapper) {
     const menu = taskWrapper.querySelector(".priority-menu-wrapper");
-    target.closest(".priority-btn-wrapper").classList.toggle("focused");
+    const btnWrapper = target.closest(".priority-btn-wrapper");
+    btnWrapper.classList.toggle("focused");
     this.togglePriorityMenu(menu);
+    this.setPriorityMenuPosition(menu, btnWrapper);
   }
 
   focusStartingList() {
@@ -467,7 +462,6 @@ export default class App {
     } else {
       //if there is a previous list, then remove the class and add it to the clicked list
       prevList.classList.remove("focused-list");
-
       listButton.classList.add("focused-list");
     }
   }
@@ -487,6 +481,24 @@ export default class App {
 
   togglePriorityMenu(menu) {
     menu.classList.toggle("open-menu");
+  }
+
+  setPriorityMenuPosition(menu, btn) {
+    menu.style.left = "";
+    const menuCoords = menu.getBoundingClientRect();
+    const buttonCoords = btn.getBoundingClientRect();
+
+    const difference = buttonCoords.left - menuCoords.left;
+    const gap = 15;
+
+    const btnXOffset = buttonCoords.width / 4;
+    const trueOffset = (menuCoords.width - buttonCoords.width) / 2;
+
+    console.log(btnXOffset);
+    console.log(trueOffset);
+
+    menu.style.left = `${difference - trueOffset}px`;
+    menu.style.bottom = `${buttonCoords.height + gap}px`;
   }
 
   removeActiveTask() {
