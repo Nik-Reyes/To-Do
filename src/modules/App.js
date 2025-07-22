@@ -11,6 +11,40 @@ export default class App {
       overlay: document.querySelector(".overlay"),
     };
     this.activeTaskElement;
+    this.initialize();
+  }
+
+  initialize() {
+    // initialize all data
+    this.data.init();
+    // render all elements with data
+    this.renderer.init(
+      this.data.currentListTitle,
+      this.data.listCollection.systemLists,
+      this.data.listCollection.myLists,
+      this.data.currentTasks,
+      this.elements.pageWrapper
+    );
+    // app sets up all needed elements
+    this.queryElements({
+      taskCollection: ".task-collection",
+      header: "header",
+      sidebar: "aside",
+      nav: ".navigation",
+      addListBtn: ".addList-btn",
+      mylistWrapper: ".mylist-wrapper",
+      systemListWrapper: ".system-list-wrapper",
+      innerMylistWrapper: ".inner-mylist-wrapper",
+      innerSystemListWrapper: ".inner-system-list-wrapper",
+      headerHamburger: "header .hamburger",
+      headerTitle: ".header .header-title",
+    });
+    //app passes elements object to sidebar manager for contstruction
+    new SidebarManager(this.elements).init();
+    // app applies functionality
+    this.applyEventListeners();
+    // app sets the focused state on the starting list
+    this.focusStartingList();
   }
 
   queryElements(selectors) {
@@ -45,7 +79,7 @@ export default class App {
       this.elements.headerTitle,
       this.data.currentListTitle
     );
-    this.renderer.updateTasks(this.data.currentTasks);
+    this.renderer.renderTasks(this.data.currentTasks);
   }
 
   handleNewList(e) {
@@ -95,7 +129,7 @@ export default class App {
     const listButton = target.closest(".list-btn");
     if (!listButton) return;
 
-    // return if the clicked element is a new list
+    // return if the clicked element is an editable list button
     const classList = listButton.classList;
     if (classList.contains("new-list")) return;
 
@@ -111,7 +145,18 @@ export default class App {
       this.elements.headerTitle,
       this.data.currentListTitle
     );
-    this.renderer.updateTasks(this.data.currentTasks);
+
+    if (this.data.currentListTitle === "All Tasks") {
+      this.renderer.createAllTasksCollection(
+        "All Tasks",
+        this.data.getSectionedTasks()
+      );
+    } else {
+      this.renderer.createGenericTaskCollection(
+        "generic",
+        this.data.currentTasks
+      );
+    }
   }
 
   collapseActiveTaskElement(e) {
@@ -310,10 +355,10 @@ export default class App {
     this.data.handleNewDate(taskIdx, taskProperty, date);
     if (this.data.currentListTitle === "Today") {
       //task in today has been deleted, rerender to show deletion
-      this.renderer.updateTasks(this.data.currentTasks);
+      this.renderer.renderTasks(this.data.currentTasks);
     }
     if (dateInput.value === "" && this.data.currentListTitle === "Scheduled") {
-      this.renderer.updateTasks(this.data.currentTasks);
+      this.renderer.renderTasks(this.data.currentTasks);
     }
 
     dateInput.setAttribute("value", date);
@@ -324,7 +369,7 @@ export default class App {
     this.data.handleCheckedTask(taskIdx, taskProperty, checkedValue);
     this.rerenderLists();
     if (this.data.currentListTitle === "Completed") {
-      this.renderer.updateTasks(this.data.currentTasks);
+      this.renderer.renderTasks(this.data.currentTasks);
     }
   }
 
@@ -359,40 +404,6 @@ export default class App {
       "dblclick",
       this.handleDoubleClicks.bind(this)
     );
-  }
-
-  initialize() {
-    // initialize all data
-    this.data.init();
-    // render all elements with data
-    this.renderer.init(
-      this.data.currentListTitle,
-      this.data.listCollection.systemLists,
-      this.data.listCollection.myLists,
-      this.data.currentTasks,
-      this.elements.pageWrapper
-    );
-    // app sets up all needed elements
-    this.queryElements({
-      taskCollection: ".task-collection",
-      header: "header",
-      sidebar: "aside",
-      nav: "nav",
-      addListBtn: ".addList-btn",
-      mylistWrapper: ".mylist-wrapper",
-      systemListWrapper: ".system-list-wrapper",
-      innerMylistWrapper: ".inner-mylist-wrapper",
-      innerSystemListWrapper: ".inner-system-list-wrapper",
-      headerHamburger: "header .hamburger",
-      headerTitle: ".header .header-title",
-    });
-    //app passes elements object to sidebar manager for contstruction
-    this.sidebarManager = new SidebarManager(this.elements);
-    this.sidebarManager.init();
-    // app applies functionality
-    this.applyEventListeners();
-    // app sets the focused state on the starting list
-    this.focusStartingList();
   }
 
   //////////////// PURE UI-RESPONSIVE METHODS ///////////////

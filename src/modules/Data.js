@@ -1,7 +1,7 @@
 import List from "./List.js";
 import Task from "./Task.js";
 import CreateDefaultLists from "./Storage.js";
-import { format, isAfter, isBefore, isEqual, isPast, parseISO } from "date-fns";
+import { format, isAfter, isBefore, isEqual, parseISO } from "date-fns";
 
 export default class Data {
   #listCollection = [];
@@ -79,6 +79,23 @@ export default class Data {
 
   ////////////// ACTION METHODS ///////////////
 
+  getSectionedTasks() {
+    const sectionedTasks = [];
+
+    this.listCollection.myLists
+      .sort(function (a, b) {
+        return a.tasks.length - b.tasks.length;
+      })
+      .forEach((list) => {
+        sectionedTasks.push({
+          listTitle: list.title,
+          tasks: [...list.tasks],
+        });
+      });
+
+    return sectionedTasks;
+  }
+
   isDateInPast(date) {
     const todaysDate = format(new Date(), "yyyy-MM-dd");
     return isBefore(date, todaysDate);
@@ -121,10 +138,6 @@ export default class Data {
     if (taskIdx !== -1 && this.currentTasks[taskIdx]) {
       this.currentTasks[taskIdx][taskProperty] = value;
     }
-  }
-
-  updateTaskObjectWithObject(taskObj, taskProperty, value) {
-    taskObj[taskProperty] = value;
   }
 
   createNewList(title) {
@@ -180,7 +193,7 @@ export default class Data {
     const dateTask = this.getTask(taskElementIdx);
     //account for user clearing the date
     if (newDate === "") {
-      this.updateTaskObjectWithObject(dateTask, taskProperty, newDate);
+      dateTask["dueDate"] = newDate;
       this.deleteTaskFromToday(dateTask);
       this.deleteTaskFromScheduled(dateTask);
       return;
@@ -213,7 +226,7 @@ export default class Data {
         isAfter(selectedDate, prevDate)
       ) {
         this.deleteTaskFromToday(dateTask);
-        this.updateTaskObjectWithObject(dateTask, "dueDate", selectedDate);
+        dateTask["dueDate"] = selectedDate;
       }
     } else {
       if (isAfter(selectedDate, todaysDate)) {
@@ -239,7 +252,7 @@ export default class Data {
   }
 
   init() {
-    this.listCollection = CreateDefaultLists();
+    this.listCollection = CreateDefaultLists(); //storage will send starting list
     this.currentList = this.startingListIDX;
     this.#destinationService = {
       Today: this.listCollection.systemLists[0],
