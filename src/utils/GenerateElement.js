@@ -6,7 +6,7 @@ export default function generateElement(type, attributes = {}, content = null) {
     element = document.createElement(type);
   }
   if (content) {
-    element.innerText = content;
+    element.textContent = content;
   }
 
   if (attributes && attributes instanceof Object) {

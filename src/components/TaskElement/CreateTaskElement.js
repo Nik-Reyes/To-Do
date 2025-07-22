@@ -34,11 +34,14 @@ export default function createTaskElement(task) {
     class: "expandable-content",
   });
 
-  const taskNotes = generateElement("textarea", {
-    class: "task-notes",
-    placeholder: "Notes",
-  });
-  taskNotes.textContent = task.notes;
+  const taskNotes = generateElement(
+    "textarea",
+    {
+      class: "task-notes",
+      placeholder: "Notes",
+    },
+    task.notes
+  );
 
   const taskDate = generateElement("input", {
     class: "inner-cyberpunk-clip-wrapper-br task-date",
@@ -74,7 +77,7 @@ export default function createTaskElement(task) {
   const svgWrapper = generateElement("div", { class: "delete-svg-wrapper" });
   const row = generateElement("div", { class: "row" });
 
-  //////// ELEMENT EVENT LISTENER APPLICATION ////////
+  //////// ELEMENT ASSEMBLY ////////
   taskPriorityWrapper.append(taskPriority);
   taskPriorityColorPanel.appendChild(taskPriorityInnerDiv);
   taskDateWrapper.appendChild(taskDate);
