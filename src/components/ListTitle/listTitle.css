@@ -10,13 +10,16 @@
 
 .list-title-wrapper {
   display: flex;
-  background: var(--main-bg);
+  background: rgb(16, 12, 21);
   align-items: center;
   position: relative;
-  padding: 0.7em 1em 0.5em;
+  padding: 0.5em 1em;
   gap: 0.75rem;
   justify-content: space-between;
   font-size: 1.3rem;
+  border: 1px solid var(--cyber-red-neon-bg);
+  box-shadow: 0 0 1px var(--cyber-red);
+  border-radius: 3px;
 }
 
 .list-section-title {
@@ -25,14 +28,5 @@
   font-family: "Rajdhani Medium";
   line-height: 1;
   font-size: inherit;
-}
-
-.list-title-wrapper::before {
-  content: "";
-  height: 1.5px;
-  background: linear-gradient(to right, var(--cyber-red) 50%, var(--main-bg));
-  width: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
+  padding-top: 2px;
 }

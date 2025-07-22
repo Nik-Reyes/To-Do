@@ -42,13 +42,17 @@
     0% 100%
   );
 
-  /* transition speeds */
   --list-btn-transition-speed: 100ms;
   --sidebar-width: 17rem;
+  --header-height: 60px;
 }
 
 button {
   cursor: pointer;
+}
+
+html {
+  background-color: var(--main-bg);
 }
 
 body {
@@ -56,6 +60,7 @@ body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
   overflow-x: hidden;
+  background: linear-gradient(180deg, #2b0e10 0%, #07080d 100%) fixed;
 }
 
 body * {
@@ -65,7 +70,7 @@ body * {
 .page-wrapper {
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: var(--header-height) 1fr;
   min-height: 100dvh;
 }
 

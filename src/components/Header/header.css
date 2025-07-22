@@ -14,49 +14,28 @@
   top: 0;
   position: sticky;
   grid-template-columns: 1fr auto;
-  grid-template-rows: auto auto;
   grid-row: 1;
   grid-column: 1/-1;
   --header-content-padding: 1rem;
   --header-row-gap: 16px;
-  row-gap: var(--header-row-gap);
   z-index: 100;
   border-right-color: transparent;
-}
-
-.page-wrapper.desktop-sidebar .header {
-  grid-column: 2;
+  text-align: center;
 }
 
 .header-title-wrapper {
   padding: var(--header-content-padding);
+  padding-left: 60px;
   background-color: var(--header-bg);
   box-shadow: inset 0px 0px 100rem 5px rgb(255, 97, 89),
     0px 0px 8px 0px rgba(249, 115, 108, 0.71);
+  max-height: var(--header-height);
 }
 
 .header-title {
   font-family: "Rajdhani Medium";
   line-height: 1;
-  padding-top: 3px;
+  padding-top: 2px;
   letter-spacing: -1px;
   font-size: 1.75rem;
-}
-
-nav {
-  grid-column: 1/-1;
-  padding: 0px 16px;
-}
-
-.page-wrapper:has(
-    :where(
-        aside
-          .inner-system-list-wrapper
-          .list-btn-wrapper:nth-of-type(even)
-          .list-btn.focused-list
-      )
-  )
-  nav
-  .add-task-btn {
-  display: none;
 }

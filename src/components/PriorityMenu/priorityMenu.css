@@ -1,10 +1,18 @@
+@font-face {
+  font-family: "Rajdhani";
+  src: url("Rajdhani-Regular.woff2") format("woff2"),
+    url("Rajdhani-Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-stretch: normal;
+  unicode-range: U+0020-0912;
+}
+
 .priority-menu-wrapper {
   width: max-content;
   position: absolute;
   z-index: 999;
   display: none;
-  left: 195px;
-  top: -70px;
 }
 
 .open-menu {
@@ -17,18 +25,17 @@
 
 .priority-menu-option {
   border: none;
-  color: var(--cyber-red-neon-bg);
-  padding: 0.5em 1.5em;
+  color: var(--cyber-red-text);
+  padding: 0.7em 1.5em;
+  font-size: 0.9125rem;
+  font-family: "Rajdhani";
+  line-height: 1;
+  background-color: rgb(25, 0, 0);
   transition: background-color 100ms ease-in-out;
 }
 
 .priority-menu-option:last-child {
   overflow: hidden;
-}
-
-.priority-menu-option {
-  font-size: 0.8125rem;
-  background-color: rgb(25, 0, 0);
 }
 
 .menu-spacer {
