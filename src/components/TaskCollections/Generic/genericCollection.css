@@ -5,17 +5,15 @@
   position: relative;
   --task-collection-padding: 16px;
   padding-bottom: 4rem;
-  padding-top: var(--task-collection-padding);
 }
 
 .task-collection {
   display: grid;
   grid-auto-rows: min-content;
   gap: var(--task-collection-padding);
-  padding: var(--task-collection-padding);
-  padding-bottom: 0px;
-  padding-left: 32px;
   font-family: "Rajdhani";
+  padding: calc(var(--task-collection-padding) * 2)
+    var(--task-collection-padding) 0 var(--task-collection-padding);
 }
 
 .task-collection-wrapper::before {
@@ -48,4 +46,7 @@
 
 .page-wrapper.desktop-sidebar .task-collection-wrapper {
   grid-column: 2;
+}
+.page-wrapper.desktop-sidebar .task-collection {
+  padding-left: calc(var(--task-collection-padding) * 2);
 }
