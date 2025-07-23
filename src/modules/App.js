@@ -22,12 +22,12 @@ export default class App {
       this.data.currentListTitle,
       this.data.listCollection.systemLists,
       this.data.listCollection.myLists,
-      this.data.currentTasks,
+      this.data.getSectionedTasks(),
       this.elements.pageWrapper
     );
     // app sets up all needed elements
     this.queryElements({
-      taskCollection: ".task-collection",
+      taskCollectionWrapper: ".task-collection-wrapper",
       header: "header",
       sidebar: "aside",
       nav: ".navigation",
@@ -47,6 +47,36 @@ export default class App {
     this.focusStartingList();
   }
 
+  getListElementIdx(listBtnWrapper) {
+    return this.getListElements().indexOf(listBtnWrapper);
+  }
+
+  getListElements() {
+    return [...this.elements.sidebar.querySelectorAll(".list-btn-wrapper")];
+  }
+
+  getCurrentListElementBtn() {
+    return this.getCurrentListElement().querySelector(".list-btn");
+  }
+
+  getAllListElementBtnClasses() {
+    return Array.from(this.elements.sidebar.querySelectorAll(".list-btn")).map(
+      (btn) => {
+        return { class: btn.className };
+      }
+    );
+  }
+
+  getTaskIdxFromElement(taskWrapper) {
+    return [
+      ...this.elements.taskCollectionWrapper.querySelectorAll(".task-wrapper"),
+    ].indexOf(taskWrapper);
+  }
+
+  getCurrentListElement() {
+    return this.getListElements().at(this.data.currentListIdx);
+  }
+
   queryElements(selectors) {
     for (let key of Object.keys(selectors)) {
       this.elements[key] = document.querySelector(selectors[key]);
@@ -54,10 +84,10 @@ export default class App {
   }
 
   // re-render either the newList or the list when deleting
-  rerenderCurrentList(currList) {
-    const newList = currList.querySelector(".new-list");
+  rerenderCurrentList(listElement) {
+    const newList = listElement.querySelector(".new-list");
     this.switchFocusedLists(newList);
-    this.renderer.replaceList(currList, this.data.currentList, {
+    this.renderer.replaceList(listElement, this.data.currentList, {
       class: "list-btn stacked focused-list",
     });
   }
@@ -70,16 +100,16 @@ export default class App {
     this.toggleButton(this.elements.addListBtn);
   }
 
-  replaceEditableList(editableList, target) {
-    const newList = this.data.createNewList(target.value);
-    this.data.addList(newList);
-    this.data.switchLists(newList.id);
-    this.rerenderCurrentList(editableList);
+  replaceEditableList(editableListElement, target) {
+    const newListObj = this.data.createNewList(target.value);
+    this.data.addList(newListObj);
+    this.data.switchLists(-1); //-1 being the last list (the newly created list object)
+    this.rerenderCurrentList(editableListElement);
     this.renderer.updateHeaderTitle(
       this.elements.headerTitle,
       this.data.currentListTitle
     );
-    this.renderer.renderTasks(this.data.currentTasks);
+    this.renderer.createGenericTaskCollection(this.data.currentTasks);
   }
 
   handleNewList(e) {
@@ -99,30 +129,6 @@ export default class App {
     }
   }
 
-  getListElementIdx(listBtnWrapper) {
-    return parseInt(listBtnWrapper.dataset.id);
-  }
-
-  getListElements() {
-    return [...this.elements.sidebar.querySelectorAll(".list-btn-wrapper")];
-  }
-
-  getCurrentListElementBtn() {
-    return this.getCurrentListElement().querySelector(".list-btn");
-  }
-
-  getAllListElementBtnClasses() {
-    return Array.from(this.elements.sidebar.querySelectorAll(".list-btn")).map(
-      (btn) => {
-        return { class: btn.className };
-      }
-    );
-  }
-
-  getCurrentListElement() {
-    return this.getListElements().at(this.data.currentListIdx);
-  }
-
   handleListClicks(e) {
     const target = e.target;
     // return if the clicked element is not a list
@@ -134,28 +140,24 @@ export default class App {
     if (classList.contains("new-list")) return;
 
     const listBtnWrapper = target.closest(".list-btn-wrapper");
-    const listIdx = this.getListElementIdx(listBtnWrapper);
+    const listElementIdx = this.getListElementIdx(listBtnWrapper);
 
     // return if the user clicks the list they are already on
-    if (listIdx === this.data.currentListId) return;
+    if (listElementIdx === this.data.currentListIdx) return;
 
     this.switchFocusedLists(listButton);
-    this.data.switchLists(listIdx);
+
+    this.data.switchLists(listElementIdx);
     this.renderer.updateHeaderTitle(
       this.elements.headerTitle,
       this.data.currentListTitle
     );
 
     if (this.data.currentListTitle === "All Tasks") {
-      this.renderer.createAllTasksCollection(
-        "All Tasks",
-        this.data.getSectionedTasks()
-      );
+      this.renderer.createAllTasksCollection(this.data.getSectionedTasks());
+      console.log(this.data.currentList);
     } else {
-      this.renderer.createGenericTaskCollection(
-        "generic",
-        this.data.currentTasks
-      );
+      this.renderer.createGenericTaskCollection(this.data.currentTasks);
     }
   }
 
@@ -167,12 +169,14 @@ export default class App {
   handleDocumentClicks(e) {
     const target = e.target;
     const newList = this.elements.mylistWrapper.querySelector(".newList-input");
-    const opendMenu = this.elements.taskCollection.querySelector(".open-menu");
+    const opendMenu =
+      this.elements.taskCollectionWrapper.querySelector(".open-menu");
     const focusedDate =
-      this.elements.taskCollection.querySelector(".task-date.focused");
-    const focusedPriorityWrapper = this.elements.taskCollection.querySelector(
-      ".priority-btn-wrapper.focused"
-    );
+      this.elements.taskCollectionWrapper.querySelector(".task-date.focused");
+    const focusedPriorityWrapper =
+      this.elements.taskCollectionWrapper.querySelector(
+        ".priority-btn-wrapper.focused"
+      );
 
     //collapses the opened task if the user clicks away from it and the click isnt adding a task
     if (this.activeTaskElement && !target.closest(".add-task-btn")) {
@@ -214,7 +218,8 @@ export default class App {
   }
 
   handlePriorityOptionClick(target, taskWrapper, taskIdx) {
-    const menu = this.elements.taskCollection.querySelector(".open-menu");
+    const menu =
+      this.elements.taskCollectionWrapper.querySelector(".open-menu");
     this.closeMenu(menu);
 
     //retrieve the user-selected priority rating
@@ -231,12 +236,6 @@ export default class App {
     taskContent.classList.add("active");
     target.style.width = "100%";
     this.activeTaskElement = taskWrapper;
-  }
-
-  getTaskIdxFromElement(taskWrapper) {
-    return Array.from(
-      this.elements.taskCollection.querySelectorAll(".task-wrapper")
-    ).indexOf(taskWrapper);
   }
 
   rerenderLists() {
@@ -272,13 +271,13 @@ export default class App {
     }
     this.data.addTask(newTask);
     //prohibit adding the task twice if user is on the All Tasks list
-    if (this.data.currentListTitle !== "All Tasks") {
+    if (this.data.currentListTitle !== destinationList) {
       this.data.portTask(destinationList, newTask);
     }
 
     //render the task in DOM
     const newTaskElement = this.renderer.renderTask(
-      this.elements.taskCollection,
+      this.elements.taskCollectionWrapper.querySelector(".task-collection"),
       newTask
     );
 
@@ -309,6 +308,8 @@ export default class App {
     const property = Object.keys(propMap).find((className) =>
       target.className.includes(className)
     );
+
+    console.log(property);
 
     if (property) {
       if (property === "task-notes") {
@@ -388,19 +389,19 @@ export default class App {
     );
     document.addEventListener("click", this.handleDocumentClicks.bind(this));
     this.elements.nav.addEventListener("click", this.addTaskElement.bind(this));
-    this.elements.taskCollection.addEventListener(
+    this.elements.taskCollectionWrapper.addEventListener(
       "click",
       this.handleTaskClicks.bind(this)
     );
-    this.elements.taskCollection.addEventListener(
+    this.elements.taskCollectionWrapper.addEventListener(
       "input",
       this.handleTaskInput.bind(this)
     );
-    this.elements.taskCollection.addEventListener(
+    this.elements.taskCollectionWrapper.addEventListener(
       "keydown",
       this.handleTaskKeydown.bind(this)
     );
-    this.elements.taskCollection.addEventListener(
+    this.elements.taskCollectionWrapper.addEventListener(
       "dblclick",
       this.handleDoubleClicks.bind(this)
     );
@@ -502,18 +503,15 @@ export default class App {
     const difference = buttonCoords.left - menuCoords.left;
     const gap = 15;
 
-    const btnXOffset = buttonCoords.width / 4;
     const trueOffset = (menuCoords.width - buttonCoords.width) / 2;
-
-    console.log(btnXOffset);
-    console.log(trueOffset);
 
     menu.style.left = `${difference - trueOffset}px`;
     menu.style.bottom = `${buttonCoords.height + gap}px`;
   }
 
   removeActiveTask() {
-    const activeTask = this.elements.taskCollection.querySelector(".active");
+    const activeTask =
+      this.elements.taskCollectionWrapper.querySelector(".active");
     if (!activeTask) return;
 
     const activeTaskInput = activeTask.querySelector(".task-input");

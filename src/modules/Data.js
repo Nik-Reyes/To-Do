@@ -1,6 +1,6 @@
 import List from "./List.js";
 import Task from "./Task.js";
-import CreateDefaultLists from "./Storage.js";
+import Storage from "./Storage.js";
 import { format, isAfter, isBefore, isEqual, parseISO } from "date-fns";
 
 export default class Data {
@@ -37,10 +37,6 @@ export default class Data {
     return this.#destinationService;
   }
 
-  get currentListId() {
-    return this.#currentList.id;
-  }
-
   get currentListIdx() {
     return this.lists.indexOf(this.currentList);
   }
@@ -58,6 +54,11 @@ export default class Data {
       ...this.#listCollection.systemLists,
       ...this.#listCollection.myLists,
     ];
+  }
+
+  get allMylistsTasks() {
+    const tasks = this.listCollection.myLists.flatMap((list) => list.tasks);
+    return tasks;
   }
 
   get startingListIDX() {
@@ -81,8 +82,9 @@ export default class Data {
 
   getSectionedTasks() {
     const sectionedTasks = [];
+    const copiedLists = this.listCollection.myLists.slice();
 
-    this.listCollection.myLists
+    copiedLists
       .sort(function (a, b) {
         return a.tasks.length - b.tasks.length;
       })
@@ -108,7 +110,6 @@ export default class Data {
     this.currentList = idx;
   }
 
-  //rename to pushListObj
   addList(newListObj) {
     this.listCollection.myLists.push(newListObj);
   }
@@ -136,6 +137,8 @@ export default class Data {
 
   updateTaskObjectWithIndex(taskIdx, taskProperty, value) {
     if (taskIdx !== -1 && this.currentTasks[taskIdx]) {
+      console.log(taskIdx);
+
       this.currentTasks[taskIdx][taskProperty] = value;
     }
   }
@@ -252,12 +255,13 @@ export default class Data {
   }
 
   init() {
-    this.listCollection = CreateDefaultLists(); //storage will send starting list
-    this.currentList = this.startingListIDX;
+    const storage = new Storage(); //storage will send starting list
+    this.listCollection = storage.loadLists();
+    this.currentList = 0; //was: this.startingListIDX. Might change later to load on last clicked list
     this.#destinationService = {
-      Today: this.listCollection.systemLists[0],
-      Scheduled: this.listCollection.systemLists[1],
-      "All Tasks": this.listCollection.systemLists[2],
+      "All Tasks": this.listCollection.systemLists[0],
+      Today: this.listCollection.systemLists[1],
+      Scheduled: this.listCollection.systemLists[2],
       Completed: this.listCollection.systemLists[3],
     };
   }

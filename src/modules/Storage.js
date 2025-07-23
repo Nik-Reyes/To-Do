@@ -1,40 +1,49 @@
-import List from "./List.js";
-import { defaultItems } from "./DefaultTasks.js";
+import { defaultLists } from "./DefaultLists.js";
 
-export default function CreateDefaultLists() {
-  const lists = {};
-  const myListStage = [];
-  const systemListStage = [];
-  const myLists = ["Groceries"];
-  const systemLists = ["Today", "Scheduled", "All Tasks", "Completed"];
+export default class Storage {
+  constructor() {
+    this.listDataKey = "listData";
+  }
+  storageAvailable(type) {
+    let storage;
+    try {
+      storage = window[type];
+      const storageTest = "__storage_test__";
+      storage.setItem(storageTest, storageTest);
+      storage.removeItem(storageTest);
+      return true;
+    } catch (e) {
+      return (
+        e instanceof DOMException &&
+        e.name === "QuotaExceededError" &&
+        // acknowledge QuotaExceededError only if there's something already stored
+        storage &&
+        storage.length !== 0
+      );
+    }
+  }
 
-  const createLists = () => {
-    systemLists.forEach((title) => {
-      systemListStage.push(new List(title));
-    });
+  loadLists() {
+    if (this.storageAvailable("localStorage")) {
+      console.log("local storage is available");
+      if (localStorage.length === 0) {
+        //return default lists and push default lists to localStorage
+        // this.pushToLocalStorage(defaultLists);
+        // console.log(JSON.parse(localStorage.getItem(this.listDataKey)));
+        return defaultLists;
+      } else {
+        // this.removeFromLocalStorage();
+        // load from local storage
+      }
+    }
+  }
 
-    myLists.forEach((title) => {
-      myListStage.push(new List(title));
-    });
-  };
+  //where data is an object of arrays of objects
+  pushToLocalStorage(data) {
+    localStorage.setItem(this.listDataKey, JSON.stringify(data));
+  }
 
-  const addMyListItems = () => {
-    defaultItems.forEach((item) => {
-      myListStage[0].addTask(item);
-    });
-  };
-
-  const stageLists = () => {
-    createLists();
-    addMyListItems();
-  };
-
-  const pushLists = () => {
-    stageLists();
-    lists.systemLists = systemListStage;
-    lists.myLists = myListStage;
-    return lists;
-  };
-
-  return pushLists();
+  removeFromLocalStorage() {
+    localStorage.removeItem(this.listDataKey);
+  }
 }

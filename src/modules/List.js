@@ -1,42 +1,19 @@
 export default class List {
-  static count = 0;
-  #title;
-  #tasks = [];
-  #id;
-
   constructor(title) {
-    this.#title = title;
-    this.#id = List.count++;
+    this.title = title;
+    this.tasks = [];
+    this.id = `${Date.now().toString(36)}-${Math.random()
+      .toString(36)
+      .substring(2)}`;
   }
 
   ////////////// GETTER METHODS ///////////////
-  get title() {
-    return this.#title;
-  }
-
-  get id() {
-    return this.#id;
-  }
-
-  get tasks() {
-    return this.#tasks;
-  }
-
   get numberOfTasks() {
-    return this.#tasks.length;
+    return this.tasks.length;
   }
 
   get hasTasks() {
-    return this.#tasks.length >= 1 ? true : false;
-  }
-
-  ////////////// SETTER METHODS ///////////////
-  set tasks(trimmedTasks) {
-    this.#tasks = trimmedTasks;
-  }
-
-  set title(newTitle) {
-    this.#title = newTitle;
+    return this.tasks.length >= 1 ? true : false;
   }
 
   ////////////// ACTION METHODS ///////////////
@@ -49,7 +26,7 @@ export default class List {
   }
 
   completeTask(taskId) {
-    const task = this.#tasks.find((task) => task.id === taskId);
+    const task = this.tasks.find((task) => task.id === taskId);
     if (task) {
       task.markchecked();
     }

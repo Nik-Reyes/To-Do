@@ -1,5 +1,6 @@
 import createGenericTaskCollection from "../components/TaskCollections/Generic/GenericTaskCollection.js";
 import createAllTasksTaskCollection from "../components/TaskCollections/AllTasks/AllTasksCollection.js";
+import createTaskCollectionWrapper from "../components/TaskCollections/TaskCollectionWrapper.js";
 import createTaskElement from "../components/TaskElement/CreateTaskElement.js";
 import createListElement from "../components/ListElement/CreateListElement.js";
 import createSection from "../components/TaskCollectionSection/Section.js";
@@ -110,6 +111,7 @@ export default class RenderUI {
   }
 
   async renderSectionedTasks(sections) {
+    console.log(sections);
     const frag = document.createDocumentFragment();
 
     await new Promise((resolve) => setTimeout(resolve, 25));
@@ -137,7 +139,6 @@ export default class RenderUI {
   //appends array of task elements to task collection section
   async renderTasks(taskObjects) {
     if (!taskObjects) throw Error("Tasks DNE!");
-    this.taskCollection.innerText = "";
     const taskCollectionFrag = document.createDocumentFragment();
 
     await new Promise((resolve) => setTimeout(resolve, 25));
@@ -201,36 +202,35 @@ export default class RenderUI {
   }
 
   setTaskCollectionElements(taskCollectionType) {
-    const newWrapper = this.taskCollections[taskCollectionType]();
-    this.taskCollectionWrapper?.replaceWith(newWrapper);
-    this.taskCollectionWrapper = newWrapper;
-    this.taskCollection = newWrapper.querySelector(".task-collection");
+    const newTaskCollection = this.taskCollections[taskCollectionType]();
+    this.taskCollection?.replaceWith(newTaskCollection);
+    this.taskCollection = newTaskCollection;
   }
 
   //when switching to a non generic list, app needs to send in the proper type so renderer can render new task collection and its tasks
-  createGenericTaskCollection(taskCollectionType, tasks) {
-    this.setTaskCollectionElements(taskCollectionType);
+  createGenericTaskCollection(tasks) {
+    this.setTaskCollectionElements("generic");
     this.renderTasks(tasks);
   }
 
-  createAllTasksCollection(taskCollectionType, tasks) {
-    this.setTaskCollectionElements(taskCollectionType);
-    this.renderSectionedTasks(tasks);
+  createAllTasksCollection(sectionedTasks) {
+    this.setTaskCollectionElements("All Tasks");
+    this.renderSectionedTasks(sectionedTasks);
+  }
+
+  createTaskCollectionWrapper() {
+    this.taskCollectionWrapper = createTaskCollectionWrapper();
+    this.taskCollection =
+      this.taskCollectionWrapper.querySelector(".task-collection");
   }
 
   //responsible for creating all the necessary compoenents needed for initial render
-  assembleComponents(
-    title,
-    systemLists,
-    myLists,
-    currentTasks,
-    pageWrapper,
-    collectionType = "generic"
-  ) {
+  assembleComponents(title, systemLists, myLists, sectionedTasks, pageWrapper) {
     this.createHeaderElement(title);
     this.createSidebarElement();
     this.renderLists(systemLists, myLists);
-    this.createGenericTaskCollection(collectionType, currentTasks);
+    this.createTaskCollectionWrapper();
+    this.createAllTasksCollection(sectionedTasks);
     pageWrapper.append(this.header, this.sidebar, this.taskCollectionWrapper);
   }
 
@@ -247,14 +247,13 @@ export default class RenderUI {
     headerTitleElement.innerText = newTitle;
   }
 
-  init(title, systemLists, myLists, currentTasks, pageWrapper, collectionType) {
+  init(title, systemLists, myLists, sectionedTasks, pageWrapper) {
     this.assembleComponents(
       title,
       systemLists,
       myLists,
-      currentTasks,
-      pageWrapper,
-      collectionType
+      sectionedTasks,
+      pageWrapper
     );
 
     setTimeout(resizeListSvgs, 1);
