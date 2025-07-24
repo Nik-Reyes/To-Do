@@ -59,7 +59,7 @@ export default class Task {
     return this.#id;
   }
 
-  markchecked() {
-    this.checked = true;
+  toggleCheck() {
+    this.#checked = !this.#checked;
   }
 }

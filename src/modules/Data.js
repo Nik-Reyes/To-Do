@@ -49,6 +49,11 @@ export default class Data {
     return this.#listCollection;
   }
 
+  //number of myLists is the same number of sections in All Tasks list
+  get numberOfMyLists() {
+    return this.#listCollection.myLists.length;
+  }
+
   get lists() {
     return [
       ...this.#listCollection.systemLists,
@@ -80,22 +85,39 @@ export default class Data {
 
   ////////////// ACTION METHODS ///////////////
 
-  getSectionedTasks() {
-    const sectionedTasks = [];
+  sortMyLists() {
     const copiedLists = this.listCollection.myLists.slice();
+    return copiedLists.sort(function (a, b) {
+      return a.tasks.length - b.tasks.length;
+    });
+  }
 
-    copiedLists
-      .sort(function (a, b) {
-        return a.tasks.length - b.tasks.length;
-      })
-      .forEach((list) => {
-        sectionedTasks.push({
-          listTitle: list.title,
-          tasks: [...list.tasks],
-        });
+  getFlattenedSortedMyLists() {
+    return this.sortMyLists().flatMap((list) => list.tasks);
+  }
+
+  groupMyListTasks() {
+    const sectionedTasks = [];
+    this.sortMyLists().forEach((list) => {
+      sectionedTasks.push({
+        listTitle: list.title,
+        tasks: [...list.tasks],
       });
-
+    });
     return sectionedTasks;
+  }
+
+  updateAllTasksOrder() {
+    console.log(this.getFlattenedSortedMyLists());
+    this.allTasksList.tasks = this.getFlattenedSortedMyLists();
+    console.log(this.allTasksList);
+  }
+
+  // returns array of false/true values based on if the list has more than 0 tasks
+  sectionHasTasks() {
+    return this.sortMyLists().map((list) => {
+      return list.tasks.length > 0;
+    });
   }
 
   isDateInPast(date) {
@@ -137,8 +159,6 @@ export default class Data {
 
   updateTaskObjectWithIndex(taskIdx, taskProperty, value) {
     if (taskIdx !== -1 && this.currentTasks[taskIdx]) {
-      console.log(taskIdx);
-
       this.currentTasks[taskIdx][taskProperty] = value;
     }
   }
@@ -147,28 +167,22 @@ export default class Data {
     return new List(title);
   }
 
-  //delete task from completed list and make sure its unchecked to uncheck it from all other lists
+  //delete task from completed list and toggle its checked state
   deleteCheckedTask(taskToDelete) {
-    this.completedList.tasks.forEach((task, i) => {
-      if (task === taskToDelete) {
-        this.completedList.deleteTask(i);
-        taskToDelete.checked = false;
-        return;
-      }
-    });
+    const idx = this.completedList.tasks.indexOf(taskToDelete);
+    if (idx !== -1) {
+      this.completedList.deleteTask(idx);
+      taskToDelete.toggleCheck();
+    }
   }
 
-  handleCheckedTask(taskElementIdx, taskProperty, checkedValue) {
+  handleCheckedTask(taskElementIdx) {
     const checkedTask = this.getTask(taskElementIdx);
     if (checkedTask.checked) {
       this.deleteCheckedTask(checkedTask);
     } else {
       this.portTask("Completed", taskElementIdx);
-      this.updateTaskObjectWithIndex(
-        taskElementIdx,
-        taskProperty,
-        checkedValue
-      );
+      this.currentTasks[taskElementIdx].toggleCheck();
     }
   }
 
@@ -192,7 +206,7 @@ export default class Data {
     }
   }
 
-  handleNewDate(taskElementIdx, taskProperty, newDate) {
+  handleNewDate(taskElementIdx, newDate) {
     const dateTask = this.getTask(taskElementIdx);
     //account for user clearing the date
     if (newDate === "") {
@@ -205,25 +219,22 @@ export default class Data {
     const todaysDate = format(new Date(), dateFormat);
     const selectedDate = format(parseISO(newDate), dateFormat);
 
-    let scheduledTaskIdx = this.scheduledList.tasks.indexOf(dateTask);
-    let todaysTaskIdx = this.todayList.tasks.indexOf(dateTask);
+    let scheduledHasTask = this.scheduledList.tasks.includes(dateTask);
+    let todayHasTask = this.todayList.tasks.includes(dateTask);
 
     if (isBefore(selectedDate, todaysDate)) {
       console.log("task is in the past");
       return;
     }
 
-    if (scheduledTaskIdx !== -1 || todaysTaskIdx !== -1) {
+    if (scheduledHasTask || todayHasTask) {
       const prevDate = dateTask.dueDate;
-      if (isBefore(selectedDate, prevDate)) {
+      // prevDate === "" means the task was created in Scheduled
+      if (isBefore(selectedDate, prevDate) || prevDate === "") {
         if (isEqual(selectedDate, todaysDate)) {
           this.portTask("Today", dateTask);
         }
-        this.updateTaskObjectWithIndex(
-          taskElementIdx,
-          taskProperty,
-          selectedDate
-        );
+        this.currentTasks[taskElementIdx].dueDate = selectedDate;
       } else if (
         isAfter(selectedDate, todaysDate) &&
         isAfter(selectedDate, prevDate)
@@ -238,11 +249,7 @@ export default class Data {
         this.portTask("Scheduled", dateTask);
         this.portTask("Today", dateTask);
       }
-      this.updateTaskObjectWithIndex(
-        taskElementIdx,
-        taskProperty,
-        selectedDate
-      );
+      this.currentTasks[taskElementIdx].dueDate = selectedDate;
     }
   }
 
@@ -264,5 +271,7 @@ export default class Data {
       Scheduled: this.listCollection.systemLists[2],
       Completed: this.listCollection.systemLists[3],
     };
+    this.#destinationService["All Tasks"].tasks =
+      this.getFlattenedSortedMyLists();
   }
 }

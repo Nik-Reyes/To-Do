@@ -20,6 +20,7 @@
 .addList-btn {
   position: relative;
   display: grid;
+  place-content: center;
   width: 24px;
   height: 24px;
   clip-path: var(--cyberpunk-clip-br-sm);

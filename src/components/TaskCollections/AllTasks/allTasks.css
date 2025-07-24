@@ -1,4 +1,23 @@
+.sub-collection-wrapper {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 200ms ease-in-out;
+}
+
 .sub-collection {
   display: grid;
   gap: 16px;
+  overflow: hidden;
 }
+
+.sub-collection-expanded {
+  grid-template-rows: 1fr;
+}
+
+/* .sub-collection-expanded .sub-collection {
+  overflow: auto;
+} */
+
+/* .section-wrapper + .sub-collection-wrapper {
+  grid-template-rows: 1fr;
+} */

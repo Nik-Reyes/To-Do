@@ -1,7 +1,7 @@
 import generateElement from "../../utils/GenerateElement";
 import "./section.css";
 
-export default function createSection(title) {
+export default function createSection(title, buttonText, hasTasks) {
   const sectionWrapper = generateElement("div", {
     class: "section-wrapper",
   });
@@ -16,12 +16,18 @@ export default function createSection(title) {
     },
     title
   );
-  const sectionExpansionBtn = generateElement(
-    "button",
-    { class: "expand-collapse" },
-    "Collapse"
-  );
-  titleWrapper.append(sectionTitle, sectionExpansionBtn);
+
+  titleWrapper.appendChild(sectionTitle);
+
+  if (hasTasks) {
+    const sectionExpansionBtn = generateElement(
+      "button",
+      { class: "expand-collapse" },
+      buttonText || "Collapse"
+    );
+    titleWrapper.appendChild(sectionExpansionBtn);
+  }
+
   sectionWrapper.appendChild(titleWrapper);
 
   return sectionWrapper;

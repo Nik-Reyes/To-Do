@@ -25,7 +25,6 @@ export default class Storage {
 
   loadLists() {
     if (this.storageAvailable("localStorage")) {
-      console.log("local storage is available");
       if (localStorage.length === 0) {
         //return default lists and push default lists to localStorage
         // this.pushToLocalStorage(defaultLists);

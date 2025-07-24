@@ -1,42 +1,26 @@
 .hamburger {
-  width: 30px;
   display: grid;
-  align-items: center;
-  transition: background-color 200ms ease-in-out;
+  place-items: center;
+  width: var(--header-height);
+  height: var(--header-height);
+  background-color: var(--main-bg);
+  border: 1px solid rgb(255, 97, 89);
   border: none;
-  background-color: transparent;
-  margin: 0.5rem 1.5rem 0.5rem auto;
   z-index: 1;
 }
 
 .ham-line-wrapper {
-  width: inherit;
-  aspect-ratio: 1;
-  display: inherit;
+  display: grid;
+  gap: 5px;
+  width: 75%;
   padding: 5px;
 }
 
 .ham-line {
-  height: 3px;
+  height: 2.5px;
   background-color: var(--cyber-red);
   width: 100%;
   transition: background-color 200ms ease-in-out;
-}
-
-.header .hamburger {
-  place-items: center;
-  width: var(--header-height);
-  height: var(--header-height);
-  margin: 0px;
-  background-color: var(--main-bg);
-  border: 1px solid rgb(255, 97, 89);
-}
-
-.header .ham-line-wrapper {
-  place-items: center;
-  max-width: 40px;
-}
-
-.header .ham-line {
+  box-shadow: 0 0 1.5px rgb(255, 97, 89);
   background-color: rgb(255, 97, 89);
 }

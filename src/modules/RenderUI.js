@@ -13,7 +13,6 @@ import "../components/TaskElement/task.css";
 export default class RenderUI {
   #header;
   #taskCollection;
-  #pageWrapper;
   #sidebar;
   #taskCollectionWrapper;
   #taskCollections = {
@@ -22,10 +21,6 @@ export default class RenderUI {
   };
 
   ////////////// GETTER METHODS ///////////////
-  get pageWrapper() {
-    return this.#pageWrapper;
-  }
-
   get sidebar() {
     return this.#sidebar;
   }
@@ -54,10 +49,6 @@ export default class RenderUI {
 
   set taskCollection(el) {
     this.#taskCollection = el;
-  }
-
-  set pageWrapper(el) {
-    this.#pageWrapper = el;
   }
 
   set sidebar(el) {
@@ -110,21 +101,34 @@ export default class RenderUI {
     return [sysEls, myEls];
   }
 
-  async renderSectionedTasks(sections) {
-    console.log(sections);
+  //always starts off with base classes
+  async renderSectionedTasks(sections, classes, sectionHasTasks) {
     const frag = document.createDocumentFragment();
-
     await new Promise((resolve) => setTimeout(resolve, 25));
-
-    sections.forEach((section) => {
-      const sectionHeader = createSection(section.listTitle);
-      frag.appendChild(sectionHeader);
-      const taskElements = this.createTaskElements(section.tasks);
-      const subCollection = generateElement("section", {
-        class: `sub-collection ${section.listTitle}-collection`,
+    sections.forEach((section, i) => {
+      const subCollectionWrapper = generateElement("section", {
+        class: classes[i].class,
       });
+
+      const subCollection = generateElement("section", {
+        class: `sub-collection`,
+      });
+
+      const buttonText = classes[i].class.includes("sub-collection-expanded")
+        ? "Collapse"
+        : "Expand";
+
+      const sectionHeader = createSection(
+        section.listTitle,
+        buttonText,
+        sectionHasTasks[i]
+      );
+      const taskElements = this.createTaskElements(section.tasks);
+
       subCollection.append(...taskElements);
-      frag.appendChild(subCollection);
+      subCollectionWrapper.appendChild(subCollection);
+
+      frag.append(sectionHeader, subCollectionWrapper);
     });
     this.taskCollection.appendChild(frag);
     this.setNotesSize();
@@ -139,6 +143,7 @@ export default class RenderUI {
   //appends array of task elements to task collection section
   async renderTasks(taskObjects) {
     if (!taskObjects) throw Error("Tasks DNE!");
+    this.taskCollection.innerText = "";
     const taskCollectionFrag = document.createDocumentFragment();
 
     await new Promise((resolve) => setTimeout(resolve, 25));
@@ -213,9 +218,9 @@ export default class RenderUI {
     this.renderTasks(tasks);
   }
 
-  createAllTasksCollection(sectionedTasks) {
+  createAllTasksCollection(sectionedTasks, classes, sectionHasTasks) {
     this.setTaskCollectionElements("All Tasks");
-    this.renderSectionedTasks(sectionedTasks);
+    this.renderSectionedTasks(sectionedTasks, classes, sectionHasTasks);
   }
 
   createTaskCollectionWrapper() {
@@ -225,12 +230,20 @@ export default class RenderUI {
   }
 
   //responsible for creating all the necessary compoenents needed for initial render
-  assembleComponents(title, systemLists, myLists, sectionedTasks, pageWrapper) {
+  assembleComponents(
+    title,
+    systemLists,
+    myLists,
+    sectionedTasks,
+    classes,
+    sectionHasTasks,
+    pageWrapper
+  ) {
     this.createHeaderElement(title);
     this.createSidebarElement();
     this.renderLists(systemLists, myLists);
     this.createTaskCollectionWrapper();
-    this.createAllTasksCollection(sectionedTasks);
+    this.createAllTasksCollection(sectionedTasks, classes, sectionHasTasks);
     pageWrapper.append(this.header, this.sidebar, this.taskCollectionWrapper);
   }
 
@@ -247,12 +260,22 @@ export default class RenderUI {
     headerTitleElement.innerText = newTitle;
   }
 
-  init(title, systemLists, myLists, sectionedTasks, pageWrapper) {
+  init(
+    title,
+    systemLists,
+    myLists,
+    sectionedTasks,
+    classes,
+    sectionHasTasks,
+    pageWrapper
+  ) {
     this.assembleComponents(
       title,
       systemLists,
       myLists,
       sectionedTasks,
+      classes,
+      sectionHasTasks,
       pageWrapper
     );
 

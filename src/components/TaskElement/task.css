@@ -23,6 +23,11 @@
   cursor: pointer;
 }
 
+::-webkit-calendar-picker-indicator {
+  filter: brightness(0) saturate(100%) invert(63%) sepia(38%) saturate(5892%)
+    hue-rotate(325deg) brightness(102%) contrast(97%);
+}
+
 .priority-panel {
   background-color: var(--priority-bg);
   display: grid;
