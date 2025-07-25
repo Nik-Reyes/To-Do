@@ -12,7 +12,7 @@ aside {
   gap: 1rem;
 }
 
-aside :where(label, .list-btn-wrapper) {
+aside :where(label, .inner-system-list-wrapper, .inner-mylist-wrapper) {
   padding: 0px 0.5rem;
 }
 

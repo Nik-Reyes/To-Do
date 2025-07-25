@@ -1,0 +1,76 @@
+.list-btn-wrapper.my-list {
+  display: block;
+}
+
+.list-element-title {
+  display: grid;
+  position: relative;
+  transition: transform var(--list-btn-transition-speed) ease-in-out;
+  align-self: self-start;
+}
+
+.hoverable-list-content-wrapper {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 250ms 0ms ease-in-out; /* 0ms delay for closing */
+}
+
+.list-btn-wrapper.my-list:hover .hoverable-list-content-wrapper {
+  grid-template-rows: 1fr;
+  transition: grid-template-rows 250ms 500ms ease-in-out;
+}
+
+.list-btn-wrapper.my-list:has(.focused-list) .hoverable-list-content-wrapper {
+  transition: grid-template-rows 250ms 0ms ease-in-out;
+}
+
+.hoverable-list-content {
+  padding-top: 10px;
+  overflow: hidden;
+  display: flex;
+  gap: 10px;
+}
+
+.list-btn-wrapper.my-list:hover .hoverable-list-content-wrapper {
+  grid-template-rows: 1fr;
+}
+
+.delete-list-wrapper,
+.edit-list-wrapper {
+  width: 50%;
+  display: grid;
+}
+
+button[data-btn-type="edit-list"],
+button[data-btn-type="delete-list"] {
+  border: none;
+  outline: none;
+  width: 100%;
+  height: 100%;
+  color: var(--main-bg);
+  padding: 0.5em;
+  font-size: 0.9125rem;
+  font-weight: 500;
+}
+
+.list-btn-wrapper.my-list:hover .list-btn {
+  background-color: hsl(48, 82%, 52%, 0.15);
+  color: hsl(48, 82%, 52%);
+  text-shadow: 0px 0px 1px hsl(48, 82%, 52%);
+}
+
+.list-btn-wrapper.my-list:hover polygon {
+  stroke: hsl(48, 82%, 52%);
+}
+
+.list-btn-wrapper.my-list:hover {
+  transform: translateX(10px);
+}
+
+.list-btn-wrapper.my-list :where(.cyberpunk-clip-wrapper-br) {
+  clip-path: var(--cyberpunk-clip-br-md);
+}
+
+.list-btn-wrapper.my-list :where(.cyberpunk-clip-wrapper-bl) {
+  clip-path: var(--cyberpunk-clip-bl-md);
+}

@@ -66,12 +66,12 @@ export default class Data {
     return tasks;
   }
 
-  get startingListIDX() {
-    return this.#listCollection.systemLists.length;
-  }
-
   get currentTasks() {
     return this.#currentList.tasks;
+  }
+
+  get numberOfCurrentTasks() {
+    return this.#currentList.tasks.length;
   }
 
   ////////////// SETTER METHODS ///////////////
@@ -108,9 +108,11 @@ export default class Data {
   }
 
   updateAllTasksOrder() {
-    console.log(this.getFlattenedSortedMyLists());
     this.allTasksList.tasks = this.getFlattenedSortedMyLists();
-    console.log(this.allTasksList);
+  }
+
+  listHasTasks() {
+    return this.#currentList.tasks.length > 0 ? "populated" : "empty";
   }
 
   // returns array of false/true values based on if the list has more than 0 tasks

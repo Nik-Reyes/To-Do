@@ -50,33 +50,18 @@ polygon {
   pointer-events: none;
 }
 
-.list-btn:hover {
+.list-btn-wrapper:hover .list-btn {
   background-color: hsl(48, 82%, 52%, 0.15);
   color: hsl(48, 82%, 52%);
   text-shadow: 0px 0px 1px hsl(48, 82%, 52%);
 }
 
-.list-btn-wrapper:has(.list-btn:hover) polygon {
+.list-btn-wrapper:hover polygon {
   stroke: hsl(48, 82%, 52%);
 }
 
-.list-btn-wrapper:has(.list-btn:hover) {
+.list-btn-wrapper:hover {
   transform: translateX(10px);
-}
-
-.list-btn input[type="text"] {
-  border: none;
-  width: 17ch;
-  color: inherit;
-  outline: none;
-}
-
-.list-btn-wrapper:has(.newList-input):hover {
-  transform: none;
-}
-
-.list-btn-wrapper:has(.newList-input) .list-btn {
-  background-color: var(--list-button-hover-bg);
 }
 
 .focused-list {

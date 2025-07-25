@@ -34,12 +34,37 @@
     calc(100% - 7px) 100%,
     0% 100%
   );
+
   --cyberpunk-clip-br-sm: polygon(
     0% 0%,
     100% 0%,
     100% calc(100% - 7px),
     calc(100% - 5px) 100%,
     0% 100%
+  );
+
+  --cyberpunk-clip-bl: polygon(
+    0% 0%,
+    100% 0%,
+    100% 100%,
+    9px 100%,
+    0% calc(100% - 11px)
+  );
+
+  --cyberpunk-clip-bl-md: polygon(
+    0% 0%,
+    100% 0%,
+    100% 100%,
+    7px 100%,
+    0% calc(100% - 9px)
+  );
+
+  --cyberpunk-clip-bl-sm: polygon(
+    0% 0%,
+    100% 0%,
+    100% 100%,
+    5px 100%,
+    0% calc(100% - 7px)
   );
 
   --list-btn-transition-speed: 100ms;
@@ -53,6 +78,7 @@ button {
 
 html {
   background-color: var(--main-bg);
+  overflow-y: scroll;
 }
 
 body {
@@ -93,4 +119,26 @@ body * {
 .stacked {
   grid-row: 1/-1;
   grid-column: 1/-1;
+}
+
+.cyberpunk-clip-wrapper-br {
+  clip-path: var(--cyberpunk-clip-br);
+  background-color: var(--cyber-red-neon-bg);
+  padding: 1px;
+  transition: background-color 200ms;
+}
+
+.inner-cyberpunk-clip-wrapper-br {
+  clip-path: var(--cyberpunk-clip-br);
+}
+
+.cyberpunk-clip-wrapper-bl {
+  clip-path: var(--cyberpunk-clip-bl);
+  background-color: var(--cyber-red-neon-bg);
+  padding: 1px;
+  transition: background-color 200ms;
+}
+
+.inner-cyberpunk-clip-wrapper-bl {
+  clip-path: var(--cyberpunk-clip-bl);
 }

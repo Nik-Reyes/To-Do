@@ -1,8 +1,10 @@
+import createEditableListElement from "../components/ListElement/ListElements/EditableListElement/CreateEditableListElement.js";
+import createSystemListElement from "../components/ListElement/ListElements/SystemListElement/CreateSystemListElement.js";
+import createMyListElement from "../components/ListElement/ListElements/MyListElement/CreateMyListElement.js";
 import createGenericTaskCollection from "../components/TaskCollections/Generic/GenericTaskCollection.js";
 import createAllTasksTaskCollection from "../components/TaskCollections/AllTasks/AllTasksCollection.js";
 import createTaskCollectionWrapper from "../components/TaskCollections/TaskCollectionWrapper.js";
 import createTaskElement from "../components/TaskElement/CreateTaskElement.js";
-import createListElement from "../components/ListElement/CreateListElement.js";
 import createSection from "../components/TaskCollectionSection/Section.js";
 import createHeader from "../components/Header/CreateHeader.js";
 import createSidebar from "../components/Sidebar/Sidebar.js";
@@ -16,8 +18,9 @@ export default class RenderUI {
   #sidebar;
   #taskCollectionWrapper;
   #taskCollections = {
-    generic: () => createGenericTaskCollection(),
-    "All Tasks": () => createAllTasksTaskCollection(),
+    generic: (collectionState) => createGenericTaskCollection(collectionState),
+    "All Tasks": (collectionState) =>
+      createAllTasksTaskCollection(collectionState),
   };
 
   ////////////// GETTER METHODS ///////////////
@@ -92,10 +95,10 @@ export default class RenderUI {
   createListElements(sysObjects, myObjects, attributes) {
     let i = 0;
     const sysEls = sysObjects.map((list) =>
-      createListElement(list, attributes?.[i++])
+      createSystemListElement(list, attributes?.[i++])
     );
     const myEls = myObjects.map((list) =>
-      createListElement(list, attributes?.[i++])
+      createMyListElement(list, attributes?.[i++])
     );
 
     return [sysEls, myEls];
@@ -174,7 +177,7 @@ export default class RenderUI {
 
   //places a list button on the sidebar whose title/name can be edited
   renderEditableList(mylistWrapper) {
-    const newList = createListElement();
+    const newList = createEditableListElement();
     mylistWrapper.appendChild(newList);
     resizeListSvgs();
     return newList;
@@ -202,24 +205,30 @@ export default class RenderUI {
 
   //replaces a list button with its own list list object (a re-render function)
   replaceList(currentListEl, currentListObj, attributes) {
-    currentListEl.replaceWith(createListElement(currentListObj, attributes));
+    currentListEl.replaceWith(createMyListElement(currentListObj, attributes));
     resizeListSvgs();
   }
 
-  setTaskCollectionElements(taskCollectionType) {
-    const newTaskCollection = this.taskCollections[taskCollectionType]();
+  setTaskCollectionElements(taskCollectionType, collectionState) {
+    const newTaskCollection =
+      this.taskCollections[taskCollectionType](collectionState);
     this.taskCollection?.replaceWith(newTaskCollection);
     this.taskCollection = newTaskCollection;
   }
 
   //when switching to a non generic list, app needs to send in the proper type so renderer can render new task collection and its tasks
-  createGenericTaskCollection(tasks) {
-    this.setTaskCollectionElements("generic");
+  createGenericTaskCollection(tasks, collectionState) {
+    this.setTaskCollectionElements("generic", collectionState);
     this.renderTasks(tasks);
   }
 
-  createAllTasksCollection(sectionedTasks, classes, sectionHasTasks) {
-    this.setTaskCollectionElements("All Tasks");
+  createAllTasksCollection(
+    sectionedTasks,
+    classes,
+    sectionHasTasks,
+    collectionState
+  ) {
+    this.setTaskCollectionElements("All Tasks", collectionState);
     this.renderSectionedTasks(sectionedTasks, classes, sectionHasTasks);
   }
 
@@ -227,24 +236,6 @@ export default class RenderUI {
     this.taskCollectionWrapper = createTaskCollectionWrapper();
     this.taskCollection =
       this.taskCollectionWrapper.querySelector(".task-collection");
-  }
-
-  //responsible for creating all the necessary compoenents needed for initial render
-  assembleComponents(
-    title,
-    systemLists,
-    myLists,
-    sectionedTasks,
-    classes,
-    sectionHasTasks,
-    pageWrapper
-  ) {
-    this.createHeaderElement(title);
-    this.createSidebarElement();
-    this.renderLists(systemLists, myLists);
-    this.createTaskCollectionWrapper();
-    this.createAllTasksCollection(sectionedTasks, classes, sectionHasTasks);
-    pageWrapper.append(this.header, this.sidebar, this.taskCollectionWrapper);
   }
 
   removeEditableList(list) {
@@ -267,17 +258,20 @@ export default class RenderUI {
     sectionedTasks,
     classes,
     sectionHasTasks,
-    pageWrapper
+    pageWrapper,
+    collectionState
   ) {
-    this.assembleComponents(
-      title,
-      systemLists,
-      myLists,
+    this.createHeaderElement(title);
+    this.createSidebarElement();
+    this.renderLists(systemLists, myLists);
+    this.createTaskCollectionWrapper();
+    this.createAllTasksCollection(
       sectionedTasks,
       classes,
       sectionHasTasks,
-      pageWrapper
+      collectionState
     );
+    pageWrapper.append(this.header, this.sidebar, this.taskCollectionWrapper);
 
     setTimeout(resizeListSvgs, 1);
     window.addEventListener("resize", resizeListSvgs);

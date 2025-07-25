@@ -28,7 +28,8 @@ export default class App {
       this.data.groupMyListTasks(),
       this.wrapperClassNames,
       this.data.sectionHasTasks(),
-      this.elements.pageWrapper
+      this.elements.pageWrapper,
+      this.data.listHasTasks()
     );
     // app sets up all needed elements
     this.queryElements({
@@ -158,7 +159,10 @@ export default class App {
       this.elements.headerTitle,
       this.data.currentListTitle
     );
-    this.renderer.createGenericTaskCollection(this.data.currentTasks);
+    this.renderer.createGenericTaskCollection(
+      this.data.currentTasks,
+      this.data.listHasTasks()
+    );
   }
 
   handleNewList(e) {
@@ -204,15 +208,18 @@ export default class App {
 
     if (this.data.currentListTitle === "All Tasks") {
       this.data.updateAllTasksOrder();
-      console.log(this.data.allTasksList);
       this.setSectionStates();
       this.renderer.createAllTasksCollection(
         this.data.groupMyListTasks(),
         this.wrapperClassNames,
-        this.data.sectionHasTasks()
+        this.data.sectionHasTasks(),
+        this.data.listHasTasks()
       );
     } else {
-      this.renderer.createGenericTaskCollection(this.data.currentTasks);
+      this.renderer.createGenericTaskCollection(
+        this.data.currentTasks,
+        this.data.listHasTasks()
+      );
     }
   }
 

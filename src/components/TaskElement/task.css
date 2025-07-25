@@ -244,17 +244,6 @@ input[type="date"] {
   background-color: var(--more-options-bg);
 }
 
-.cyberpunk-clip-wrapper-br {
-  clip-path: var(--cyberpunk-clip-br);
-  background-color: var(--cyber-red-neon-bg);
-  padding: 1px;
-  transition: background-color 200ms;
-}
-
-.inner-cyberpunk-clip-wrapper-br {
-  clip-path: var(--cyberpunk-clip-br);
-}
-
 .task-date:hover,
 .task-date.focused,
 .priority-btn-wrapper:hover .task-priority,

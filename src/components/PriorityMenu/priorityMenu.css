@@ -34,10 +34,6 @@
   transition: background-color 100ms ease-in-out;
 }
 
-.priority-menu-option:last-child {
-  overflow: hidden;
-}
-
 .menu-spacer {
   display: block;
   display: flex;

@@ -12,7 +12,7 @@ export default function generateElement(type, attributes = {}, content = null) {
   if (attributes && attributes instanceof Object) {
     Object.entries(attributes)
       .filter(([key, value]) => {
-        return value.toString() !== "false" && value !== undefined;
+        return value !== undefined && value.toString() !== "false";
       })
       .forEach(([key, value]) => {
         element.setAttribute(
