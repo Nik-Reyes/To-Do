@@ -1,4 +1,4 @@
-import generateElement from "../../utils/GenerateElement";
+import generateElement from "../../utils/GenerateElement.js";
 import "./section.css";
 
 export default function createSection(title, buttonText, hasTasks) {

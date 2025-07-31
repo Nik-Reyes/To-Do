@@ -1,4 +1,4 @@
-import generateElement from "../../utils/GenerateElement";
+import generateElement from "../../utils/GenerateElement.js";
 import "./hamburger.css";
 
 export default function createHamburger() {

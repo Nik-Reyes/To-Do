@@ -1,4 +1,4 @@
-import generateElement from "../../utils/GenerateElement";
+import generateElement from "../../utils/GenerateElement.js";
 import "./priorityMenu.css";
 
 export default function createPirorityMenu() {
