@@ -40,4 +40,41 @@ button[data-btn-type="cancel-edit"] {
   font-weight: 500;
   font-family: "Rajdhani";
   line-height: 1;
+  position: relative;
+  isolation: isolate;
+}
+
+@media (pointer: fine) {
+  button[data-btn-type="confirm-edit"]::after,
+  button[data-btn-type="cancel-edit"]::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    background: rgb(254, 215, 91);
+    transform: scaleX(0);
+    transition: transform 150ms ease-in-out, z-index 0ms;
+  }
+
+  button[data-btn-type="confirm-edit"]::after {
+    transform-origin: left;
+  }
+
+  button[data-btn-type="cancel-edit"]::after {
+    transform-origin: right;
+  }
+
+  button[data-btn-type="confirm-edit"]:hover::after {
+    transform-origin: right;
+    transform: scaleX(1);
+    z-index: -1;
+  }
+
+  button[data-btn-type="cancel-edit"]:hover::after {
+    transform-origin: left;
+    transform: scaleX(1);
+    z-index: -1;
+  }
 }
