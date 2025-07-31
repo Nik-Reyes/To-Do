@@ -2,16 +2,21 @@ export default function resizeSvgs() {
   const listButton = document.querySelector(".list-btn");
   const listSvgStrokes = document.querySelectorAll(".list-btn-wrapper polygon");
   const listSvgWrapper = document.querySelector(".list-btn-wrapper svg");
+  const correctListTitleHeight = listButton.querySelector(".list-title");
+
+  let newList = document.querySelector(".new-list.list-btn input");
+  let editableList = document.querySelector(".editable-list-input");
   const listButtonHeight = listButton.offsetHeight;
   const listButtonWidth = listButton.offsetWidth;
 
-  //ran into bug where browser set improper line height for input, even when I applied inline styles or the !important flag
-  //explcitly setting the height seems to work
-  let newList = document.querySelector(".new-list.list-btn input");
   if (newList) {
-    const correctListTitleHeight = listButton.querySelector(".list-title");
     newList.style.height = `${correctListTitleHeight.offsetHeight}px`;
   }
+
+  if (editableList) {
+    editableList.style.height = `${correctListTitleHeight.offsetHeight}px`;
+  }
+
   listSvgWrapper.setAttribute(
     "viewBox",
     `0 0 ${listButtonWidth} ${listButtonHeight}`

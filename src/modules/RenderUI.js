@@ -1,5 +1,6 @@
-import createEditableListElement from "../components/ListElement/ListElements/EditableListElement/CreateEditableListElement.js";
+import createEditableListElement from "../components/ListElement/ListElements/EditableListElement/CreateEditableListELement.js";
 import createSystemListElement from "../components/ListElement/ListElements/SystemListElement/CreateSystemListElement.js";
+import createNewListElement from "../components/ListElement/ListElements/NewListElement/CreateNewListElement.js";
 import createMyListElement from "../components/ListElement/ListElements/MyListElement/CreateMyListElement.js";
 import createGenericTaskCollection from "../components/TaskCollections/Generic/GenericTaskCollection.js";
 import createAllTasksTaskCollection from "../components/TaskCollections/AllTasks/AllTasksCollection.js";
@@ -91,6 +92,11 @@ export default class RenderUI {
     return objects.map((task) => createTaskElement(task));
   }
 
+  renderEditableList(listBtnWrapper) {
+    listBtnWrapper.replaceWith(createEditableListElement());
+    resizeListSvgs();
+  }
+
   //takes in list objects (and optional attributes), returns array of list elements
   createListElements(sysObjects, myObjects, attributes) {
     let i = 0;
@@ -104,10 +110,17 @@ export default class RenderUI {
     return [sysEls, myEls];
   }
 
-  //always starts off with base classes
-  async renderSectionedTasks(sections, classes, sectionHasTasks) {
+  rerenderSectionHeader(section, title, text, state) {
+    section.replaceWith(this.renderSectionHeader(title, text, state));
+  }
+
+  renderSectionHeader(title, text, state) {
+    return createSection(title, text, state);
+  }
+
+  renderSections(sections, classes, sectionStates) {
     const frag = document.createDocumentFragment();
-    await new Promise((resolve) => setTimeout(resolve, 25));
+
     sections.forEach((section, i) => {
       const subCollectionWrapper = generateElement("section", {
         class: classes[i].class,
@@ -121,10 +134,10 @@ export default class RenderUI {
         ? "Collapse"
         : "Expand";
 
-      const sectionHeader = createSection(
+      const sectionHeader = this.renderSectionHeader(
         section.listTitle,
         buttonText,
-        sectionHasTasks[i]
+        sectionStates[i]
       );
       const taskElements = this.createTaskElements(section.tasks);
 
@@ -133,7 +146,18 @@ export default class RenderUI {
 
       frag.append(sectionHeader, subCollectionWrapper);
     });
-    this.taskCollection.appendChild(frag);
+    return frag;
+  }
+
+  //always starts off with base classes
+  async renderSectionedTasks(sections, classes, sectionHasTasks) {
+    await new Promise((resolve) => setTimeout(resolve, 25));
+    const sectionsFragment = this.renderSections(
+      sections,
+      classes,
+      sectionHasTasks
+    );
+    this.taskCollection.appendChild(sectionsFragment);
     this.setNotesSize();
   }
 
@@ -145,7 +169,7 @@ export default class RenderUI {
 
   //appends array of task elements to task collection section
   async renderTasks(taskObjects) {
-    if (!taskObjects) throw Error("Tasks DNE!");
+    if (!taskObjects) return;
     this.taskCollection.innerText = "";
     const taskCollectionFrag = document.createDocumentFragment();
 
@@ -176,8 +200,8 @@ export default class RenderUI {
   }
 
   //places a list button on the sidebar whose title/name can be edited
-  renderEditableList(mylistWrapper) {
-    const newList = createEditableListElement();
+  renderNewList(mylistWrapper) {
+    const newList = createNewListElement();
     mylistWrapper.appendChild(newList);
     resizeListSvgs();
     return newList;
@@ -204,7 +228,7 @@ export default class RenderUI {
   }
 
   //replaces a list button with its own list list object (a re-render function)
-  replaceList(currentListEl, currentListObj, attributes) {
+  rerenderList(currentListEl, currentListObj, attributes) {
     currentListEl.replaceWith(createMyListElement(currentListObj, attributes));
     resizeListSvgs();
   }

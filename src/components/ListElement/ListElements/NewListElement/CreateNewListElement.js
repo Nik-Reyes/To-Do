@@ -1,10 +1,11 @@
 import generateElement from "../../../../utils/GenerateElement.js";
+import "./newListElement.css";
 import "../../list.css";
-import "./editableList.css";
 
-export default function createEditableListElement() {
+export default function createNewListElement() {
+  //////// ELEMENT CREATION ////////
   const listButtonWrapper = generateElement("div", {
-    class: "list-btn-wrapper my-list editable-list-element",
+    class: "list-btn-wrapper my-list",
   });
 
   //////// TITLE PORTION OF THE LIST BUTTON ////////
@@ -25,46 +26,20 @@ export default function createEditableListElement() {
 
   const input = generateElement("input", {
     type: "text",
-    id: "editable-list-input",
-    class: "editable-list-input",
+    class: "newList-input",
     maxlength: "17",
     placeholder: "List Name",
-    required: "",
   });
 
   const listElement = generateElement("div", {
-    class: "editable-list text-layer stacked",
+    class: "new-list list-btn stacked",
   });
-
-  //////// EDIT LIST ACTION BUTTONS ////////
-  const confirmCancelWrapper = generateElement("div", {
-    class: "confirm-cancel-wrapper",
-  });
-
-  const confirmEditBtn = generateElement(
-    "button",
-    {
-      class: "cyberpunk-clip-wrapper-bl confirm-edit-btn",
-      "data-btn-type": "confirm-edit",
-    },
-    "confirm"
-  );
-
-  const cancelEditBtn = generateElement(
-    "button",
-    {
-      class: "cyberpunk-clip-wrapper-br cancel-edit-btn",
-      "data-btn-type": "cancel-edit",
-    },
-    "cancel"
-  );
 
   //////// ELEMENT ASSEMBLY ////////
   listElement.append(input);
   svgWrapper.appendChild(svgStroke);
   listElementTitle.append(svgWrapper, listElement);
-  confirmCancelWrapper.append(confirmEditBtn, cancelEditBtn);
-  listButtonWrapper.append(listElementTitle, confirmCancelWrapper);
+  listButtonWrapper.append(listElementTitle);
 
   return listButtonWrapper;
 }

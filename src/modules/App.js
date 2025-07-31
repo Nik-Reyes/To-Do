@@ -6,12 +6,13 @@ export default class App {
   constructor() {
     this.data = new Data();
     this.renderer = new RenderUI();
+    this.activeTaskElement;
+    this.listBtnWrapperClassNames;
+    this.listBtnClassNames;
     this.elements = {
       pageWrapper: document.querySelector(".page-wrapper"),
       overlay: document.querySelector(".overlay"),
     };
-    this.activeTaskElement;
-    this.wrapperClassNames;
     this.initialize();
   }
 
@@ -25,11 +26,11 @@ export default class App {
       this.data.currentListTitle,
       this.data.listCollection.systemLists,
       this.data.listCollection.myLists,
-      this.data.groupMyListTasks(),
-      this.wrapperClassNames,
+      this.data.getGroupedTasks(),
+      this.listBtnWrapperClassNames,
       this.data.sectionHasTasks(),
       this.elements.pageWrapper,
-      this.data.listHasTasks()
+      this.data.getTaskCollectionState()
     );
     // app sets up all needed elements
     this.queryElements({
@@ -57,8 +58,25 @@ export default class App {
     return this.getListElements().indexOf(listBtnWrapper);
   }
 
+  getSectionHeader(idx) {
+    const sectionWrappers = Array.from(
+      this.elements.taskCollectionWrapper.querySelectorAll(".section-wrapper")
+    );
+    return sectionWrappers.at(idx);
+  }
+
   getListElements() {
     return [...this.elements.sidebar.querySelectorAll(".list-btn-wrapper")];
+  }
+
+  getAllTasksListElement() {
+    const allTasksId = this.data.getAllTasksListID();
+    if (!allTasksId) throw Error("All Tasks ID DNE!");
+    for (let listEl of this.getListElements()) {
+      if (listEl.dataset.id === allTasksId) {
+        return listEl;
+      }
+    }
   }
 
   getCurrentListElementBtn() {
@@ -83,6 +101,10 @@ export default class App {
     return this.getListElements().at(this.data.currentListIdx);
   }
 
+  getListElement(idx) {
+    return this.getListElements().at(idx);
+  }
+
   queryElements(selectors) {
     for (let key of Object.keys(selectors)) {
       this.elements[key] = document.querySelector(selectors[key]);
@@ -103,20 +125,21 @@ export default class App {
       const sectionElements = this.getSectionElements();
       //is true only if the user is on the All Tasks list
       if (sectionElements.length !== 0) {
-        this.wrapperClassNames = sectionElements.map((wrapper) => {
+        this.listBtnWrapperClassNames = sectionElements.map((wrapper) => {
           return {
             class: wrapper.className,
           };
         });
       } else {
+        //registers additional classes to match total number of myLists
         const currNumberOfSections = this.data.numberOfMyLists;
-        const prevNumberOfSections = this.wrapperClassNames.length;
+        const prevNumberOfSections = this.listBtnWrapperClassNames.length;
         const numberOfClassNamesToMake =
           currNumberOfSections - prevNumberOfSections;
         if (numberOfClassNamesToMake === 0) return; //no new lists made
 
         for (let i = 0; i < numberOfClassNamesToMake; i++) {
-          this.wrapperClassNames.push({
+          this.listBtnWrapperClassNames.push({
             class: "sub-collection-wrapper sub-collection-expanded",
           });
         }
@@ -129,7 +152,7 @@ export default class App {
           class: "sub-collection-wrapper sub-collection-expanded",
         });
       }
-      this.wrapperClassNames = classNames;
+      this.listBtnWrapperClassNames = classNames;
     }
   }
 
@@ -137,15 +160,13 @@ export default class App {
   rerenderCurrentList(listElement) {
     const newList = listElement.querySelector(".new-list");
     this.switchFocusedLists(newList);
-    this.renderer.replaceList(listElement, this.data.currentList, {
+    this.renderer.rerenderList(listElement, this.data.currentList, {
       class: "list-btn stacked focused-list",
     });
   }
 
   addEditableListElement() {
-    const list = this.renderer.renderEditableList(
-      this.elements.innerMylistWrapper
-    );
+    const list = this.renderer.renderNewList(this.elements.innerMylistWrapper);
     list.querySelector(".newList-input").focus();
     this.toggleButton(this.elements.addListBtn);
   }
@@ -153,7 +174,7 @@ export default class App {
   replaceEditableList(editableListElement, target) {
     const newListObj = this.data.createNewList(target.value);
     this.data.addList(newListObj);
-    this.data.switchLists(-1); //-1 being the last list (the newly created list object)
+    this.data.updateCurrentList(-1); //-1 being the last list (the newly created list object)
     this.rerenderCurrentList(editableListElement);
     this.renderer.updateHeaderTitle(
       this.elements.headerTitle,
@@ -161,7 +182,7 @@ export default class App {
     );
     this.renderer.createGenericTaskCollection(
       this.data.currentTasks,
-      this.data.listHasTasks()
+      this.data.getTaskCollectionState()
     );
   }
 
@@ -182,44 +203,137 @@ export default class App {
     }
   }
 
-  handleListClicks(e) {
-    const target = e.target;
-    // return if the clicked element is not a list
-    const listButton = target.closest(".list-btn");
-    if (!listButton) return;
-
-    // return if the clicked element is an editable list button
-    const classList = listButton.classList;
-    if (classList.contains("new-list")) return;
-
-    const listBtnWrapper = target.closest(".list-btn-wrapper");
-    const listElementIdx = this.getListElementIdx(listBtnWrapper);
-
-    // return if the user clicks the list they are already on
-    if (listElementIdx === this.data.currentListIdx) return;
-
-    this.switchFocusedLists(listButton);
-
-    this.data.switchLists(listElementIdx);
+  switchLists(listElementIdx, listBtn) {
+    this.switchFocusedLists(listBtn);
+    this.data.updateCurrentList(listElementIdx);
     this.renderer.updateHeaderTitle(
       this.elements.headerTitle,
       this.data.currentListTitle
     );
-
     if (this.data.currentListTitle === "All Tasks") {
       this.data.updateAllTasksOrder();
+      this.data.updateAllTasksListOrder();
       this.setSectionStates();
       this.renderer.createAllTasksCollection(
-        this.data.groupMyListTasks(),
-        this.wrapperClassNames,
+        this.data.getGroupedTasks(),
+        this.listBtnWrapperClassNames,
         this.data.sectionHasTasks(),
-        this.data.listHasTasks()
+        this.data.getTaskCollectionState()
       );
     } else {
       this.renderer.createGenericTaskCollection(
         this.data.currentTasks,
-        this.data.listHasTasks()
+        this.data.getTaskCollectionState()
       );
+    }
+  }
+
+  deleteListElement(listBtnWrapper) {
+    const listId = listBtnWrapper.dataset.id;
+
+    const listElement = this.getAllTasksListElement();
+    const listElementIdx = this.getListElementIdx(listElement);
+    if (!listElement || listElementIdx === -1) return;
+
+    this.data.deleteList(listId);
+    this.switchLists(listElementIdx, listElement.querySelector(".list-btn"));
+    console.log(this.data.allTasksList);
+    this.rerenderLists();
+  }
+
+  editListElement(listBtnWrapper, button) {
+    this.listBtnClassNames = { class: button.className };
+    this.renderer.renderEditableList(listBtnWrapper);
+  }
+
+  confirmListEdit(listElementIdx, listBtnWrapper, input) {
+    const newTitle = input.value;
+    if (!input.checkValidity()) {
+      input.reportValidity();
+      return;
+    }
+
+    //update the list object with the new title
+    this.data.updateListObject(listElementIdx, "title", newTitle);
+    const currentListObj = this.data.lists.at(listElementIdx);
+
+    //rerender the list element
+    this.renderer.rerenderList(
+      listBtnWrapper,
+      currentListObj,
+      this.listBtnClassNames
+    );
+  }
+
+  cancelListEdit(listElementIdx, listBtnWrapper) {
+    //get currentList Obj
+    const currentListObj = this.data.lists.at(listElementIdx);
+
+    //rerender the list element
+    this.renderer.rerenderList(
+      listBtnWrapper,
+      currentListObj,
+      this.listBtnClassNames
+    );
+  }
+
+  handleListBtnClick(listElementIdx, listBtn) {
+    if (listElementIdx === this.data.currentListIdx) return;
+    this.switchLists(listElementIdx, listBtn);
+  }
+
+  //should be handelSideBarClicks: check if target is addList btn, list element, or any of the button clicks (edit, delete, confirm, cancel)
+  handleSidebarClicks(e) {
+    const target = e.target;
+
+    if (e.target.closest(".addList-btn")) {
+      this.addEditableListElement(e);
+    } else if (e.target.closest(".list-btn-wrapper")) {
+      const listBtnWrapper = e.target.closest(".list-btn-wrapper");
+      const listBtn = listBtnWrapper.querySelector("button");
+      const listElementIdx = this.getListElementIdx(listBtnWrapper);
+      const listInput = listBtnWrapper.querySelector("input");
+
+      const listElementHandlers = {
+        ".new-list": () => {
+          return;
+        },
+        ".list-btn": () => this.handleListBtnClick(listElementIdx, listBtn),
+        ".edit-list-btn": () => this.editListElement(listBtnWrapper, listBtn),
+        ".delete-list-btn": () => this.deleteListElement(listBtnWrapper),
+        ".confirm-edit-btn": () =>
+          this.confirmListEdit(listElementIdx, listBtnWrapper, listInput),
+        ".cancel-edit-btn": () =>
+          this.cancelListEdit(listElementIdx, listBtnWrapper),
+      };
+      for (let [selector, handler] of Object.entries(listElementHandlers)) {
+        if (target.closest(selector)) {
+          handler();
+          break;
+        }
+      }
+    }
+  }
+
+  handleSidebarInput(e) {
+    const key = e.key;
+    const target = e.target;
+
+    const listBtnWrapper = e.target.closest(".list-btn-wrapper");
+    const listElementIdx = this.getListElementIdx(listBtnWrapper);
+    const listInput = listBtnWrapper.querySelector("input");
+
+    if (key === "Enter") {
+      if (target.value === "") return;
+      if (target.closest(".editable-list-input")) {
+        this.confirmListEdit(listElementIdx, listBtnWrapper, listInput);
+      }
+    }
+
+    if (key === "Escape") {
+      if (target.closest(".editable-list-input")) {
+        this.cancelListEdit(listElementIdx, listBtnWrapper);
+      }
     }
   }
 
@@ -312,9 +426,31 @@ export default class App {
   }
 
   deleteTaskElement(taskWrapper, taskIdx) {
+    const list = this.data.getListFromtask(taskIdx);
+
     this.data.deleteTask(taskIdx);
     this.renderer.deleteTaskElement(taskWrapper);
     this.rerenderLists();
+
+    if (this.data.currentListTitle === "All Tasks") {
+      const listHasTasks = this.data.listHasTasks(list);
+      if (!listHasTasks) {
+        const listIdx = this.data.getListIdxFromAllTasks(list);
+        if (listIdx === -1) return;
+        const sectionHeader = this.getSectionHeader(listIdx);
+        this.renderer.rerenderSectionHeader(
+          sectionHeader,
+          list.title,
+          null,
+          listHasTasks
+        );
+      }
+      return;
+    }
+
+    if (this.data.currentTasks.length === 0) {
+      this.renderer.createGenericTaskCollection(this.currentTasks, "empty");
+    }
   }
 
   addTaskElement(e) {
@@ -324,6 +460,11 @@ export default class App {
     //condition makes sure the task stays open
     if (!target.className.includes("add-task-btn")) return;
 
+    //replace the empty task collection class with the populated class
+    if (this.data.getTaskCollectionState() === "empty") {
+      this.renderer.createGenericTaskCollection(this.currentTasks, "populated");
+    }
+
     //create the data, add data to current list, port data to all tasks list
     const destinationList = "All Tasks";
     const newTask = this.data.createNewTask();
@@ -331,7 +472,9 @@ export default class App {
       newTask.dueDate = this.data.todaysDate;
       this.data.portTask("Scheduled", newTask);
     }
+
     this.data.addTask(newTask);
+
     //prohibit adding the task twice if user is on the All Tasks list
     if (this.data.currentListTitle !== destinationList) {
       this.data.portTask(destinationList, newTask);
@@ -351,7 +494,7 @@ export default class App {
     this.handleTaskInputClick(input, newTaskElement, taskContent);
 
     //Rerender all lists to update the list task count
-    //timout allows the new list to be properly removed (if there is one) and for the addList button to toggle
+    //timeout allows the new list to be properly removed (if there is one) and for the addList button to toggle
     setTimeout(() => this.rerenderLists(), 0);
   }
 
@@ -429,11 +572,11 @@ export default class App {
   applyEventListeners() {
     this.elements.sidebar.addEventListener(
       "click",
-      this.handleListClicks.bind(this)
+      this.handleSidebarClicks.bind(this)
     );
-    this.elements.addListBtn.addEventListener(
-      "click",
-      this.addEditableListElement.bind(this)
+    this.elements.sidebar.addEventListener(
+      "keydown",
+      this.handleSidebarInput.bind(this)
     );
     this.elements.mylistWrapper.addEventListener(
       "keydown",
@@ -524,24 +667,20 @@ export default class App {
   }
 
   switchFocusedLists(listButton) {
-    // listButton is my clicked list
     // if my clicked list already has focus, do nothing, just return
     if (listButton.classList.contains("focused-list")) return;
 
     //if the clicked listButton does not have focus then remove the focus from the previous focused list
     const prevList = this.elements.sidebar.querySelector(".focused-list");
-
     //if list button is not a clicked button, and is a newList, just remove the old focused list and early return
     if (listButton.classList.contains("new-list")) {
       prevList.classList.remove("focused-list");
       return;
     }
 
-    // if there is no previous focused list, apply the focused list to the clicked list (this is the first ever clicked list)
     if (!prevList) {
       listButton.classList.add("focused-list");
     } else {
-      //if there is a previous list, then remove the class and add it to the clicked list
       prevList.classList.remove("focused-list");
       listButton.classList.add("focused-list");
     }

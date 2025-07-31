@@ -4,9 +4,10 @@ import Storage from "./Storage.js";
 import { format, isAfter, isBefore, isEqual, parseISO } from "date-fns";
 
 export default class Data {
-  #listCollection = [];
-  #currentList = null;
-  #destinationService = {};
+  #listCollection;
+  #currentList;
+  #destinationService;
+  #allTasksListOrder;
 
   ////////////// GETTER METHODS ///////////////
   get currentList() {
@@ -26,7 +27,11 @@ export default class Data {
   }
 
   get allTasksList() {
-    return this.destinationService["All Tasks"];
+    for (let list of this.#listCollection.systemLists) {
+      if (list.title === "All Tasks") {
+        return list;
+      }
+    }
   }
 
   get completedList() {
@@ -74,6 +79,14 @@ export default class Data {
     return this.#currentList.tasks.length;
   }
 
+  get allTasksListOrder() {
+    return this.#allTasksListOrder;
+  }
+
+  get myLists() {
+    return this.#listCollection.myLists;
+  }
+
   ////////////// SETTER METHODS ///////////////
   set currentList(idx) {
     this.#currentList = this.lists.at(idx);
@@ -83,22 +96,42 @@ export default class Data {
     this.#listCollection = collection;
   }
 
-  ////////////// ACTION METHODS ///////////////
-
-  sortMyLists() {
-    const copiedLists = this.listCollection.myLists.slice();
-    return copiedLists.sort(function (a, b) {
-      return a.tasks.length - b.tasks.length;
-    });
+  ////////////// CREATE METHODS ///////////////
+  createNewTask() {
+    return new Task();
   }
 
+  createNewList(title) {
+    return new List(title);
+  }
+
+  ////////////// READ METHODS ///////////////
   getFlattenedSortedMyLists() {
-    return this.sortMyLists().flatMap((list) => list.tasks);
+    return this.getSortedLists().flatMap((list) => list.tasks);
   }
 
-  groupMyListTasks() {
+  getListIdxFromAllTasks(list) {
+    const allTaskLists = this.#allTasksListOrder;
+
+    for (let i = 0; i < allTaskLists.length; i++) {
+      if (list.title === allTaskLists[i].listTitle) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  getTaskCollectionState() {
+    return this.#currentList.tasks.length > 0 ? "populated" : "empty";
+  }
+
+  getTask(elementIdx) {
+    return this.currentTasks.at(elementIdx);
+  }
+
+  getGroupedTasks() {
     const sectionedTasks = [];
-    this.sortMyLists().forEach((list) => {
+    this.getSortedLists().forEach((list) => {
       sectionedTasks.push({
         listTitle: list.title,
         tasks: [...list.tasks],
@@ -107,43 +140,73 @@ export default class Data {
     return sectionedTasks;
   }
 
+  getListFromtask(idx) {
+    const task = this.getTask(idx);
+    //get the task
+    //loop through each list and check if that list has the task
+    //if the list has the task, return the task title
+    for (let list of this.listCollection.myLists) {
+      const idx = list.tasks.indexOf(task);
+      if (idx !== -1) {
+        return list;
+      }
+    }
+    return null;
+  }
+
+  getAllTasksListID() {
+    for (let list of this.#listCollection.systemLists) {
+      if (list.title === "All Tasks") {
+        return list.id;
+      }
+    }
+  }
+
+  getSortedLists() {
+    const copiedLists = this.listCollection.myLists.slice();
+    return copiedLists.sort(function (a, b) {
+      return a.tasks.length - b.tasks.length;
+    });
+  }
+
+  ////////////// UPDATE METHODS ///////////////
+  updateTaskObjectWithIndex(taskIdx, taskProperty, value) {
+    if (taskIdx !== -1 && this.currentTasks[taskIdx]) {
+      this.currentTasks[taskIdx][taskProperty] = value;
+    }
+  }
+
+  updateListObject(listIdx, listProperty, value) {
+    if (listIdx !== -1 && this.lists.at(listIdx)) {
+      this.lists.at(listIdx)[listProperty] = value;
+    }
+  }
+
   updateAllTasksOrder() {
     this.allTasksList.tasks = this.getFlattenedSortedMyLists();
   }
 
-  listHasTasks() {
-    return this.#currentList.tasks.length > 0 ? "populated" : "empty";
+  updateAllTasksListOrder() {
+    this.#allTasksListOrder = this.getGroupedTasks();
   }
 
-  // returns array of false/true values based on if the list has more than 0 tasks
-  sectionHasTasks() {
-    return this.sortMyLists().map((list) => {
-      return list.tasks.length > 0;
-    });
-  }
-
-  isDateInPast(date) {
-    const todaysDate = format(new Date(), "yyyy-MM-dd");
-    return isBefore(date, todaysDate);
-  }
-
-  getTask(elementIdx) {
-    return this.currentTasks.at(elementIdx);
-  }
-  switchLists(idx) {
+  updateCurrentList(idx) {
     this.currentList = idx;
   }
 
-  addList(newListObj) {
-    this.listCollection.myLists.push(newListObj);
-  }
+  ////////////// DELETION METHODS ///////////////
+  deleteList(id) {
+    console.log(id);
+    const myLists = this.myLists;
+    for (let i = 0; i < myLists.length; i++) {
+      console.log("here");
+      if (myLists[i].id === id) {
+        myLists.splice(i, 1);
+        console.log(this.myLists);
 
-  createNewTask() {
-    return new Task();
-  }
-
-  addTask(newTask) {
-    this.currentList.addTask(newTask);
+        return;
+      }
+    }
   }
 
   //deletes the task from every list
@@ -158,33 +221,12 @@ export default class Data {
       }
     }
   }
-
-  updateTaskObjectWithIndex(taskIdx, taskProperty, value) {
-    if (taskIdx !== -1 && this.currentTasks[taskIdx]) {
-      this.currentTasks[taskIdx][taskProperty] = value;
-    }
-  }
-
-  createNewList(title) {
-    return new List(title);
-  }
-
   //delete task from completed list and toggle its checked state
   deleteCheckedTask(taskToDelete) {
     const idx = this.completedList.tasks.indexOf(taskToDelete);
     if (idx !== -1) {
       this.completedList.deleteTask(idx);
       taskToDelete.toggleCheck();
-    }
-  }
-
-  handleCheckedTask(taskElementIdx) {
-    const checkedTask = this.getTask(taskElementIdx);
-    if (checkedTask.checked) {
-      this.deleteCheckedTask(checkedTask);
-    } else {
-      this.portTask("Completed", taskElementIdx);
-      this.currentTasks[taskElementIdx].toggleCheck();
     }
   }
 
@@ -208,6 +250,40 @@ export default class Data {
     }
   }
 
+  ////////////// ADDING METHODS ///////////////
+  //Accepts a task object or existing element index
+  //data can only ever be ported to a system list. All other lists are added to the current list the user is on
+  portTask(destination, task) {
+    !isNaN(task)
+      ? this.destinationService[destination].tasks.push(this.getTask(task))
+      : this.destinationService[destination].tasks.push(task);
+  }
+
+  addTask(newTask) {
+    this.currentList.addTask(newTask);
+  }
+
+  addList(newListObj) {
+    this.listCollection.myLists.push(newListObj);
+  }
+
+  ////////////// BOOLEAN EVALUATION METHODS ///////////////
+  listHasTasks(list) {
+    return list.tasks.length > 0;
+  }
+
+  isDateInPast(date) {
+    const todaysDate = format(new Date(), "yyyy-MM-dd");
+    return isBefore(date, todaysDate);
+  }
+
+  sectionHasTasks() {
+    return this.getSortedLists().map((list) => {
+      return list.tasks.length > 0;
+    });
+  }
+
+  ////////////// HANDLER METHODS ///////////////
   handleNewDate(taskElementIdx, newDate) {
     const dateTask = this.getTask(taskElementIdx);
     //account for user clearing the date
@@ -255,14 +331,17 @@ export default class Data {
     }
   }
 
-  //Accepts a task object or existing element index
-  //data can only ever be ported to a system list. All other lists are added to the current list the user is on
-  portTask(destination, task) {
-    !isNaN(task)
-      ? this.destinationService[destination].tasks.push(this.getTask(task))
-      : this.destinationService[destination].tasks.push(task);
+  handleCheckedTask(taskElementIdx) {
+    const checkedTask = this.getTask(taskElementIdx);
+    if (checkedTask.checked) {
+      this.deleteCheckedTask(checkedTask);
+    } else {
+      this.portTask("Completed", taskElementIdx);
+      this.currentTasks[taskElementIdx].toggleCheck();
+    }
   }
 
+  //////////////// INIT METHOD ///////////////
   init() {
     const storage = new Storage(); //storage will send starting list
     this.listCollection = storage.loadLists();
@@ -275,5 +354,6 @@ export default class Data {
     };
     this.#destinationService["All Tasks"].tasks =
       this.getFlattenedSortedMyLists();
+    this.#allTasksListOrder = this.getGroupedTasks();
   }
 }

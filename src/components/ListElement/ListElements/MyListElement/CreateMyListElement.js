@@ -1,4 +1,4 @@
-import generateElement from "../../../../utils/GenerateElement";
+import generateElement from "../../../../utils/GenerateElement.js";
 import "./myListElement.css";
 import "../../list.css";
 
@@ -6,6 +6,7 @@ export default function createMyListElement(list, attributes) {
   //////// ELEMENT CREATION ////////
   const listButtonWrapper = generateElement("div", {
     class: "list-btn-wrapper my-list",
+    "data-id": list.id,
   });
 
   //////// TITLE PORTION OF THE LIST BUTTON ////////
@@ -38,7 +39,6 @@ export default function createMyListElement(list, attributes) {
 
   const listButton = generateElement("button", {
     class: attributes?.class || "list-btn stacked",
-    "data-id": list.id,
     "data-btn-type": "my-list-btn",
   });
 
@@ -53,14 +53,17 @@ export default function createMyListElement(list, attributes) {
 
   const editListButton = generateElement(
     "button",
-    { class: "cyberpunk-clip-wrapper-bl", "data-btn-type": "edit-list" },
+    {
+      class: "cyberpunk-clip-wrapper-bl edit-list-btn",
+      "data-btn-type": "edit-list",
+    },
     "edit"
   );
 
   const deleteListButton = generateElement(
     "button",
     {
-      class: "cyberpunk-clip-wrapper-br",
+      class: "cyberpunk-clip-wrapper-br delete-list-btn",
       "data-btn-type": "delete-list",
     },
     "delete"

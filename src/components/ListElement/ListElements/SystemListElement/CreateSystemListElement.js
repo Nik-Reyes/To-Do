@@ -1,10 +1,11 @@
-import generateElement from "../../../../utils/GenerateElement";
+import generateElement from "../../../../utils/GenerateElement.js";
 import "../../list.css";
 
 export default function createSystemListElement(list, attributes) {
   //////// ELEMENT CREATION ////////
   const buttonWrapper = generateElement("div", {
     class: "list-btn-wrapper",
+    "data-id": list.id,
   });
 
   const svgWrapper = generateElement("svg", {
@@ -30,7 +31,6 @@ export default function createSystemListElement(list, attributes) {
   );
   const listElement = generateElement("button", {
     class: attributes?.class || "list-btn stacked",
-    "data-id": list.id,
   });
 
   //////// ELEMENT ASSEMBLY ////////
