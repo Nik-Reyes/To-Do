@@ -14,6 +14,8 @@ export default function createMyListElement(list, attributes) {
     class: "list-element-title",
   });
 
+  const svgEditOptions = generateElement("div", { class: "edit-list" });
+
   const svgWrapper = generateElement("svg", {
     class: "svg-wrapper stacked",
     overflow: "visible",
@@ -72,7 +74,7 @@ export default function createMyListElement(list, attributes) {
   //////// ELEMENT ASSEMBLY ////////
   listButton.append(buttonName, taskCount);
   svgWrapper.appendChild(svgStroke);
-  listElementTitle.append(svgWrapper, listButton);
+  listElementTitle.append(svgEditOptions, svgWrapper, listButton);
   hoverableListContent.append(editListButton, deleteListButton);
   hoverableListContentWrapper.appendChild(hoverableListContent);
   listButtonWrapper.append(listElementTitle, hoverableListContentWrapper);

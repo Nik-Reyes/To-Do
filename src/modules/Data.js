@@ -196,14 +196,10 @@ export default class Data {
 
   ////////////// DELETION METHODS ///////////////
   deleteList(id) {
-    console.log(id);
     const myLists = this.myLists;
     for (let i = 0; i < myLists.length; i++) {
-      console.log("here");
       if (myLists[i].id === id) {
         myLists.splice(i, 1);
-        console.log(this.myLists);
-
         return;
       }
     }

@@ -237,7 +237,6 @@ export default class App {
 
     this.data.deleteList(listId);
     this.switchLists(listElementIdx, listElement.querySelector(".list-btn"));
-    console.log(this.data.allTasksList);
     this.rerenderLists();
   }
 
@@ -248,7 +247,10 @@ export default class App {
 
   confirmListEdit(listElementIdx, listBtnWrapper, input) {
     const newTitle = input.value;
-    if (!input.checkValidity()) {
+
+    input.setCustomValidity("");
+    if (!input.validity.valid) {
+      input.setCustomValidity("This List must have a title");
       input.reportValidity();
       return;
     }
@@ -282,6 +284,25 @@ export default class App {
     this.switchLists(listElementIdx, listBtn);
   }
 
+  openEditOptions(listBtnWrapper) {
+    const hoverWrapper = listBtnWrapper.querySelector(
+      ".hoverable-list-content-wrapper"
+    );
+
+    if (hoverWrapper.className.includes("expand-row")) {
+      hoverWrapper.classList.add("collapse-row");
+      hoverWrapper.addEventListener(
+        "transitionend",
+        () => {
+          hoverWrapper.classList.remove("expand-row", "collapse-row");
+        },
+        { once: true }
+      );
+    } else {
+    }
+    hoverWrapper.classList.add("expand-row");
+  }
+
   //should be handelSideBarClicks: check if target is addList btn, list element, or any of the button clicks (edit, delete, confirm, cancel)
   handleSidebarClicks(e) {
     const target = e.target;
@@ -299,6 +320,7 @@ export default class App {
           return;
         },
         ".list-btn": () => this.handleListBtnClick(listElementIdx, listBtn),
+        ".edit-list": () => this.openEditOptions(listBtnWrapper),
         ".edit-list-btn": () => this.editListElement(listBtnWrapper, listBtn),
         ".delete-list-btn": () => this.deleteListElement(listBtnWrapper),
         ".confirm-edit-btn": () =>
