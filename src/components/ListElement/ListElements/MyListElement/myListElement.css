@@ -1,5 +1,6 @@
 .list-btn-wrapper.my-list {
   display: block;
+  min-width: 0px;
 }
 
 .list-element-title {
@@ -35,12 +36,6 @@
   grid-template-rows: 1fr;
 }
 
-.delete-list-wrapper,
-.edit-list-wrapper {
-  width: 50%;
-  display: grid;
-}
-
 button[data-btn-type="edit-list"],
 button[data-btn-type="delete-list"] {
   border: none;
@@ -48,23 +43,11 @@ button[data-btn-type="delete-list"] {
   width: 100%;
   height: 100%;
   color: var(--main-bg);
-  padding: 0.5em;
-  font-size: 0.9125rem;
+  padding: 0.25em 0.2em 0.2em;
+  font-size: 1.2rem;
   font-weight: 500;
-}
-
-.list-btn-wrapper.my-list:hover .list-btn {
-  background-color: hsl(48, 82%, 52%, 0.15);
-  color: hsl(48, 82%, 52%);
-  text-shadow: 0px 0px 1px hsl(48, 82%, 52%);
-}
-
-.list-btn-wrapper.my-list:hover polygon {
-  stroke: hsl(48, 82%, 52%);
-}
-
-.list-btn-wrapper.my-list:hover {
-  transform: translateX(10px);
+  font-family: "Rajdhani";
+  line-height: 1;
 }
 
 .list-btn-wrapper.my-list :where(.cyberpunk-clip-wrapper-br) {
@@ -73,4 +56,22 @@ button[data-btn-type="delete-list"] {
 
 .list-btn-wrapper.my-list :where(.cyberpunk-clip-wrapper-bl) {
   clip-path: var(--cyberpunk-clip-bl-md);
+}
+
+@media (pointer: coarse) {
+  .list-btn-wrapper.my-list:hover .hoverable-list-content-wrapper {
+    transition: grid-template-rows 250ms 100ms ease-in-out;
+  }
+}
+
+.confirm-cancel-wrapper {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.list-title {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }

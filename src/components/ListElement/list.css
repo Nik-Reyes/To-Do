@@ -21,11 +21,14 @@
   padding: 0.75rem 1rem;
   border: none;
   outline: none;
-  cursor: pointer;
   clip-path: var(--cyberpunk-clip-br);
   display: flex;
   justify-content: space-between;
   color: var(--cyber-blue);
+}
+
+.list-btn:not(:has(input)) {
+  cursor: pointer;
 }
 
 .list-btn > * {
@@ -50,17 +53,19 @@ polygon {
   pointer-events: none;
 }
 
-.list-btn-wrapper:hover .list-btn {
+.list-btn-wrapper:not(:has(input)):hover .list-btn {
   background-color: hsl(48, 82%, 52%, 0.15);
   color: hsl(48, 82%, 52%);
   text-shadow: 0px 0px 1px hsl(48, 82%, 52%);
 }
 
-.list-btn-wrapper:hover polygon {
+/* any button that does not have an input should turn gold when hovered over  */
+
+.list-btn-wrapper:not(:has(input)):hover polygon {
   stroke: hsl(48, 82%, 52%);
 }
 
-.list-btn-wrapper:hover {
+.list-btn-wrapper:not(:has(input)):hover {
   transform: translateX(10px);
 }
 
