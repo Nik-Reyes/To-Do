@@ -9,6 +9,10 @@ export default class Data {
   #destinationService;
   #allTasksListOrder;
 
+  constructor() {
+    this._storage = new Storage();
+  }
+
   ////////////// GETTER METHODS ///////////////
   get currentList() {
     return this.#currentList;
@@ -34,6 +38,10 @@ export default class Data {
     }
   }
 
+  get storage() {
+    return this._storage;
+  }
+
   get completedList() {
     return this.destinationService.Completed;
   }
@@ -43,7 +51,7 @@ export default class Data {
   }
 
   get currentListIdx() {
-    return this.lists.indexOf(this.currentList);
+    return this.lists.findIndex((list) => list.id === this.currentList.id);
   }
 
   get currentListTitle() {
@@ -135,18 +143,19 @@ export default class Data {
       sectionedTasks.push({
         listTitle: list.title,
         tasks: [...list.tasks],
+        id: list.id,
       });
     });
     return sectionedTasks;
   }
 
   getListFromtask(idx) {
-    const task = this.getTask(idx);
+    const taskToCheck = this.getTask(idx);
     //get the task
     //loop through each list and check if that list has the task
     //if the list has the task, return the task title
     for (let list of this.listCollection.myLists) {
-      const idx = list.tasks.indexOf(task);
+      const idx = list.tasks.findIndex((task) => task.id === taskToCheck.id);
       if (idx !== -1) {
         return list;
       }
@@ -154,12 +163,12 @@ export default class Data {
     return null;
   }
 
+  getListFromListElement(idx) {
+    return this.lists.at(idx);
+  }
+
   getAllTasksListID() {
-    for (let list of this.#listCollection.systemLists) {
-      if (list.title === "All Tasks") {
-        return list.id;
-      }
-    }
+    return this.allTasksList.id;
   }
 
   getSortedLists() {
@@ -173,12 +182,14 @@ export default class Data {
   updateTaskObjectWithIndex(taskIdx, taskProperty, value) {
     if (taskIdx !== -1 && this.currentTasks[taskIdx]) {
       this.currentTasks[taskIdx][taskProperty] = value;
+      this.updateLocalStorageData();
     }
   }
 
   updateListObject(listIdx, listProperty, value) {
     if (listIdx !== -1 && this.lists.at(listIdx)) {
       this.lists.at(listIdx)[listProperty] = value;
+      this.updateLocalStorageData();
     }
   }
 
@@ -194,12 +205,17 @@ export default class Data {
     this.currentList = idx;
   }
 
+  updateLocalStorageData() {
+    this.storage.pushToLocalStorage(this.listCollection);
+  }
+
   ////////////// DELETION METHODS ///////////////
   deleteList(id) {
     const myLists = this.myLists;
     for (let i = 0; i < myLists.length; i++) {
       if (myLists[i].id === id) {
         myLists.splice(i, 1);
+        this.updateLocalStorageData();
         return;
       }
     }
@@ -211,15 +227,18 @@ export default class Data {
     const lists = this.lists;
     let idx = -1;
     for (let list of lists) {
-      idx = list.tasks.indexOf(taskToDelete);
+      idx = list.tasks.findIndex((task) => task.id === taskToDelete.id);
       if (idx !== -1) {
         list.deleteTask(idx);
+        this.updateLocalStorageData();
       }
     }
   }
   //delete task from completed list and toggle its checked state
   deleteCheckedTask(taskToDelete) {
-    const idx = this.completedList.tasks.indexOf(taskToDelete);
+    const idx = this.completedList.tasks.findIndex(
+      (task) => task.id === taskToDelete.id
+    );
     if (idx !== -1) {
       this.completedList.deleteTask(idx);
       taskToDelete.toggleCheck();
@@ -230,7 +249,9 @@ export default class Data {
     const scheduledList = this.scheduledList;
     const scheduledListTasks = scheduledList.tasks;
 
-    let idx = scheduledListTasks.indexOf(taskToDelete);
+    const idx = scheduledListTasks.findIndex(
+      (task) => task.id === taskToDelete.id
+    );
     if (idx !== -1) {
       scheduledList.deleteTask(idx);
     }
@@ -240,7 +261,7 @@ export default class Data {
     const todayList = this.todayList;
     const todayListTasks = todayList.tasks;
 
-    let idx = todayListTasks.indexOf(taskToDelete);
+    const idx = todayListTasks.findIndex((task) => task.id === taskToDelete.id);
     if (idx !== -1) {
       todayList.deleteTask(idx);
     }
@@ -257,10 +278,12 @@ export default class Data {
 
   addTask(newTask) {
     this.currentList.addTask(newTask);
+    this.updateLocalStorageData();
   }
 
   addList(newListObj) {
     this.listCollection.myLists.push(newListObj);
+    this.updateLocalStorageData();
   }
 
   ////////////// BOOLEAN EVALUATION METHODS ///////////////
@@ -279,6 +302,21 @@ export default class Data {
     });
   }
 
+  isOnCurrentListByTitle(title) {
+    return this.currentListTitle === title;
+  }
+
+  isOnCurrentListByID(listID) {
+    return this.#currentList.id === listID;
+  }
+
+  currentListIsAllTasks() {
+    const allTasks = this.allTasksList;
+    const currentList = this.currentList;
+
+    return currentList.id === allTasks.id;
+  }
+
   ////////////// HANDLER METHODS ///////////////
   handleNewDate(taskElementIdx, newDate) {
     const dateTask = this.getTask(taskElementIdx);
@@ -287,6 +325,7 @@ export default class Data {
       dateTask["dueDate"] = newDate;
       this.deleteTaskFromToday(dateTask);
       this.deleteTaskFromScheduled(dateTask);
+      this.updateLocalStorageData();
       return;
     }
     const dateFormat = "yyyy-MM-dd";
@@ -303,8 +342,7 @@ export default class Data {
 
     if (scheduledHasTask || todayHasTask) {
       const prevDate = dateTask.dueDate;
-      // prevDate === "" means the task was created in Scheduled
-      if (isBefore(selectedDate, prevDate) || prevDate === "") {
+      if (isBefore(selectedDate, prevDate)) {
         if (isEqual(selectedDate, todaysDate)) {
           this.portTask("Today", dateTask);
         }
@@ -325,6 +363,8 @@ export default class Data {
       }
       this.currentTasks[taskElementIdx].dueDate = selectedDate;
     }
+
+    this.updateLocalStorageData();
   }
 
   handleCheckedTask(taskElementIdx) {
@@ -335,12 +375,14 @@ export default class Data {
       this.portTask("Completed", taskElementIdx);
       this.currentTasks[taskElementIdx].toggleCheck();
     }
+    this.updateLocalStorageData();
   }
 
   //////////////// INIT METHOD ///////////////
   init() {
-    const storage = new Storage(); //storage will send starting list
-    this.listCollection = storage.loadLists();
+    this._storage = new Storage(); //storage will send starting list
+    this.listCollection = this._storage.loadLists();
+
     this.currentList = 0; //was: this.startingListIDX. Might change later to load on last clicked list
     this.#destinationService = {
       "All Tasks": this.listCollection.systemLists[0],
@@ -350,6 +392,7 @@ export default class Data {
     };
     this.#destinationService["All Tasks"].tasks =
       this.getFlattenedSortedMyLists();
+
     this.#allTasksListOrder = this.getGroupedTasks();
   }
 }

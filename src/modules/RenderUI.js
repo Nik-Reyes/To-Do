@@ -13,15 +13,33 @@ import generateElement from "../utils/GenerateElement.js";
 import resizeListSvgs from "../utils/ResizeSvgs.js";
 import "../components/TaskElement/task.css";
 
+import createDisabledNav from "../components/Navs/AddDisabled/AddTaskDisabled.js";
+import createGenericNav from "../components/Navs/Generic/GenericNav.js";
+
 export default class RenderUI {
   #header;
   #taskCollection;
   #sidebar;
   #taskCollectionWrapper;
   #taskCollections = {
-    generic: (collectionState) => createGenericTaskCollection(collectionState),
-    "All Tasks": (collectionState) =>
-      createAllTasksTaskCollection(collectionState),
+    generic: (collectionState) => {
+      this.taskCollectionWrapper
+        .querySelector("nav")
+        .replaceWith(createGenericNav());
+      return createGenericTaskCollection(collectionState);
+    },
+    "All Tasks": (collectionState) => {
+      this.taskCollectionWrapper
+        .querySelector("nav")
+        .replaceWith(createDisabledNav());
+      return createAllTasksTaskCollection(collectionState);
+    },
+    disabled: (collectionState) => {
+      this.taskCollectionWrapper
+        .querySelector("nav")
+        .replaceWith(createDisabledNav());
+      return createGenericTaskCollection(collectionState);
+    },
   };
 
   ////////////// GETTER METHODS ///////////////
@@ -78,6 +96,7 @@ export default class RenderUI {
         });
     }, 25);
   }
+
   createHeaderElement(title) {
     if (!title) throw Error("Title DNE!");
     this.header = createHeader(title);
@@ -110,12 +129,12 @@ export default class RenderUI {
     return [sysEls, myEls];
   }
 
-  rerenderSectionHeader(section, title, text, state) {
-    section.replaceWith(this.renderSectionHeader(title, text, state));
+  rerenderSectionHeader(section, title, text, state, id) {
+    section.replaceWith(this.renderSectionHeader(title, text, state, id));
   }
 
-  renderSectionHeader(title, text, state) {
-    return createSection(title, text, state);
+  renderSectionHeader(title, text, state, id) {
+    return createSection(title, text, state, id);
   }
 
   renderSections(sections, classes, sectionStates) {
@@ -137,7 +156,8 @@ export default class RenderUI {
       const sectionHeader = this.renderSectionHeader(
         section.listTitle,
         buttonText,
-        sectionStates[i]
+        sectionStates[i],
+        section.id
       );
       const taskElements = this.createTaskElements(section.tasks);
 
@@ -241,12 +261,17 @@ export default class RenderUI {
   }
 
   //when switching to a non generic list, app needs to send in the proper type so renderer can render new task collection and its tasks
-  createGenericTaskCollection(tasks, collectionState) {
+  renderGenericTaskCollection(tasks, collectionState) {
     this.setTaskCollectionElements("generic", collectionState);
     this.renderTasks(tasks);
   }
 
-  createAllTasksCollection(
+  renderDisabledCollection(tasks, collectionState) {
+    this.setTaskCollectionElements("disabled", collectionState);
+    this.renderTasks(tasks);
+  }
+
+  renderAllTasksCollection(
     sectionedTasks,
     classes,
     sectionHasTasks,
@@ -256,7 +281,7 @@ export default class RenderUI {
     this.renderSectionedTasks(sectionedTasks, classes, sectionHasTasks);
   }
 
-  createTaskCollectionWrapper() {
+  renderTaskCollectionWrapper() {
     this.taskCollectionWrapper = createTaskCollectionWrapper();
     this.taskCollection =
       this.taskCollectionWrapper.querySelector(".task-collection");
@@ -288,8 +313,8 @@ export default class RenderUI {
     this.createHeaderElement(title);
     this.createSidebarElement();
     this.renderLists(systemLists, myLists);
-    this.createTaskCollectionWrapper();
-    this.createAllTasksCollection(
+    this.renderTaskCollectionWrapper();
+    this.renderAllTasksCollection(
       sectionedTasks,
       classes,
       sectionHasTasks,

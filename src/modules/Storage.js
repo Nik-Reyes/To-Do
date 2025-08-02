@@ -1,9 +1,12 @@
 import { defaultLists } from "./DefaultLists.js";
+import List from "./List.js";
+import Task from "./Task.js";
 
 export default class Storage {
   constructor() {
-    this.listDataKey = "listData";
+    this._listDataKey = "listData";
   }
+
   storageAvailable(type) {
     let storage;
     try {
@@ -26,23 +29,55 @@ export default class Storage {
   loadLists() {
     if (this.storageAvailable("localStorage")) {
       if (localStorage.length === 0) {
-        //return default lists and push default lists to localStorage
-        // this.pushToLocalStorage(defaultLists);
-        // console.log(JSON.parse(localStorage.getItem(this.listDataKey)));
+        // return default lists and push default lists to localStorage
+        this.pushToLocalStorage(defaultLists);
         return defaultLists;
       } else {
-        // this.removeFromLocalStorage();
         // load from local storage
+        // localStorage.removeItem(this._listDataKey);
+        const parsedData = this.loadFromLocalStorage();
+        return this.reClassifyData(parsedData);
       }
     }
   }
 
   //where data is an object of arrays of objects
   pushToLocalStorage(data) {
-    localStorage.setItem(this.listDataKey, JSON.stringify(data));
+    localStorage.setItem(this._listDataKey, JSON.stringify(data));
+  }
+
+  loadFromLocalStorage() {
+    return JSON.parse(localStorage.getItem(this._listDataKey));
   }
 
   removeFromLocalStorage() {
-    localStorage.removeItem(this.listDataKey);
+    localStorage.removeItem(this._listDataKey);
+  }
+
+  reClassifyData(data) {
+    return Object.fromEntries(
+      Object.entries(data).map(([listType, lists]) => {
+        return [listType, lists.map((list) => this.reclassifyList(list))];
+      })
+    );
+  }
+
+  reclassifyList(list) {
+    return new List(
+      list._title,
+      list._tasks.map((task) => this.reclassifyTask(task)),
+      list._id
+    );
+  }
+
+  reclassifyTask(task) {
+    return new Task(
+      task._title,
+      task._notes,
+      task._dueDate,
+      task._priority,
+      task._checked,
+      task._id
+    );
   }
 }

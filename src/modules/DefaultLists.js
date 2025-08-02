@@ -18,13 +18,13 @@ const choreItems = [
 ];
 
 const groceries = new List("Groceries");
-groceries.tasks.push(...groceryItems);
+groceries.pushTasks(groceryItems);
 
 const chores = new List("Chores");
-chores.tasks.push(...choreItems);
+chores.pushTasks(choreItems);
 
 const allTasks = new List("All Tasks");
-allTasks.tasks.push(...groceryItems, ...choreItems);
+allTasks.pushTasks([...groceryItems, ...choreItems]);
 
 export const defaultLists = {
   systemLists: [

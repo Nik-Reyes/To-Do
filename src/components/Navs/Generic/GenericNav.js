@@ -1,6 +1,5 @@
 import generateElement from "../../../utils/GenerateElement.js";
 import createAddButton from "../../AddingButton/CreateAddButton.js";
-import "./genericNav.css";
 import ".././navStyles.css";
 
 export default function createGenericNav() {

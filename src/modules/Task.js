@@ -1,65 +1,62 @@
 export default class Task {
-  #title;
-  #dueDate;
-  #priority;
-  #notes;
-  #checked;
-  #id = `${performance.now().toString(36)}-${Math.random()
-    .toString(36)
-    .substring(2)}`;
-  constructor(title, notes, dueDate, priority, checked) {
-    this.#title = title || "New Task";
-    this.#dueDate = dueDate || "";
-    this.#priority = priority || "no-priority";
-    this.#notes = notes || "";
-    this.#checked = checked || false;
+  constructor(title, notes, dueDate, priority, checked, id) {
+    this._title = title || "New Task";
+    this._dueDate = dueDate || "";
+    this._priority = priority || "no-priority";
+    this._notes = notes || "";
+    this._checked = checked || false;
+    this._id =
+      id ||
+      `${performance.now().toString(36)}-${Math.random()
+        .toString(36)
+        .substring(2)}`;
   }
 
   get title() {
-    return this.#title;
+    return this._title;
   }
 
   set title(newTitle) {
-    this.#title = newTitle;
+    this._title = newTitle;
   }
 
   get dueDate() {
-    return this.#dueDate;
+    return this._dueDate;
   }
 
   set dueDate(newDate) {
-    this.#dueDate = newDate;
+    this._dueDate = newDate;
   }
 
   get priority() {
-    return this.#priority;
+    return this._priority;
   }
 
   set priority(newPriority) {
-    this.#priority = newPriority;
+    this._priority = newPriority;
   }
 
   get notes() {
-    return this.#notes;
+    return this._notes;
   }
 
   set notes(newNote) {
-    this.#notes = newNote;
+    this._notes = newNote;
   }
 
   get checked() {
-    return this.#checked;
+    return this._checked;
   }
 
   set checked(updateComplete) {
-    this.#checked = updateComplete;
+    this._checked = updateComplete;
   }
 
   get id() {
-    return this.#id;
+    return this._id;
   }
 
   toggleCheck() {
-    this.#checked = !this.#checked;
+    this._checked = !this._checked;
   }
 }

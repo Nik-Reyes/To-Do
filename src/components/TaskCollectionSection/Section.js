@@ -1,9 +1,10 @@
 import generateElement from "../../utils/GenerateElement.js";
 import "./section.css";
 
-export default function createSection(title, buttonText, hasTasks) {
+export default function createSection(title, buttonText, hasTasks, id) {
   const sectionWrapper = generateElement("div", {
     class: "section-wrapper",
+    "data-id": id,
   });
   const titleWrapper = generateElement("div", {
     class: "title-wrapper",
