@@ -20,6 +20,7 @@
   --black-transparent-light: rgba(0, 0, 0, 0.3);
   --black-transparent-reg: rgba(0, 0, 0, 0.5);
   --black-transparent-bold: rgba(0, 0, 0, 0.7);
+
   --cyberpunk-clip-br: polygon(
     0% 0%,
     100% 0%,
@@ -70,6 +71,7 @@
   --list-btn-transition-speed: 100ms;
   --sidebar-width: 17rem;
   --header-height: 60px;
+  --header-content-spacing: 32px;
 }
 
 button {
@@ -78,7 +80,6 @@ button {
 
 html {
   background-color: var(--main-bg);
-  overflow-y: scroll;
 }
 
 body {
@@ -97,7 +98,7 @@ body * {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: var(--header-height) 1fr;
-  min-height: 100dvh;
+  height: 100dvh;
 }
 
 .page-wrapper.desktop-sidebar {

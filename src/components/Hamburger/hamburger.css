@@ -5,7 +5,6 @@
   height: var(--header-height);
   background-color: var(--main-bg);
   border: 1px solid rgb(255, 97, 89);
-  border: none;
   z-index: 1;
 }
 

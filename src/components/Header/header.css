@@ -1,7 +1,7 @@
 @font-face {
-  font-family: "Rajdhani Medium";
-  src: url("Rajdhani-Medium.woff2") format("woff2"),
-    url("Rajdhani-Medium.woff") format("woff");
+  font-family: "Rajdhani Bold";
+  src: url("Rajdhani-Bold.woff2") format("woff2"),
+    url("Rajdhani-Bold.woff") format("woff");
   font-weight: 500;
   font-style: normal;
   font-stretch: normal;
@@ -33,9 +33,9 @@
 }
 
 .header-title {
-  font-family: "Rajdhani Medium";
+  font-family: "Rajdhani Bold";
   line-height: 1;
-  padding-top: 2px;
   letter-spacing: -1px;
-  font-size: 1.75rem;
+  padding-top: 2px;
+  font-size: 1.85rem;
 }
