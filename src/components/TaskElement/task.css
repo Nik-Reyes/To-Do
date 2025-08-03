@@ -140,25 +140,6 @@ textarea {
   border: 1px solid var(--cyber-red);
 }
 
-.delete-svg-wrapper::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  --extra-spacing: 20%;
-  --x-divisor: 2.4;
-  --y-divisor: 2.2;
-  width: calc(100% + var(--extra-spacing));
-  height: calc(100% + var(--extra-spacing));
-  transform: translate(
-    calc((var(--extra-spacing) / var(--x-divisor)) * -1),
-    calc((var(--extra-spacing) / var(--y-divisor)) * -1)
-  );
-  border: 1px solid var(--cyber-red);
-  transition: background-color 100ms;
-  z-index: -1;
-}
-
 .delete-svg-wrapper::before {
   content: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8' standalone='no'%3F%3E%3C!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools --%3E%3Csvg width='14px' height='14px' viewBox='0 -0.5 21 21' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3Cdefs%3E%3C/defs%3E%3Cg id='Page-1' stroke='none' stroke-width='1' fill='none' fill-rule='evenodd'%3E%3Cg id='Dribbble-Light-Preview' transform='translate(-419.000000, -240.000000)' fill='rgb(228, 27, 51)'%3E%3Cg id='icons' transform='translate(56.000000, 160.000000)'%3E%3Cpolygon id='close-%5B%231511%5D' points='375.0183 90 384 98.554 382.48065 100 373.5 91.446 364.5183 100 363 98.554 371.98065 90 363 81.446 364.5183 80 373.5 88.554 382.48065 80 384 81.446'%3E%3C/polygon%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   display: grid;

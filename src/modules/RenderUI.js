@@ -190,7 +190,6 @@ export default class RenderUI {
   //appends array of task elements to task collection section
   async renderTasks(taskObjects) {
     if (!taskObjects) return;
-    this.taskCollection.innerText = "";
     const taskCollectionFrag = document.createDocumentFragment();
 
     await new Promise((resolve) => setTimeout(resolve, 25));

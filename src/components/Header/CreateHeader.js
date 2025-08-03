@@ -4,6 +4,7 @@ import "./header.css";
 
 export default function createHeader(listName) {
   const header = generateElement("header", { class: "header" });
+  const headerTagLabel = generateElement("div", { class: "header-tag-label" });
   const hamburger = createHamburger();
 
   const titleWrapper = generateElement("div", {
@@ -17,7 +18,9 @@ export default function createHeader(listName) {
   );
 
   titleWrapper.appendChild(headerTitle);
-  header.append(titleWrapper, hamburger);
+  headerTagLabel.appendChild(titleWrapper);
+
+  header.append(headerTagLabel, hamburger);
 
   return header;
 }
