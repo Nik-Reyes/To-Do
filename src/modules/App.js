@@ -299,6 +299,7 @@ export default class App {
       this.renderer.rerenderList(listBtnWrapper, currentListObj, {
         class: "list-btn stacked focused-list",
       });
+      return;
     }
 
     this.renderer.rerenderList(listBtnWrapper, currentListObj);
@@ -306,7 +307,6 @@ export default class App {
 
   deleteTaskElement(taskWrapper, taskIdx) {
     const list = this.data.getListFromtask(taskIdx);
-
     this.data.deleteTask(taskIdx);
     this.renderer.deleteTaskElement(taskWrapper);
     this.rerenderLists();
@@ -356,6 +356,14 @@ export default class App {
       ".hoverable-list-content-wrapper"
     );
 
+    if (hoverWrapper.classList.contains("expand-row")) {
+      hoverWrapper.classList.remove("expand-row");
+      return;
+    }
+
+    const lists = document.querySelectorAll(".expand-row");
+    lists.forEach((list) => list.classList.remove("expand-row"));
+
     if (hoverWrapper.className.includes("expand-row")) {
       hoverWrapper.classList.add("collapse-row");
       hoverWrapper.addEventListener(
@@ -365,8 +373,8 @@ export default class App {
         },
         { once: true }
       );
-    } else {
     }
+
     hoverWrapper.classList.add("expand-row");
   }
 
@@ -387,7 +395,7 @@ export default class App {
           return;
         },
         ".list-btn": () => this.handleListBtnClick(listElementIdx, listBtn),
-        ".edit-list": () => this.openEditOptions(listBtnWrapper),
+        ".edit-list": () => this.openEditOptions(listBtnWrapper, target),
         ".edit-list-btn": () => this.editListElement(listBtnWrapper),
         ".delete-list-btn": () => this.deleteListElement(listBtnWrapper),
         ".confirm-edit-btn": () =>
@@ -441,11 +449,15 @@ export default class App {
       this.elements.taskCollectionWrapper.querySelector(
         ".priority-btn-wrapper.focused"
       );
+    const currentListEdit = document.querySelector(
+      ".list-btn-wrapper:has(.expand-row)"
+    );
 
     //collapses the opened task if the user clicks away from it and the click isnt adding a task
     if (this.activeTaskElement && !target.closest(".add-task-btn")) {
       this.collapseActiveTaskElement(e);
     }
+
     // removes the new editable list if the user clicks away from it
     if (
       newList &&
@@ -472,6 +484,14 @@ export default class App {
       !target.closest(".open-menu")
     ) {
       opendMenu.classList.remove("open-menu");
+    }
+
+    if (currentListEdit) {
+      if (!e.composedPath().includes(currentListEdit)) {
+        currentListEdit
+          .querySelector(".hoverable-list-content-wrapper")
+          .classList.remove("expand-row");
+      }
     }
   }
 
@@ -689,7 +709,7 @@ export default class App {
         "task-priority": () =>
           this.handleTaskPriorityCLick(target, taskWrapper),
         "delete-svg-wrapper": () =>
-          this.deleteTaskElement(taskWrapper, taskIdx),
+          this.deleteTaskElement(taskWrapper, taskIdx, target),
         "task-date": () => {
           target.classList.add("focused");
         },
