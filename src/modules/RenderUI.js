@@ -112,7 +112,9 @@ export default class RenderUI {
   }
 
   renderEditableList(listBtnWrapper) {
-    listBtnWrapper.replaceWith(createEditableListElement());
+    const editableList = createEditableListElement();
+    listBtnWrapper.replaceWith(editableList);
+    editableList.querySelector("input").focus();
     resizeListSvgs();
   }
 
