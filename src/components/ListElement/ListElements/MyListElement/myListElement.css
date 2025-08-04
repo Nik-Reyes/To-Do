@@ -13,10 +13,15 @@
 .hoverable-list-content-wrapper {
   display: grid;
   grid-template-rows: 0fr;
-  opacity: 1;
+  opacity: 0;
+  transition: grid-template-rows 200ms ease-in-out, transform 200ms ease-in-out,
+    opacity 100ms ease-in-out;
+  transform: translateY(-100%);
+}
+
+.hoverable-list-content-wrapper.expand-row {
   transition: grid-template-rows 200ms ease-in-out, transform 200ms ease-in-out,
     opacity 200ms ease-in-out;
-  transform: translateY(-100%);
 }
 
 .hoverable-list-content {
@@ -30,12 +35,6 @@
   transform: translateY(0%);
   opacity: 1;
   grid-template-rows: 1fr;
-}
-
-.collapse-row {
-  transform: translateY(-100%);
-  opacity: 0;
-  grid-template-rows: 0fr;
 }
 
 button[data-btn-type="edit-list"],

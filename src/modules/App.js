@@ -364,17 +364,6 @@ export default class App {
     const lists = document.querySelectorAll(".expand-row");
     lists.forEach((list) => list.classList.remove("expand-row"));
 
-    if (hoverWrapper.className.includes("expand-row")) {
-      hoverWrapper.classList.add("collapse-row");
-      hoverWrapper.addEventListener(
-        "transitionend",
-        () => {
-          hoverWrapper.classList.remove("expand-row", "collapse-row");
-        },
-        { once: true }
-      );
-    }
-
     hoverWrapper.classList.add("expand-row");
   }
 
