@@ -5,7 +5,7 @@ export default function resizeSvgs() {
   const correctListTitleHeight = listButton.querySelector(".list-title");
 
   let newList = document.querySelector(".new-list.list-btn input");
-  let editableList = document.querySelector(".editable-list-input");
+  let editableLists = document.querySelectorAll(".editable-list-input");
   const listButtonHeight = listButton.offsetHeight;
   const listButtonWidth = listButton.offsetWidth;
 
@@ -13,8 +13,10 @@ export default function resizeSvgs() {
     newList.style.height = `${correctListTitleHeight.offsetHeight}px`;
   }
 
-  if (editableList) {
-    editableList.style.height = `${correctListTitleHeight.offsetHeight}px`;
+  if (editableLists.length > 0) {
+    editableLists.forEach((list) => {
+      list.style.height = `${correctListTitleHeight.offsetHeight}px`;
+    });
   }
 
   listSvgWrapper.setAttribute(
