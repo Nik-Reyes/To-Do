@@ -3,6 +3,8 @@ import createPriorityMenu from "../PriorityMenu/CreatePriorityMenu.js";
 import { format } from "date-fns";
 import "./task.css";
 
+const TASK_TITLE_HEIGHT = 29; //calculated by hand using: height = line-height(1.4) * font-size(1.25rem) - values as seen in "./task.css";
+
 export default function createTaskElement(task) {
   //////// ELEMENT CREATION ////////
   const taskWrapper = generateElement("div", {
@@ -20,10 +22,17 @@ export default function createTaskElement(task) {
     "textarea",
     {
       class: "task-input",
-      style: "height: 28px", //calculated by hand using: height = line-height(1.4) * font-size(1.25rem) - values as seen in "./task.css";
+      style: `height: ${TASK_TITLE_HEIGHT}px`,
+      readonly: task.checked,
     },
     task.title
   );
+
+  requestAnimationFrame(() => {
+    if (taskInput.scrollHeight > TASK_TITLE_HEIGHT) {
+      taskInput.setAttribute("style", `height: ${taskInput.scrollHeight}px`);
+    }
+  });
 
   const taskCheckBoxWrapper = generateElement("div", {
     class: "task-checkbox-wrapper",
@@ -52,6 +61,7 @@ export default function createTaskElement(task) {
     {
       class: "task-notes",
       placeholder: "Notes",
+      disabled: task.checked,
     },
     task.notes
   );
@@ -62,6 +72,7 @@ export default function createTaskElement(task) {
     name: "due-date",
     min: format(new Date(), "yyyy-MM-dd"),
     value: task.dueDate,
+    disabled: task.checked,
   });
   const taskPriorityWrapper = generateElement("div", {
     class: "cyberpunk-clip-wrapper-br priority-btn-wrapper",
@@ -75,6 +86,7 @@ export default function createTaskElement(task) {
     "button",
     {
       class: "inner-cyberpunk-clip-wrapper-br task-priority",
+      disabled: task.checked,
     },
     "Priority"
   );

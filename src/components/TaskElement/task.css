@@ -13,6 +13,8 @@
   grid-template-columns: 13.5px 1fr;
   position: relative;
   --ghost-white: rgba(107, 107, 107, 1);
+  --text-deleteSVG-spacing: 10px;
+  --deleteSVG-width: 25px;
 }
 
 .task-wrapper.completed .cyberpunk-clip-wrapper-br {
@@ -163,10 +165,11 @@ textarea {
   display: flex;
   justify-content: space-between;
   align-items: start;
+  column-gap: var(--text-deleteSVG-spacing);
 }
 
 .delete-svg-wrapper {
-  width: 25px;
+  width: var(--deleteSVG-width);
   height: calc(var(--taskInput-lh) * var(--taskInput-fs));
   flex-shrink: 0;
   position: relative;
@@ -189,11 +192,12 @@ textarea {
   min-width: 0px;
   flex: 1;
   resize: none;
-  overflow: hidden;
+  /* overflow: hidden; */
   line-height: var(--taskInput-lh);
   text-shadow: 0.01em 0.01em 0.15em hsla(0, 100%, 61%, 0.4);
   padding-top: 1px;
   will-change: height;
+  width: fit-content;
 }
 
 .delete-svg-wrapper:hover {
@@ -226,6 +230,7 @@ textarea {
   color: hsl(0, 0%, 80%, 90%);
   text-shadow: 0px 0px 1px hsl(0, 0%, 85%);
   border: none;
+  padding-right: calc(var(--text-deleteSVG-spacing) + var(--deleteSVG-width));
 }
 
 .task-notes::placeholder {
