@@ -1,7 +1,8 @@
 .sub-collection-wrapper {
+  --expand-duration: 200ms;
   display: grid;
   grid-template-rows: 0fr;
-  transition: grid-template-rows 200ms ease-in-out;
+  transition: grid-template-rows var(--expand-duration) ease-in-out;
 }
 
 .sub-collection {
@@ -12,6 +13,22 @@
 
 .sub-collection-expanded {
   grid-template-rows: 1fr;
+}
+
+.sub-collection-wrapper.sub-collection-expanded .sub-collection {
+  animation-duration: 0ms;
+  animation-delay: var(--expand-duration);
+  animation-name: show-overflow;
+  animation-fill-mode: forwards;
+}
+
+@keyframes show-overflow {
+  from {
+    overflow: hidden;
+  }
+  to {
+    overflow: visible;
+  }
 }
 
 .task-collection.all-tasks {

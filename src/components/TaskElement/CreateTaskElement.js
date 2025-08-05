@@ -5,23 +5,36 @@ import "./task.css";
 
 export default function createTaskElement(task) {
   //////// ELEMENT CREATION ////////
-  const taskWrapper = generateElement("div", { class: "task-wrapper" });
+  const taskWrapper = generateElement("div", {
+    class: `task-wrapper ${task.checked ? "completed" : ""}`,
+    "data-task-id": task.id,
+  });
   const taskContentBorder = generateElement("div", {
     class: "cyberpunk-clip-wrapper-br",
   });
   const taskContent = generateElement("div", {
     class: "inner-cyberpunk-clip-wrapper-br task-content",
   });
-  const taskInput = generateElement("input", {
-    class: "task-input",
-    type: "text",
-    name: "task",
-    placeholder: " ",
-    value: task.title,
-    style: `width: ${task.title.length + 2.5}ch`,
+
+  const taskInput = generateElement(
+    "textarea",
+    {
+      class: "task-input",
+      style: "height: 28px", //calculated by hand using: height = line-height(1.4) * font-size(1.25rem) - values as seen in "./task.css";
+    },
+    task.title
+  );
+
+  const taskCheckBoxWrapper = generateElement("div", {
+    class: "task-checkbox-wrapper",
   });
+
+  const taskCheckBoxShell = generateElement("div", {
+    class: " cyberpunk-clip-wrapper-br  task-checkbox-shell",
+  });
+
   const taskCheckBox = generateElement("input", {
-    class: "task-checkbox",
+    class: "task-checkbox inner-cyberpunk-clip-wrapper-br",
     type: "checkbox",
     name: task.title,
     value: task.title,
@@ -85,7 +98,9 @@ export default function createTaskElement(task) {
   expandableContent.append(taskNotes, moreOptions);
   expandableContentWrapper.append(expandableContent);
   row.append(taskInput, svgWrapper);
-  taskContent.append(taskCheckBox, row, expandableContentWrapper);
+  taskCheckBoxShell.appendChild(taskCheckBox);
+  taskCheckBoxWrapper.appendChild(taskCheckBoxShell);
+  taskContent.append(taskCheckBoxWrapper, row, expandableContentWrapper);
   taskContentBorder.appendChild(taskContent);
   taskWrapper.append(taskPriorityColorPanel, taskContentBorder, menu);
 
