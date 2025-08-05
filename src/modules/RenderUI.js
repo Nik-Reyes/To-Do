@@ -82,21 +82,12 @@ export default class RenderUI {
   }
 
   ////////////// ACTION METHODS ///////////////
-  setNotesSize() {
-    setTimeout(() => {
-      const notes = Array.from(
-        this.taskCollection.querySelectorAll(".task-notes")
-      );
-      notes
-        .filter((note) => {
-          return note.value !== "";
-        })
-        .forEach((note) => {
-          note.style.height = note.scrollHeight + "px";
-        });
-    }, 25);
+  setNotesSize(note) {
+    requestAnimationFrame(() => {
+      note.style.height = "1px";
+      note.style.height = note.scrollHeight + "px";
+    }, 200);
   }
-
   createHeaderElement(title) {
     if (!title) throw Error("Title DNE!");
     this.header = createHeader(title);
@@ -173,14 +164,13 @@ export default class RenderUI {
 
   //always starts off with base classes
   async renderSectionedTasks(sections, classes, sectionHasTasks) {
-    await new Promise((resolve) => setTimeout(resolve, 25));
+    await new Promise((resolve) => requestAnimationFrame(resolve, 25));
     const sectionsFragment = this.renderSections(
       sections,
       classes,
       sectionHasTasks
     );
     this.taskCollection.appendChild(sectionsFragment);
-    this.setNotesSize();
   }
 
   renderTask(taskCollection, taskObj) {
@@ -194,12 +184,16 @@ export default class RenderUI {
     if (!taskObjects) return;
     const taskCollectionFrag = document.createDocumentFragment();
 
-    await new Promise((resolve) => setTimeout(resolve, 25));
+    await new Promise((resolve) => requestAnimationFrame(resolve, 25));
 
     const taskElements = this.createTaskElements(taskObjects);
     taskCollectionFrag.append(...taskElements);
     this.taskCollection.appendChild(taskCollectionFrag);
-    this.setNotesSize();
+  }
+
+  updateTaskElements(taskObjects) {
+    this.taskCollection.innerText = "";
+    this.renderTasks(taskObjects);
   }
 
   //appends array of list elements to systemList and myList
@@ -278,6 +272,7 @@ export default class RenderUI {
     sectionHasTasks,
     collectionState
   ) {
+    console.log(collectionState);
     this.setTaskCollectionElements("All Tasks", collectionState);
     this.renderSectionedTasks(sectionedTasks, classes, sectionHasTasks);
   }
@@ -323,7 +318,7 @@ export default class RenderUI {
     );
     pageWrapper.append(this.header, this.sidebar, this.taskCollectionWrapper);
 
-    setTimeout(resizeListSvgs, 1);
+    requestAnimationFrame(resizeListSvgs, 1);
     window.addEventListener("resize", resizeListSvgs);
   }
 }

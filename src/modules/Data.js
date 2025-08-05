@@ -137,6 +137,10 @@ export default class Data {
     return this.currentTasks.at(elementIdx);
   }
 
+  getTaskFromID(id) {
+    return this.currentTasks.find((task) => task.id === id);
+  }
+
   getGroupedTasks() {
     const sectionedTasks = [];
     this.getSortedLists().forEach((list) => {

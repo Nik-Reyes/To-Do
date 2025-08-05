@@ -506,9 +506,12 @@ export default class App {
   handleTaskInputClick(target, taskWrapper, taskContent) {
     if (!taskContent) return;
     this.removeActiveTask();
+
     taskContent.classList.add("active");
-    target.style.width = "100%";
     this.activeTaskElement = taskWrapper;
+
+    const note = taskWrapper.querySelector(".task-notes");
+    this.renderer.setNotesSize(note);
   }
 
   rerenderLists() {
@@ -585,19 +588,13 @@ export default class App {
     );
 
     if (property) {
-      if (property === "task-notes") {
-        target.style.height = "auto"; // shrinks to auto when content shrinks
-        target.style.height = target.scrollHeight + "px"; // grows to fit content
-        this.data.updateTaskObjectWithIndex(
-          taskIdx,
-          propMap[property],
-          target.value
-        );
-      } else if (property === "task-checkbox") {
-        this.handleTaskCheckBoxInput(taskIdx);
+      if (property === "task-checkbox") {
+        this.handleTaskCheckBoxInput(taskIdx, taskWrapper);
       } else if (property === "task-date") {
         this.handleTaskDateInput(target, taskIdx, target.value);
       } else {
+        target.style.height = "1px";
+        target.style.height = target.scrollHeight + "px";
         this.data.updateTaskObjectWithIndex(
           taskIdx,
           propMap[property],
@@ -630,11 +627,22 @@ export default class App {
     this.rerenderLists();
   }
 
-  handleTaskCheckBoxInput(taskIdx) {
+  handleTaskCheckBoxInput(taskIdx, taskWrapper) {
+    const taskInputs = [
+      taskWrapper.querySelector(".task-input"),
+      taskWrapper.querySelector(".task-notes"),
+      taskWrapper.querySelector(".task-date"),
+      taskWrapper.querySelector(".task-priority"),
+    ];
+
+    taskInputs.forEach((input) => input.toggleAttribute("disabled"));
+
+    taskWrapper.classList.toggle("completed");
     this.data.handleCheckedTask(taskIdx);
     this.rerenderLists();
     if (this.data.currentListTitle === "Completed") {
-      this.renderer.renderTasks(this.data.currentTasks);
+      console.log(this.data.currentTasks);
+      this.renderer.updateTaskElements(this.data.currentTasks);
     }
   }
 
@@ -783,8 +791,6 @@ export default class App {
     const activeTaskInput = activeTask.querySelector(".task-input");
     if (!activeTaskInput) return;
 
-    const inputWidth = `${activeTaskInput.value.length + 2}ch`;
-    activeTaskInput.style.width = inputWidth;
     activeTask.classList.remove("active");
     this.activeTaskElement = null;
   }
@@ -809,10 +815,6 @@ export default class App {
     const { target, key } = e;
 
     if (key === "Enter" || key === "Escape") {
-      if (target.closest(".task-input")) {
-        target.style.width = target.value.length + 2 + "ch";
-        target.blur();
-      }
       if (target.closest(".task-date")) {
         target.closest(".date-wrapper").classList.remove("focused");
       }
