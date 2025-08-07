@@ -30,7 +30,3 @@
     overflow: visible;
   }
 }
-
-.task-collection.all-tasks {
-  padding-top: var(--header-content-spacing);
-}

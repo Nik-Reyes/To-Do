@@ -8,16 +8,28 @@
   unicode-range: U+0020-0912;
 }
 
-.add-btn {
+nav button {
   text-align: center;
   border-radius: 0px;
-  border: none;
   background-color: transparent;
+  color: var(--cyber-red-text);
   font-weight: 600;
-  transition: color 150ms ease-in-out;
+  border: 1px solid var(--cyber-red-text);
+  padding: 0.45em 0.75em 0.25em;
+  transition: background-color 100ms ease-in-out;
+  font-size: inherit;
+  backdrop-filter: blur(10px);
+  font-family: "Rajdhani";
+  line-height: 1lh;
+  z-index: 1;
+}
+
+nav button:hover {
+  background-color: hsl(0, 65%, 20%);
 }
 
 .addList-btn {
+  transition: color 150ms ease-in-out;
   position: relative;
   display: grid;
   place-content: center;
@@ -26,6 +38,9 @@
   clip-path: var(--cyberpunk-clip-br-sm);
   color: rgb(254, 215, 91);
   font-size: 1.125rem;
+  border-radius: 0px;
+  border: none;
+  background-color: transparent;
 }
 
 @media (pointer: fine) {
@@ -54,33 +69,4 @@
     transform: scaleX(0);
     transition: transform 150ms ease-in-out, z-index 0ms;
   }
-}
-
-nav .add-task-btn {
-  color: var(--cyber-red-text);
-  border: 1px solid var(--cyber-red-text);
-  padding: 0.45em 0.75em 0.25em;
-  transition: background-color 100ms ease-in-out;
-  font-size: inherit;
-  backdrop-filter: blur(10px);
-  font-family: "Rajdhani";
-  line-height: 1lh;
-  display: none;
-  z-index: 1;
-}
-
-nav .add-task-btn:hover {
-  background-color: hsl(0, 65%, 20%);
-}
-
-.task-collection-wrapper:has(.generic) .add-task-btn {
-  display: grid;
-}
-
-.add-task-wrapper.add-btn-wrapper {
-  display: grid;
-}
-
-.task-collection-wrapper .add-btn-wrapper .add-task-btn {
-  margin-left: auto;
 }

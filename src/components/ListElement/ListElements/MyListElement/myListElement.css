@@ -64,7 +64,7 @@ button[data-btn-type="delete-list"] {
     width: 100%;
     background: rgb(254, 215, 91);
     transform: scaleX(0);
-    transition: transform 150ms ease-in-out, z-index 0ms;
+    transition: transform 200ms ease-in-out, z-index 0ms;
   }
 
   button[data-btn-type="edit-list"]::after {

@@ -48,7 +48,7 @@
   gap: var(--task-collection-padding);
   position: relative;
   --bottom-space: 60px;
-  padding: var(--task-collection-padding) var(--task-collection-padding)
+  padding: var(--header-content-spacing) var(--task-collection-padding)
     var(--bottom-space) var(--task-collection-padding);
   font-family: "Rajdhani";
 }

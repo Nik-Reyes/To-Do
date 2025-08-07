@@ -1,6 +1,15 @@
-.task-collection-wrapper:has(.generic) .navigation {
+.navigation {
   position: sticky;
   z-index: 1;
   top: 0px;
   padding: var(--header-content-spacing) 16px 0px;
+  display: flex;
+  column-gap: 5px;
+  justify-content: space-between;
+}
+
+@media only screen and (min-width: 41.875rem) {
+  .navigation {
+    padding-left: 32px;
+  }
 }
