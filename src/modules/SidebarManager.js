@@ -26,10 +26,8 @@ export default class SidebarManager {
     //handles the view (desktop to mobile & mobile to desktop)
     //if user is on mobile but switches to desktop, the the desktop sidebar is shown
     //if the user is on desktop and switches to mobile the sidebar is hidden
-    this.sidebar.classList.add("no-transition");
     this.isDeskPanelHidden = false;
     this.isSidebarOpen = false;
-
     setTimeout(resizeSvgs, 1);
   }
 
