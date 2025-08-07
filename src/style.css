@@ -90,6 +90,46 @@
   --header-content-spacing: 32px;
 }
 
+@font-face {
+  font-family: "Rajdhani Light";
+  src: url("./assets/fonts/Rajdhani-Light.woff2") format("woff2"),
+    url("./assets/fonts/Rajdhani-Light.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-stretch: normal;
+  unicode-range: U+0020-0912;
+}
+
+@font-face {
+  font-family: "Rajdhani";
+  src: url("./assets/fonts/Rajdhani-Regular.woff2") format("woff2"),
+    url("./assets/fonts/Rajdhani-Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-stretch: normal;
+  unicode-range: U+0020-0912;
+}
+
+@font-face {
+  font-family: "Rajdhani Medium";
+  src: url("./assets/fonts/Rajdhani-Medium.woff2") format("woff2"),
+    url("./assets/fonts/Rajdhani-Medium.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+  font-stretch: normal;
+  unicode-range: U+0020-0912;
+}
+
+@font-face {
+  font-family: "Rajdhani Bold";
+  src: url("./assets/fonts/Rajdhani-Bold.woff2") format("woff2"),
+    url("./assets/fonts/Rajdhani-Bold.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+  font-stretch: normal;
+  unicode-range: U+0020-0912;
+}
+
 button {
   cursor: pointer;
 }

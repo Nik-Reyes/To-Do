@@ -14,6 +14,7 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: "./src/index.html",
+      favicon: "./src/assets/images/icon.svg",
     }),
   ],
   module: {
@@ -24,6 +25,10 @@ module.exports = {
       },
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/i,
+        type: "asset/resource",
+      },
+      {
+        test: /\.(svg)$/i,
         type: "asset/resource",
       },
     ],
