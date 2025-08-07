@@ -5,9 +5,6 @@ export default function generateElement(type, attributes = {}, content = null) {
   } else {
     element = document.createElement(type);
   }
-  if (content) {
-    element.textContent = content;
-  }
 
   if (attributes && attributes instanceof Object) {
     Object.entries(attributes)
@@ -21,5 +18,14 @@ export default function generateElement(type, attributes = {}, content = null) {
         );
       });
   }
+
+  if (content) {
+    if (element.tagName === "DIV" && element.className.includes("task-input")) {
+      element.innerText = content;
+    } else {
+      element.textContent = content;
+    }
+  }
+
   return element;
 }

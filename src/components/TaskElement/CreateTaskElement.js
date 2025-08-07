@@ -1,9 +1,9 @@
 import generateElement from "../../utils/GenerateElement.js";
 import createPriorityMenu from "../PriorityMenu/CreatePriorityMenu.js";
+import createTaskTitleDiv from "../TaskTextDivs/TaskTitleDiv/createTaskTitleDiv.js";
+import createTaskNotesDiv from "../TaskTextDivs/TaskNotesDiv/createTaskNotesDiv.js";
 import { format } from "date-fns";
 import "./task.css";
-
-const TASK_TITLE_HEIGHT = 29; //calculated by hand using: height = line-height(1.4) * font-size(1.25rem) - values as seen in "./task.css";
 
 export default function createTaskElement(task) {
   //////// ELEMENT CREATION ////////
@@ -18,21 +18,7 @@ export default function createTaskElement(task) {
     class: "inner-cyberpunk-clip-wrapper-br task-content",
   });
 
-  const taskInput = generateElement(
-    "textarea",
-    {
-      class: "task-input",
-      style: `height: ${TASK_TITLE_HEIGHT}px`,
-      readonly: task.checked,
-    },
-    task.title
-  );
-
-  requestAnimationFrame(() => {
-    if (taskInput.scrollHeight > TASK_TITLE_HEIGHT) {
-      taskInput.setAttribute("style", `height: ${taskInput.scrollHeight}px`);
-    }
-  });
+  const taskInput = createTaskTitleDiv(task);
 
   const taskCheckBoxWrapper = generateElement("div", {
     class: "task-checkbox-wrapper",
@@ -56,15 +42,7 @@ export default function createTaskElement(task) {
     class: "expandable-content",
   });
 
-  const taskNotes = generateElement(
-    "textarea",
-    {
-      class: "task-notes",
-      placeholder: "Notes",
-      disabled: task.checked,
-    },
-    task.notes
-  );
+  const taskNotes = createTaskNotesDiv(task);
 
   const taskDate = generateElement("input", {
     class: "inner-cyberpunk-clip-wrapper-br task-date",

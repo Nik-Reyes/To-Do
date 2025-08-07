@@ -30,7 +30,14 @@
   border-color: var(--ghost-white);
 }
 
-.task-wrapper.completed :is(textarea, input:not([type="checkbox"]), button) {
+.task-wrapper.completed
+  :is(
+    textarea,
+    div.task-notes,
+    div.task-input,
+    input:not([type="checkbox"]),
+    button
+  ) {
   color: rgb(163, 163, 163);
   text-shadow: none;
 }
@@ -83,12 +90,18 @@
 }
 
 input[type="text"],
-textarea {
+textarea,
+div.task-notes,
+div.task-input {
   background-color: transparent;
   cursor: text;
 }
 
-.task-content :where(input, button, textarea) {
+div.task-notes {
+  white-space: pre-line;
+}
+
+.task-content :where(input, button, textarea, div.task-notes, div.task-input) {
   color: var(--cyber-red-text);
 }
 
@@ -192,7 +205,7 @@ textarea {
   min-width: 0px;
   flex: 1;
   resize: none;
-  /* overflow: hidden; */
+  overflow: hidden;
   line-height: var(--taskInput-lh);
   text-shadow: 0.01em 0.01em 0.15em hsla(0, 100%, 61%, 0.4);
   padding-top: 1px;
@@ -202,7 +215,6 @@ textarea {
 
 .delete-svg-wrapper:hover {
   animation: blink 150ms infinite;
-  filter: drop-shadow(0px 0px 2px 1px red);
 }
 
 @keyframes blink {
@@ -222,8 +234,8 @@ textarea {
   outline: none;
 }
 
-.task-notes {
-  line-height: 1.4;
+:is(textarea, div).task-notes {
+  line-height: 1.5;
   resize: none;
   overflow: hidden;
   outline: none;
@@ -233,7 +245,7 @@ textarea {
   padding-right: calc(var(--text-deleteSVG-spacing) + var(--deleteSVG-width));
 }
 
-.task-notes::placeholder {
+:is(textarea, div).task-notes::placeholder {
   color: inherit;
 }
 
@@ -262,10 +274,11 @@ input[type="date"] {
   visibility: hidden;
   opacity: 0;
   transition: opacity 300ms ease-in-out;
+  padding-top: 5px;
 }
 
 .expandable-content * {
-  font-size: 0.9125rem;
+  font-size: 1rem;
 }
 
 .task-content.active .expandable-content {

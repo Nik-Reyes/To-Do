@@ -5,6 +5,10 @@ import createMyListElement from "../components/ListElement/ListElements/MyListEl
 import createGenericTaskCollection from "../components/TaskCollections/Generic/GenericTaskCollection.js";
 import createAllTasksTaskCollection from "../components/TaskCollections/AllTasks/AllTasksCollection.js";
 import createTaskCollectionWrapper from "../components/TaskCollections/TaskCollectionWrapper.js";
+import createTaskTitleDiv from "../components/TaskTextDivs/TaskTitleDiv/createTaskTitleDiv.js";
+import createTaskNotesDiv from "../components/TaskTextDivs/TaskNotesDiv/createTaskNotesDiv.js";
+import createTitleTextArea from "../components/TextArea/TitleTA/CreateTitleTextArea.js";
+import createNotesTextArea from "../components/TextArea/NotesTA/CreateNotesTextArea.js";
 import createTaskElement from "../components/TaskElement/CreateTaskElement.js";
 import createSection from "../components/TaskCollectionSection/Section.js";
 import createHeader from "../components/Header/CreateHeader.js";
@@ -86,7 +90,7 @@ export default class RenderUI {
     requestAnimationFrame(() => {
       note.style.height = "1px";
       note.style.height = note.scrollHeight + "px";
-    }, 200);
+    });
   }
   createHeaderElement(title) {
     if (!title) throw Error("Title DNE!");
@@ -164,7 +168,7 @@ export default class RenderUI {
 
   //always starts off with base classes
   async renderSectionedTasks(sections, classes, sectionHasTasks) {
-    await new Promise((resolve) => requestAnimationFrame(resolve, 25));
+    await new Promise((resolve) => requestAnimationFrame(resolve));
     const sectionsFragment = this.renderSections(
       sections,
       classes,
@@ -184,7 +188,7 @@ export default class RenderUI {
     if (!taskObjects) return;
     const taskCollectionFrag = document.createDocumentFragment();
 
-    await new Promise((resolve) => requestAnimationFrame(resolve, 25));
+    await new Promise((resolve) => requestAnimationFrame(resolve));
 
     const taskElements = this.createTaskElements(taskObjects);
     taskCollectionFrag.append(...taskElements);
@@ -248,6 +252,30 @@ export default class RenderUI {
     resizeListSvgs();
   }
 
+  renderTitleTextArea(divTaskTitle, taskObj) {
+    const textArea = createTitleTextArea(taskObj);
+    divTaskTitle.replaceWith(textArea);
+    textArea.focus();
+    textArea.selectionStart = textArea.value.length;
+  }
+
+  renderNotesTextArea(divTaskTitle, taskObj) {
+    const textArea = createNotesTextArea(taskObj);
+    divTaskTitle.replaceWith(textArea);
+    textArea.focus();
+    textArea.selectionStart = textArea.value.length;
+  }
+
+  renderNotesDiv(taskNoteTextArea, taskObj) {
+    const noteDiv = createTaskNotesDiv(taskObj);
+    taskNoteTextArea.replaceWith(noteDiv);
+  }
+
+  renderTitleDiv(taskTitleTextArea, taskObj) {
+    const titleDiv = createTaskTitleDiv(taskObj);
+    taskTitleTextArea.replaceWith(titleDiv);
+  }
+
   setTaskCollectionElements(taskCollectionType, collectionState) {
     const newTaskCollection =
       this.taskCollections[taskCollectionType](collectionState);
@@ -272,7 +300,6 @@ export default class RenderUI {
     sectionHasTasks,
     collectionState
   ) {
-    console.log(collectionState);
     this.setTaskCollectionElements("All Tasks", collectionState);
     this.renderSectionedTasks(sectionedTasks, classes, sectionHasTasks);
   }
@@ -318,7 +345,7 @@ export default class RenderUI {
     );
     pageWrapper.append(this.header, this.sidebar, this.taskCollectionWrapper);
 
-    requestAnimationFrame(resizeListSvgs, 1);
+    requestAnimationFrame(resizeListSvgs);
     window.addEventListener("resize", resizeListSvgs);
   }
 }

@@ -113,6 +113,10 @@ export default class App {
     );
   }
 
+  getTextareas() {
+    return this.elements.taskCollectionWrapper.querySelectorAll("textarea");
+  }
+
   setSectionStates() {
     // renderer must have made initial render for this to be true
     if (this.elements.taskCollectionWrapper) {
@@ -305,33 +309,6 @@ export default class App {
     this.renderer.rerenderList(listBtnWrapper, currentListObj);
   }
 
-  deleteTaskElement(taskWrapper, taskIdx) {
-    const list = this.data.getListFromtask(taskIdx);
-    this.data.deleteTask(taskIdx);
-    this.renderer.deleteTaskElement(taskWrapper);
-    this.rerenderLists();
-
-    if (this.data.currentListIsAllTasks()) {
-      const listHasTasks = this.data.listHasTasks(list);
-      if (!listHasTasks) {
-        const sectionHeader = this.getSectionHeader(list.id);
-        if (!sectionHeader) return;
-        this.renderer.rerenderSectionHeader(
-          sectionHeader,
-          list.title,
-          null,
-          listHasTasks,
-          sectionHeader.dataset.id
-        );
-      }
-      return;
-    }
-
-    if (this.data.currentTasks.length === 0) {
-      this.renderer.renderGenericTaskCollection(this.currentTasks, "empty");
-    }
-  }
-
   cancelListEdit(listElementIdx, listBtnWrapper) {
     //get currentList Obj
     const canceledListObj = this.data.lists.at(listElementIdx);
@@ -441,6 +418,16 @@ export default class App {
     const currentListEdit = document.querySelector(
       ".list-btn-wrapper:has(.expand-row)"
     );
+    const textAreas = this.getTextareas();
+
+    if (textAreas.length && !e.target.closest(".add-task-btn")) {
+      if (
+        !target.className.includes("task-input") &&
+        !target.className.includes("task-notes")
+      ) {
+        this.removeTextareas(textAreas);
+      }
+    }
 
     //collapses the opened task if the user clicks away from it and the click isnt adding a task
     if (this.activeTaskElement && !target.closest(".add-task-btn")) {
@@ -503,15 +490,55 @@ export default class App {
     this.data.updateTaskObjectWithIndex(taskIdx, "priority", newPriority);
   }
 
-  handleTaskInputClick(target, taskWrapper, taskContent) {
+  removeTextareas(textareas) {
+    textareas.forEach((textarea) => {
+      const taskID = textarea.closest(".task-wrapper").dataset.taskId;
+      const taskObj = this.data.getTaskFromID(taskID);
+
+      textarea.className.includes("task-input")
+        ? this.renderer.renderTitleDiv(textarea, taskObj)
+        : this.renderer.renderNotesDiv(textarea, taskObj);
+    });
+  }
+
+  handleTaskInputClick(taskWrapper, taskContent) {
     if (!taskContent) return;
     this.removeActiveTask();
-
     taskContent.classList.add("active");
     this.activeTaskElement = taskWrapper;
 
-    const note = taskWrapper.querySelector(".task-notes");
-    this.renderer.setNotesSize(note);
+    const divTaskTitle = taskWrapper.querySelector("div.task-input");
+    const textareas = this.getTextareas();
+    const prevWrapper = textareas[0]?.closest(".task-wrapper");
+    if (prevWrapper === taskWrapper && !divTaskTitle) return;
+
+    if (textareas.length) this.removeTextareas(textareas);
+
+    if (divTaskTitle) {
+      const taskID = taskWrapper.dataset.taskId;
+      const taskObj = this.data.getTaskFromID(taskID);
+      this.renderer.renderTitleTextArea(divTaskTitle, taskObj);
+      const textarea = taskWrapper.querySelector(".task-input");
+      if (textarea && textarea.value.toLowerCase() === "new task") {
+        textarea.select();
+      }
+    }
+  }
+
+  handleTaskNoteClick(taskWrapper) {
+    const divTaskNotes = taskWrapper.querySelector("div.task-notes");
+    if (!divTaskNotes) return; //notes is a textarea when user clicks it again, don't rerender/replasce -> return
+
+    const textareas = this.getTextareas();
+
+    //document handler clears textareas too. no need to call removeTextareas if document handler already has
+    if (textareas.length) this.removeTextareas(textareas);
+
+    if (divTaskNotes) {
+      const taskID = taskWrapper.dataset.taskId;
+      const taskObj = this.data.getTaskFromID(taskID);
+      this.renderer.renderNotesTextArea(divTaskNotes, taskObj);
+    }
   }
 
   rerenderLists() {
@@ -527,9 +554,6 @@ export default class App {
 
   addTaskElement(e) {
     const target = e.target;
-    //clicking on the add task button counts as clicking outside the task
-    //when user clicks outside of task, the task closes
-    //condition makes sure the task stays open
     if (!target.className.includes("add-task-btn")) return;
 
     //replace the empty task collection class with the populated class
@@ -540,6 +564,8 @@ export default class App {
     //create the data, add data to current list, port data to all tasks list
     const destinationList = "All Tasks";
     const newTask = this.data.createNewTask();
+
+    //code remains but no option to add a task on "Today" currently exists. Might implement later
     if (this.data.currentListTitle === "Today") {
       newTask.dueDate = this.data.todaysDate;
       this.data.portTask("Scheduled", newTask);
@@ -548,22 +574,19 @@ export default class App {
     this.data.addTask(newTask);
 
     //prohibit adding the task twice if user is on the All Tasks list
+    //like the "Today" conditon check, no option to add a task on "Today" currently exists
     if (this.data.currentListTitle !== destinationList) {
       this.data.portTask(destinationList, newTask);
     }
 
     //render the task in DOM
-    const newTaskElement = this.renderer.renderTask(
-      this.elements.taskCollectionWrapper.querySelector(".task-collection"),
-      newTask
-    );
+    const taskCollection =
+      this.elements.taskCollectionWrapper.querySelector(".task-collection");
+    const newTaskElement = this.renderer.renderTask(taskCollection, newTask);
 
     //Make sure the task is added to the DOM in active mode
     const input = newTaskElement.querySelector(".task-input");
-    input.focus();
-    input.select();
-    const taskContent = newTaskElement.querySelector(".task-content");
-    this.handleTaskInputClick(input, newTaskElement, taskContent);
+    input.click();
 
     //Rerender all lists to update the list task count
     //timeout allows the new list to be properly removed (if there is one) and for the addList button to toggle
@@ -593,13 +616,13 @@ export default class App {
       } else if (property === "task-date") {
         this.handleTaskDateInput(target, taskIdx, target.value);
       } else {
-        target.style.height = "1px";
-        target.style.height = target.scrollHeight + "px";
         this.data.updateTaskObjectWithIndex(
           taskIdx,
           propMap[property],
           target.value
         );
+        target.style.height = "1px";
+        target.style.height = target.scrollHeight + "px";
       }
     }
   }
@@ -629,24 +652,33 @@ export default class App {
 
   handleTaskCheckBoxInput(taskIdx, taskWrapper) {
     const taskInputs = [
-      taskWrapper.querySelector(".task-input"),
       taskWrapper.querySelector(".task-notes"),
       taskWrapper.querySelector(".task-date"),
       taskWrapper.querySelector(".task-priority"),
     ];
 
     taskInputs.forEach((input) => input.toggleAttribute("disabled"));
+    const taskTitle = taskWrapper.querySelector(".task-input");
+    taskTitle.toggleAttribute("readonly");
 
     taskWrapper.classList.toggle("completed");
     this.data.handleCheckedTask(taskIdx);
     this.rerenderLists();
     if (this.data.currentListTitle === "Completed") {
-      console.log(this.data.currentTasks);
       this.renderer.updateTaskElements(this.data.currentTasks);
     }
   }
 
+  taskResize() {
+    const textarea =
+      this.elements.taskCollectionWrapper.querySelector("textarea");
+    if (!textarea) return;
+    textarea.style.height = `1px`;
+    textarea.style.height = `${textarea.scrollHeight}px`;
+  }
+
   applyEventListeners() {
+    window.addEventListener("resize", this.taskResize.bind(this));
     this.elements.sidebar.addEventListener(
       "click",
       this.handleSidebarClicks.bind(this)
@@ -678,6 +710,43 @@ export default class App {
     );
   }
 
+  deleteTaskElement(taskWrapper, taskIdx) {
+    const list = this.data.getListFromtask(taskIdx);
+    this.data.deleteTask(taskIdx);
+    this.renderer.deleteTaskElement(taskWrapper);
+    this.rerenderLists();
+
+    if (this.data.currentListIsAllTasks()) {
+      const listHasTasks = this.data.listHasTasks(list);
+      if (!listHasTasks) {
+        const sectionHeader = this.getSectionHeader(list.id);
+        if (!sectionHeader) return;
+        this.renderer.rerenderSectionHeader(
+          sectionHeader,
+          list.title,
+          null,
+          listHasTasks,
+          sectionHeader.dataset.id
+        );
+      }
+      return;
+    }
+
+    if (this.data.currentTasks.length === 0) {
+      this.renderer.renderGenericTaskCollection(this.currentTasks, "empty");
+    }
+  }
+
+  deleteAllCompletedTasks(target) {
+    const completedTasks = this.elements.taskCollectionWrapper.querySelectorAll(
+      ".task-wrapper.completed"
+    );
+    completedTasks.forEach((taskWrapper) => {
+      const taskIdx = this.getTaskIdxFromElement(taskWrapper);
+      this.deleteTaskElement(taskWrapper, taskIdx);
+    });
+  }
+
   //////////////// PURE UI-RESPONSIVE METHODS ///////////////
 
   handleTaskWrapperClicks(e) {
@@ -685,6 +754,8 @@ export default class App {
 
     if (target.closest(".add-task-btn")) {
       this.addTaskElement(e);
+    } else if (target.closest(".clear-btn")) {
+      this.deleteAllCompletedTasks(target);
     } else if (e.target.className.includes("expand-collapse")) {
       const sectionWrapper = target.closest(".section-wrapper");
       const subCollectionWrapper = sectionWrapper.nextSibling;
@@ -701,12 +772,12 @@ export default class App {
       const taskContent = target.closest(".task-content");
       const taskIdx = this.getTaskIdxFromElement(taskWrapper);
       const taskClickHandlers = {
-        "task-input": () =>
-          this.handleTaskInputClick(target, taskWrapper, taskContent),
+        "task-input": () => this.handleTaskInputClick(taskWrapper, taskContent),
+        "task-notes": () => this.handleTaskNoteClick(taskWrapper),
         "task-priority": () =>
           this.handleTaskPriorityCLick(target, taskWrapper),
         "delete-svg-wrapper": () =>
-          this.deleteTaskElement(taskWrapper, taskIdx, target),
+          this.deleteTaskElement(taskWrapper, taskIdx),
         "task-date": () => {
           target.classList.add("focused");
         },
@@ -717,7 +788,7 @@ export default class App {
       for (let [selector, handler] of Object.entries(taskClickHandlers)) {
         if (target.className.includes(selector)) {
           handler();
-          break;
+          return;
         }
       }
     }
@@ -827,7 +898,7 @@ export default class App {
     }
 
     if (key === "Escape") {
-      if (target.closest(".task-notes")) {
+      if (target.closest(".task-notes") || target.closest(".task-input")) {
         target.blur();
       } else if (target.closest(".task-priority")) {
         const priorityWrapper = target.closest(".priority-btn-wrapper");
