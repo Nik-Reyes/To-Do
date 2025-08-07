@@ -3,7 +3,7 @@ export default class Task {
     this._title = title || "New Task";
     this._dueDate = dueDate || "";
     this._priority = priority || "no-priority";
-    this._notes = notes || "";
+    this._notes = notes || "Notes";
     this._checked = checked || false;
     this._id =
       id ||
