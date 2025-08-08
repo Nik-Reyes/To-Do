@@ -1,74 +1,74 @@
 .list-btn-wrapper {
-  display: grid;
-  position: relative;
-  transition: transform var(--list-btn-transition-speed) ease-in-out;
-  align-self: self-start;
-  --unhover-duration: 300ms;
+	display: grid;
+	position: relative;
+	transition: transform var(--list-btn-transition-speed) ease-in-out;
+	align-self: self-start;
+	--unhover-duration: 300ms;
 }
 
 .list-btn {
-  background-color: var(--black-transparent-light);
-  padding: 0.75rem 1rem;
-  border: none;
-  outline: none;
-  clip-path: var(--cyberpunk-clip-br);
-  display: flex;
-  justify-content: space-between;
-  color: var(--cyber-blue);
+	background-color: var(--black-transparent-light);
+	padding: 0.75rem 1rem;
+	border: none;
+	outline: none;
+	clip-path: var(--cyberpunk-clip-br);
+	display: flex;
+	justify-content: space-between;
+	color: var(--cyber-blue);
 }
 
 .list-btn:not(:has(input)) {
-  cursor: pointer;
+	cursor: pointer;
 }
 
 .list-btn > * {
-  font-size: 1.125rem;
-  font-family: "Rajdhani";
-  line-height: 1;
-  padding-top: 0.2em;
+	font-size: 1.125rem;
+	font-family: 'Rajdhani';
+	line-height: 1;
+	padding-top: 0.2em;
 }
 
 polygon {
-  stroke: rgb(120, 214, 204);
-  stroke-width: 0.88px;
+	stroke: rgb(120, 214, 204);
+	stroke-width: 0.88px;
 }
 
 .svg-wrapper {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 1;
-  pointer-events: none;
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 1;
+	pointer-events: none;
 }
 
 .list-btn-wrapper:not(:has(input)):hover .list-btn {
-  background-color: hsl(48, 82%, 52%, 0.15);
-  color: hsl(48, 82%, 52%);
-  text-shadow: 0px 0px 1px hsl(48, 82%, 52%);
+	background-color: hsl(48, 82%, 52%, 0.15);
+	color: hsl(48, 82%, 52%);
+	text-shadow: 0px 0px 1px hsl(48, 82%, 52%);
 }
 
 /* any button that does not have an input should turn gold when hovered over  */
 
 .list-btn-wrapper:not(:has(input)):hover polygon {
-  stroke: hsl(48, 82%, 52%);
+	stroke: hsl(48, 82%, 52%);
 }
 
 .list-btn-wrapper:not(:has(input)):hover {
-  transform: translateX(10px);
+	transform: translateX(10px);
 }
 
 .focused-list {
-  background-color: hsl(48, 82%, 52%, 0.15);
-  color: hsl(48, 82%, 52%);
-  text-shadow: 0px 0px 1px hsl(48, 82%, 52%);
+	background-color: hsl(48, 82%, 52%, 0.15);
+	color: hsl(48, 82%, 52%);
+	text-shadow: 0px 0px 1px hsl(48, 82%, 52%);
 }
 
 .list-btn-wrapper:has(.focused-list) polygon {
-  stroke: hsl(48, 82%, 52%);
+	stroke: hsl(48, 82%, 52%);
 }
 
 .list-btn-wrapper:has(.focused-list) {
-  transform: translateX(10px);
+	transform: translateX(10px);
 }

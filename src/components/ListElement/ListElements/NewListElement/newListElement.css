@@ -1,11 +1,11 @@
-.list-btn input[type="text"] {
-  border: none;
-  width: 17ch;
-  color: inherit;
-  outline: none;
-  caret-color: hsl(48, 82%, 52%);
+.list-btn input[type='text'] {
+	border: none;
+	width: 17ch;
+	color: inherit;
+	outline: none;
+	caret-color: hsl(48, 82%, 52%);
 }
 
 .new-list.list-btn {
-  background-color: var(--list-button-hover-bg);
+	background-color: var(--list-button-hover-bg);
 }

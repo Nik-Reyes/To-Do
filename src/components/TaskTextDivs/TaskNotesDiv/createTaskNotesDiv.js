@@ -1,15 +1,15 @@
-import generateElement from "../../../utils/GenerateElement.js";
+import generateElement from '../../../utils/GenerateElement.js';
 
 export default function createTaskNotesDiv(task) {
-  const taskNotes = generateElement(
-    "div",
-    {
-      class: "task-notes",
-      placeholder: "Notes",
-      disabled: task.checked,
-    },
-    task.notes || "Notes"
-  );
+	const taskNotes = generateElement(
+		'div',
+		{
+			class: 'task-notes',
+			placeholder: 'Notes',
+			disabled: task.checked,
+		},
+		task.notes || 'Notes',
+	);
 
-  return taskNotes;
+	return taskNotes;
 }

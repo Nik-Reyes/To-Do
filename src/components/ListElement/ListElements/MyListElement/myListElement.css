@@ -1,145 +1,153 @@
 .list-btn-wrapper.my-list {
-  display: block;
-  min-width: 0px;
+	display: block;
+	min-width: 0px;
 }
 
 .list-element-title {
-  display: grid;
-  position: relative;
-  transition: transform var(--list-btn-transition-speed) ease-in-out;
-  align-self: self-start;
+	display: grid;
+	position: relative;
+	transition: transform var(--list-btn-transition-speed) ease-in-out;
+	align-self: self-start;
 }
 
 .hoverable-list-content-wrapper {
-  display: grid;
-  grid-template-rows: 0fr;
-  opacity: 0;
-  transition: grid-template-rows 200ms ease-in-out, transform 200ms ease-in-out,
-    opacity 100ms ease-in-out;
-  transform: translateY(-100%);
+	display: grid;
+	grid-template-rows: 0fr;
+	opacity: 0;
+	transition:
+		grid-template-rows 200ms ease-in-out,
+		transform 200ms ease-in-out,
+		opacity 100ms ease-in-out;
+	transform: translateY(-100%);
 }
 
 .hoverable-list-content-wrapper.expand-row {
-  transition: grid-template-rows 200ms ease-in-out, transform 200ms ease-in-out,
-    opacity 200ms ease-in-out;
+	transition:
+		grid-template-rows 200ms ease-in-out,
+		transform 200ms ease-in-out,
+		opacity 200ms ease-in-out;
 }
 
 .hoverable-list-content {
-  padding-top: 10px;
-  overflow: hidden;
-  gap: 10px;
-  display: flex;
+	padding-top: 10px;
+	overflow: hidden;
+	gap: 10px;
+	display: flex;
 }
 
 .expand-row {
-  transform: translateY(0%);
-  opacity: 1;
-  grid-template-rows: 1fr;
+	transform: translateY(0%);
+	opacity: 1;
+	grid-template-rows: 1fr;
 }
 
-button[data-btn-type="edit-list"],
-button[data-btn-type="delete-list"] {
-  border: none;
-  outline: none;
-  width: 100%;
-  height: 100%;
-  color: var(--main-bg);
-  padding: 0.25em 0.2em 0.2em;
-  font-size: 1.2rem;
-  font-weight: 500;
-  font-family: "Rajdhani";
-  line-height: 1;
-  position: relative;
-  isolation: isolate;
+button[data-btn-type='edit-list'],
+button[data-btn-type='delete-list'] {
+	border: none;
+	outline: none;
+	width: 100%;
+	height: 100%;
+	color: var(--main-bg);
+	padding: 0.25em 0.2em 0.2em;
+	font-size: 1.2rem;
+	font-weight: 500;
+	font-family: 'Rajdhani';
+	line-height: 1;
+	position: relative;
+	isolation: isolate;
 }
 
 @media (pointer: fine) {
-  button[data-btn-type="edit-list"]::after,
-  button[data-btn-type="delete-list"]::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: 100%;
-    background: rgb(254, 215, 91);
-    transform: scaleX(0);
-    transition: transform 200ms ease-in-out, z-index 0ms;
-  }
+	button[data-btn-type='edit-list']::after,
+	button[data-btn-type='delete-list']::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		top: 0;
+		height: 100%;
+		width: 100%;
+		background: rgb(254, 215, 91);
+		transform: scaleX(0);
+		transition:
+			transform 200ms ease-in-out,
+			z-index 0ms;
+	}
 
-  button[data-btn-type="edit-list"]::after {
-    transform-origin: left;
-  }
+	button[data-btn-type='edit-list']::after {
+		transform-origin: left;
+	}
 
-  button[data-btn-type="delete-list"]::after {
-    transform-origin: right;
-  }
+	button[data-btn-type='delete-list']::after {
+		transform-origin: right;
+	}
 
-  button[data-btn-type="edit-list"]:hover::after {
-    transform-origin: right;
-    transform: scaleX(1);
-    z-index: -1;
-  }
+	button[data-btn-type='edit-list']:hover::after {
+		transform-origin: right;
+		transform: scaleX(1);
+		z-index: -1;
+	}
 
-  button[data-btn-type="delete-list"]:hover::after {
-    transform-origin: left;
-    transform: scaleX(1);
-    z-index: -1;
-  }
+	button[data-btn-type='delete-list']:hover::after {
+		transform-origin: left;
+		transform: scaleX(1);
+		z-index: -1;
+	}
 }
 
 .list-btn-wrapper.my-list :where(.cyberpunk-clip-wrapper-br) {
-  clip-path: var(--cyberpunk-clip-br-md);
+	clip-path: var(--cyberpunk-clip-br-md);
 }
 
 .list-btn-wrapper.my-list :where(.cyberpunk-clip-wrapper-bl) {
-  clip-path: var(--cyberpunk-clip-bl-md);
+	clip-path: var(--cyberpunk-clip-bl-md);
 }
 
 @media (pointer: coarse) {
-  .list-btn-wrapper.my-list:hover .hoverable-list-content-wrapper {
-    transition: grid-template-rows 250ms 100ms ease-in-out;
-  }
+	.list-btn-wrapper.my-list:hover .hoverable-list-content-wrapper {
+		transition: grid-template-rows 250ms 100ms ease-in-out;
+	}
 }
 
 .confirm-cancel-wrapper {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
+	display: flex;
+	gap: 10px;
+	margin-top: 10px;
 }
 
 .list-title {
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
 }
 
 .edit-list {
-  position: absolute;
-  left: 1px;
-  top: 1px;
-  height: calc(100% - 1px);
-  width: 35px;
-  opacity: 0;
-  cursor: pointer;
-  transition: transform 150ms ease-in-out, opacity 100ms ease-in-out;
+	position: absolute;
+	left: 1px;
+	top: 1px;
+	height: calc(100% - 1px);
+	width: 35px;
+	opacity: 0;
+	cursor: pointer;
+	transition:
+		transform 150ms ease-in-out,
+		opacity 100ms ease-in-out;
 }
 
 .edit-list::after {
-  content: url("data:image/svg+xml,%3Csvg width='5' height='23' viewBox='0 0 10 46' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0H10V7.27273L8 10H4.5H0V0Z' fill='%23F16560'/%3E%3Cpath d='M0 17.7998H10V25.0725L8 27.7998H4.5H0V17.7998Z' fill='%23F16560'/%3E%3Cpath d='M0 35.5996H10V42.8723L8 45.5996H4.5H0V35.5996Z' fill='%23F16560'/%3E%3C/svg%3E%0A");
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  transition: filter 100ms ease-in-out;
+	content: url("data:image/svg+xml,%3Csvg width='5' height='23' viewBox='0 0 10 46' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0H10V7.27273L8 10H4.5H0V0Z' fill='%23F16560'/%3E%3Cpath d='M0 17.7998H10V25.0725L8 27.7998H4.5H0V17.7998Z' fill='%23F16560'/%3E%3Cpath d='M0 35.5996H10V42.8723L8 45.5996H4.5H0V35.5996Z' fill='%23F16560'/%3E%3C/svg%3E%0A");
+	position: absolute;
+	inset: 0;
+	display: grid;
+	place-items: center;
+	transition: filter 100ms ease-in-out;
 }
 
 .edit-list:hover::after {
-  filter: drop-shadow(0 0 2px var(--cyber-red));
+	filter: drop-shadow(0 0 2px var(--cyber-red));
 }
 
 .list-btn-wrapper:hover .edit-list {
-  transform: translateX(-35px);
-  transition: opacity 300ms ease-in-out;
-  opacity: 1;
+	transform: translateX(-35px);
+	transition: opacity 300ms ease-in-out;
+	opacity: 1;
 }

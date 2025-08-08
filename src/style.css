@@ -1,201 +1,167 @@
 *,
 *::after,
 *::before {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
 }
 
 :root {
-  /* colors */
-  --cyber-red: rgb(228, 27, 51);
-  --cyber-blue: rgb(120, 214, 204);
-  --cyber-red-text: #fc625a;
-  --cyber-red-neon-bg: rgb(201, 64, 68);
-  --header-bg: rgb(208, 103, 108);
-  --task-bg: rgb(56, 13, 18);
-  --list-button-hover-bg: rgba(0, 217, 255, 0.2);
-  --main-bg: hsl(351, 84%, 6%);
-  --more-options-bg: rgb(25, 0, 0);
-  --black-transparent-light: rgba(0, 0, 0, 0.3);
-  --black-transparent-reg: rgba(0, 0, 0, 0.5);
-  --black-transparent-bold: rgba(0, 0, 0, 0.7);
+	/* colors */
+	--cyber-red: rgb(228, 27, 51);
+	--cyber-blue: rgb(120, 214, 204);
+	--cyber-red-text: #fc625a;
+	--cyber-red-neon-bg: rgb(201, 64, 68);
+	--header-bg: rgb(208, 103, 108);
+	--task-bg: rgb(56, 13, 18);
+	--list-button-hover-bg: rgba(0, 217, 255, 0.2);
+	--main-bg: hsl(351, 84%, 6%);
+	--more-options-bg: rgb(25, 0, 0);
+	--black-transparent-light: rgba(0, 0, 0, 0.3);
+	--black-transparent-reg: rgba(0, 0, 0, 0.5);
+	--black-transparent-bold: rgba(0, 0, 0, 0.7);
 
-  --cyberpunk-clip-br: polygon(
-    0% 0%,
-    100% 0%,
-    100% calc(100% - 11px),
-    calc(100% - 9px) 100%,
-    0% 100%
-  );
-  --cyberpunk-clip-br-md: polygon(
-    0% 0%,
-    100% 0%,
-    100% calc(100% - 9px),
-    calc(100% - 7px) 100%,
-    0% 100%
-  );
+	--cyberpunk-clip-br: polygon(0% 0%, 100% 0%, 100% calc(100% - 11px), calc(100% - 9px) 100%, 0% 100%);
+	--cyberpunk-clip-br-md: polygon(0% 0%, 100% 0%, 100% calc(100% - 9px), calc(100% - 7px) 100%, 0% 100%);
 
-  --cyberpunk-clip-br-sm: polygon(
-    0% 0%,
-    100% 0%,
-    100% calc(100% - 7px),
-    calc(100% - 5px) 100%,
-    0% 100%
-  );
+	--cyberpunk-clip-br-sm: polygon(0% 0%, 100% 0%, 100% calc(100% - 7px), calc(100% - 5px) 100%, 0% 100%);
 
-  --cyberpunk-clip-br-xs: polygon(
-    0% 0%,
-    100% 0%,
-    100% calc(100% - 6px),
-    calc(100% - 5px) 100%,
-    0% 100%
-  );
+	--cyberpunk-clip-br-xs: polygon(0% 0%, 100% 0%, 100% calc(100% - 6px), calc(100% - 5px) 100%, 0% 100%);
 
-  --cyberpunk-clip-br-xxs: polygon(
-    0% 0%,
-    100% 0%,
-    100% calc(100% - 4px),
-    calc(100% - 3px) 100%,
-    0% 100%
-  );
+	--cyberpunk-clip-br-xxs: polygon(0% 0%, 100% 0%, 100% calc(100% - 4px), calc(100% - 3px) 100%, 0% 100%);
 
-  --cyberpunk-clip-bl: polygon(
-    0% 0%,
-    100% 0%,
-    100% 100%,
-    9px 100%,
-    0% calc(100% - 11px)
-  );
+	--cyberpunk-clip-bl: polygon(0% 0%, 100% 0%, 100% 100%, 9px 100%, 0% calc(100% - 11px));
 
-  --cyberpunk-clip-bl-md: polygon(
-    0% 0%,
-    100% 0%,
-    100% 100%,
-    7px 100%,
-    0% calc(100% - 9px)
-  );
+	--cyberpunk-clip-bl-md: polygon(0% 0%, 100% 0%, 100% 100%, 7px 100%, 0% calc(100% - 9px));
 
-  --cyberpunk-clip-bl-sm: polygon(
-    0% 0%,
-    100% 0%,
-    100% 100%,
-    5px 100%,
-    0% calc(100% - 7px)
-  );
+	--cyberpunk-clip-bl-sm: polygon(0% 0%, 100% 0%, 100% 100%, 5px 100%, 0% calc(100% - 7px));
 
-  --list-btn-transition-speed: 100ms;
-  --sidebar-width: 17rem;
-  --header-height: 60px;
-  --header-content-spacing: 32px;
+	--list-btn-transition-speed: 100ms;
+	--sidebar-width: 17rem;
+	--header-height: 60px;
+	--header-content-spacing: 32px;
 }
 
 @font-face {
-  font-family: "Rajdhani Light";
-  src: url("./assets/fonts/Rajdhani-Light.woff2") format("woff2"),
-    url("./assets/fonts/Rajdhani-Light.woff") format("woff");
-  font-weight: 400;
-  font-style: normal;
-  font-stretch: normal;
-  unicode-range: U+0020-0912;
+	font-family: 'Rajdhani Light';
+	src:
+		url('./assets/fonts/Rajdhani-Light.woff2') format('woff2'),
+		url('./assets/fonts/Rajdhani-Light.woff') format('woff');
+	font-weight: 400;
+	font-style: normal;
+	font-stretch: normal;
+	unicode-range: U+0020-0912;
 }
 
 @font-face {
-  font-family: "Rajdhani";
-  src: url("./assets/fonts/Rajdhani-Regular.woff2") format("woff2"),
-    url("./assets/fonts/Rajdhani-Regular.woff") format("woff");
-  font-weight: 400;
-  font-style: normal;
-  font-stretch: normal;
-  unicode-range: U+0020-0912;
+	font-family: 'Rajdhani';
+	src:
+		url('./assets/fonts/Rajdhani-Regular.woff2') format('woff2'),
+		url('./assets/fonts/Rajdhani-Regular.woff') format('woff');
+	font-weight: 400;
+	font-style: normal;
+	font-stretch: normal;
+	unicode-range: U+0020-0912;
 }
 
 @font-face {
-  font-family: "Rajdhani Medium";
-  src: url("./assets/fonts/Rajdhani-Medium.woff2") format("woff2"),
-    url("./assets/fonts/Rajdhani-Medium.woff") format("woff");
-  font-weight: 500;
-  font-style: normal;
-  font-stretch: normal;
-  unicode-range: U+0020-0912;
+	font-family: 'Rajdhani Medium';
+	src:
+		url('./assets/fonts/Rajdhani-Medium.woff2') format('woff2'),
+		url('./assets/fonts/Rajdhani-Medium.woff') format('woff');
+	font-weight: 500;
+	font-style: normal;
+	font-stretch: normal;
+	unicode-range: U+0020-0912;
 }
 
 @font-face {
-  font-family: "Rajdhani Bold";
-  src: url("./assets/fonts/Rajdhani-Bold.woff2") format("woff2"),
-    url("./assets/fonts/Rajdhani-Bold.woff") format("woff");
-  font-weight: 500;
-  font-style: normal;
-  font-stretch: normal;
-  unicode-range: U+0020-0912;
+	font-family: 'Rajdhani Bold';
+	src:
+		url('./assets/fonts/Rajdhani-Bold.woff2') format('woff2'),
+		url('./assets/fonts/Rajdhani-Bold.woff') format('woff');
+	font-weight: 500;
+	font-style: normal;
+	font-stretch: normal;
+	unicode-range: U+0020-0912;
 }
 
 button {
-  cursor: pointer;
+	cursor: pointer;
 }
 
 html {
-  background-color: var(--main-bg);
+	background-color: var(--main-bg);
 }
 
 body {
-  background-color: var(--main-bg);
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-  overflow-x: hidden;
-  background: linear-gradient(180deg, #2b0e10 0%, #07080d 100%) fixed;
+	background-color: var(--main-bg);
+	font-family:
+		system-ui,
+		-apple-system,
+		BlinkMacSystemFont,
+		'Segoe UI',
+		Roboto,
+		Oxygen,
+		Ubuntu,
+		Cantarell,
+		'Open Sans',
+		'Helvetica Neue',
+		sans-serif;
+	overflow-x: hidden;
+	background: linear-gradient(180deg, #2b0e10 0%, #07080d 100%) fixed;
 }
 
 body * {
-  text-transform: uppercase;
+	text-transform: uppercase;
 }
 
 .page-wrapper {
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: var(--header-height) 1fr;
-  height: 100dvh;
+	display: grid;
+	grid-template-columns: 1fr;
+	grid-template-rows: var(--header-height) 1fr;
+	height: 100dvh;
 }
 
 .page-wrapper.desktop-sidebar {
-  grid-template-columns: 17rem 1fr;
+	grid-template-columns: 17rem 1fr;
 }
 
 .overlay {
-  position: fixed;
-  inset: 0;
-  background-color: var(--black-transparent-reg);
-  z-index: 100;
-  display: none;
+	position: fixed;
+	inset: 0;
+	background-color: var(--black-transparent-reg);
+	z-index: 100;
+	display: none;
 }
 
 .overlay.active-overlay {
-  display: block;
+	display: block;
 }
 
 .stacked {
-  grid-row: 1/-1;
-  grid-column: 1/-1;
+	grid-row: 1/-1;
+	grid-column: 1/-1;
 }
 
 .cyberpunk-clip-wrapper-br {
-  clip-path: var(--cyberpunk-clip-br);
-  background-color: var(--cyber-red-neon-bg);
-  padding: 1px;
-  transition: background-color 200ms;
+	clip-path: var(--cyberpunk-clip-br);
+	background-color: var(--cyber-red-neon-bg);
+	padding: 1px;
+	transition: background-color 200ms;
 }
 
 .inner-cyberpunk-clip-wrapper-br {
-  clip-path: var(--cyberpunk-clip-br);
+	clip-path: var(--cyberpunk-clip-br);
 }
 
 .cyberpunk-clip-wrapper-bl {
-  clip-path: var(--cyberpunk-clip-bl);
-  background-color: var(--cyber-red-neon-bg);
-  padding: 1px;
-  transition: background-color 200ms;
+	clip-path: var(--cyberpunk-clip-bl);
+	background-color: var(--cyber-red-neon-bg);
+	padding: 1px;
+	transition: background-color 200ms;
 }
 
 .inner-cyberpunk-clip-wrapper-bl {
-  clip-path: var(--cyberpunk-clip-bl);
+	clip-path: var(--cyberpunk-clip-bl);
 }

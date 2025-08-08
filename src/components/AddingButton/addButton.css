@@ -1,62 +1,64 @@
 nav button {
-  text-align: center;
-  border-radius: 0px;
-  background-color: transparent;
-  color: var(--cyber-red-text);
-  font-weight: 600;
-  border: 1px solid var(--cyber-red-text);
-  padding: 0.45em 0.75em 0.25em;
-  transition: background-color 100ms ease-in-out;
-  font-size: inherit;
-  backdrop-filter: blur(10px);
-  font-family: "Rajdhani";
-  line-height: 1lh;
-  z-index: 1;
+	text-align: center;
+	border-radius: 0px;
+	background-color: transparent;
+	color: var(--cyber-red-text);
+	font-weight: 600;
+	border: 1px solid var(--cyber-red-text);
+	padding: 0.45em 0.75em 0.25em;
+	transition: background-color 100ms ease-in-out;
+	font-size: inherit;
+	backdrop-filter: blur(10px);
+	font-family: 'Rajdhani';
+	line-height: 1lh;
+	z-index: 1;
 }
 
 nav button:hover {
-  background-color: hsl(0, 65%, 20%);
+	background-color: hsl(0, 65%, 20%);
 }
 
 .addList-btn {
-  transition: color 150ms ease-in-out;
-  position: relative;
-  display: grid;
-  place-content: center;
-  width: 24px;
-  height: 24px;
-  clip-path: var(--cyberpunk-clip-br-sm);
-  color: rgb(254, 215, 91);
-  font-size: 1.125rem;
-  border-radius: 0px;
-  border: none;
-  background-color: transparent;
+	transition: color 150ms ease-in-out;
+	position: relative;
+	display: grid;
+	place-content: center;
+	width: 24px;
+	height: 24px;
+	clip-path: var(--cyberpunk-clip-br-sm);
+	color: rgb(254, 215, 91);
+	font-size: 1.125rem;
+	border-radius: 0px;
+	border: none;
+	background-color: transparent;
 }
 
 @media (pointer: fine) {
-  .addList-btn:not(.addList-btn[disabled=""]):hover::after {
-    transform: scaleX(1);
-    z-index: -1;
-  }
+	.addList-btn:not(.addList-btn[disabled='']):hover::after {
+		transform: scaleX(1);
+		z-index: -1;
+	}
 
-  .addList-btn:not(.addList-btn[disabled=""]):hover {
-    color: var(--main-bg);
-  }
+	.addList-btn:not(.addList-btn[disabled='']):hover {
+		color: var(--main-bg);
+	}
 
-  .addList-btn[disabled=""] {
-    cursor: auto;
-  }
+	.addList-btn[disabled=''] {
+		cursor: auto;
+	}
 
-  .addList-btn::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: 100%;
-    background: rgb(254, 215, 91);
-    transform-origin: left;
-    transform: scaleX(0);
-    transition: transform 150ms ease-in-out, z-index 0ms;
-  }
+	.addList-btn::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		top: 0;
+		height: 100%;
+		width: 100%;
+		background: rgb(254, 215, 91);
+		transform-origin: left;
+		transform: scaleX(0);
+		transition:
+			transform 150ms ease-in-out,
+			z-index 0ms;
+	}
 }

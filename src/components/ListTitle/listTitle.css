@@ -1,22 +1,22 @@
 .list-title-wrapper {
-  display: flex;
-  background: rgb(16, 12, 21);
-  align-items: center;
-  position: relative;
-  padding: 0.5em 1em;
-  gap: 0.75rem;
-  justify-content: space-between;
-  font-size: 1.3rem;
-  border: 1px solid var(--cyber-red-neon-bg);
-  box-shadow: 0 0 1px var(--cyber-red);
-  border-radius: 3px;
+	display: flex;
+	background: rgb(16, 12, 21);
+	align-items: center;
+	position: relative;
+	padding: 0.5em 1em;
+	gap: 0.75rem;
+	justify-content: space-between;
+	font-size: 1.3rem;
+	border: 1px solid var(--cyber-red-neon-bg);
+	box-shadow: 0 0 1px var(--cyber-red);
+	border-radius: 3px;
 }
 
 .list-section-title {
-  color: var(--cyber-red-text);
-  position: relative;
-  font-family: "Rajdhani Medium";
-  line-height: 1;
-  font-size: inherit;
-  padding-top: 2px;
+	color: var(--cyber-red-text);
+	position: relative;
+	font-family: 'Rajdhani Medium';
+	line-height: 1;
+	font-size: inherit;
+	padding-top: 2px;
 }

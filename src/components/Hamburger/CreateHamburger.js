@@ -1,20 +1,20 @@
-import generateElement from "../../utils/GenerateElement.js";
-import "./hamburger.css";
+import generateElement from '../../utils/GenerateElement.js';
+import './hamburger.css';
 
 export default function createHamburger() {
-  const hamburger = generateElement("button", {
-    class: "hamburger",
-    "aria-controls": "sidebar",
-  });
+	const hamburger = generateElement('button', {
+		'class': 'hamburger',
+		'aria-controls': 'sidebar',
+	});
 
-  const hamLineWrapper = generateElement("span", { class: "ham-line-wrapper" });
+	const hamLineWrapper = generateElement('span', { class: 'ham-line-wrapper' });
 
-  const hamLine1 = generateElement("span", { class: "ham-line" });
-  const hamLine2 = generateElement("span", { class: "ham-line" });
-  const hamLine3 = generateElement("span", { class: "ham-line" });
+	const hamLine1 = generateElement('span', { class: 'ham-line' });
+	const hamLine2 = generateElement('span', { class: 'ham-line' });
+	const hamLine3 = generateElement('span', { class: 'ham-line' });
 
-  hamLineWrapper.append(hamLine1, hamLine2, hamLine3);
-  hamburger.append(hamLineWrapper);
+	hamLineWrapper.append(hamLine1, hamLine2, hamLine3);
+	hamburger.append(hamLineWrapper);
 
-  return hamburger;
+	return hamburger;
 }
