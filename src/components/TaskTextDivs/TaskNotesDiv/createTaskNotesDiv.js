@@ -8,7 +8,7 @@ export default function createTaskNotesDiv(task) {
       placeholder: "Notes",
       disabled: task.checked,
     },
-    task.notes
+    task.notes || "Notes"
   );
 
   return taskNotes;
